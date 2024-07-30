@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "User.Infrastructure.Persistence": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package inventoryproto;
+
+service InventoryProtoService {
+	rpc GetVehicle(GetVehicleRequest) returns (GetVehicleReponse) {}
+	rpc CheckVehicle(CheckVehicleRequest) returns (VehicleStatusReponse) {}
+}
+
+// GetVehicle
+message GetVehicleRequest {
+	string vehicle_id = 1;
+}
+message GetVehicleReponse {
+	double rental_price_per_day = 1;
+    string registration_plates = 2;
+    string variant_id = 3;
+}
+
+// CheckVehicle
+message CheckVehicleRequest {
+	string vehicle_id = 1;
+}
+message VehicleStatusReponse {
+	bool is_exists = 1;
+}

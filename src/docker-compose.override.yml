@@ -1,0 +1,203 @@
+version: '3.4'
+
+services:
+  rabbitmq:
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=rentacme
+      - RABBITMQ_DEFAULT_PASS=Passw0rd!
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+  consul:
+    container_name: consul
+    ports:
+      - 8500:8500
+
+  prometheus:
+    container_name: prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --enable-feature=otlp-write-receiver
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    volumes:
+      - ./BuildingBlocks/configs/prometheus:/etc/prometheus
+    depends_on:
+      - consul
+
+  grafana:
+    container_name: grafana
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=grafana
+    volumes:
+      - ./BuildingBlocks/configs/grafana:/etc/grafana/provisioning/datasources
+    depends_on:
+      - prometheus
+
+  loki:
+    container_name: loki
+    ports:
+      - 3100:3100
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./BuildingBlocks/configs/loki/loki.yml:/etc/loki/local-config.yaml
+    depends_on:
+      - grafana
+
+  tempo:
+    container_name: tempo
+    command: [ "-config.file=/etc/tempo.yml" ]
+    volumes:
+      - ./BuildingBlocks/configs/tempo/tempo.yml:/etc/tempo.yml
+    ports:
+      - 3200:3200
+      - 4318:4318
+    depends_on:
+      - grafana
+
+  otel-collector:
+    container_name: otel-collector
+    command: [ "--config=/etc/otel-collector.yml" ]
+    volumes:
+      - ./BuildingBlocks/configs/otel-collector/otel-collector.yml:/etc/otel-collector.yml
+    ports:
+      - 1888:1888 # pprof extension
+      - 8888:8888 # Prometheus metrics exposed by the Collector
+      - 8889:8889 # Prometheus exporter metrics
+      - 13133:13133 # health_check extension
+      - 4317:4317 # OTLP gRPC receiver
+      # - 4318:4318 # OTLP http receiver
+      - 55679:55679 # zpages extension
+    depends_on:
+      - prometheus
+      - grafana
+      - loki
+      - tempo
+
+  sql_server:
+    container_name: sql_server
+    environment:
+      ACCEPT_EULA: Y
+      MSSQL_SA_PASSWORD: Passw0rd!
+    ports:
+      - 1401:1433
+
+  apigateway:
+    container_name: apigateway
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+    ports:
+      - "5000:8080"
+      - "5001:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    depends_on:
+      - user.api
+      - inventory.api
+      - reservation.api
+
+  user.api:
+    container_name: user.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - SERVICE_HTTP_PORTS=5211
+      - SERVICE_HTTPS_PORTS=5212
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    ports:
+      - "5211:8080"
+      - "5212:8081"
+    depends_on:
+      - consul
+      - sql_server
+      - rabbitmq
+
+  inventory.api:
+    container_name: inventory.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+    ports:
+      - "5221:8080"
+      - "5222:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    depends_on:
+      - consul
+      - sql_server
+      - rabbitmq
+
+  reservation.api:
+    container_name: reservation.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    ports:
+      - "5231:8080"
+      - "5232:8081"
+    depends_on:
+      - consul
+      - sql_server
+      - rabbitmq
+
+  notification.api:
+    container_name: notification.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+    ports:
+      - "5241:8080"
+      - "5242:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    depends_on:
+      - consul
+      - sql_server
+      - rabbitmq
+
+  payment.api:
+    container_name: payment.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+    ports:
+      - "5251:8080"
+      - "5252:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    depends_on:
+      - consul
+      - sql_server
+      - rabbitmq
+
+  saga_orchestration_statemachine:
+    container_name: saga_orchestration_statemachine
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    depends_on:
+      - consul
+      - sql_server
+      - rabbitmq

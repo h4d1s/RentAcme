@@ -1,0 +1,109 @@
+version: '3.4'
+
+services:
+  rabbitmq:
+    image: rabbitmq:management
+    networks: 
+      - rentacme_network
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib
+    networks: 
+      - rentacme_network
+
+  prometheus:
+    image: prom/prometheus
+    networks: 
+      - rentacme_network
+
+  grafana:
+    image: grafana/grafana
+    networks: 
+      - rentacme_network
+
+  loki:
+    image: grafana/loki:latest
+    networks:
+      - rentacme_network
+
+  tempo:
+    image: grafana/tempo:latest
+    networks:
+      - rentacme_network
+
+  consul:
+    image: hashicorp/consul:latest
+    networks: 
+      - rentacme_network
+
+  sql_server:
+    image: mcr.microsoft.com/mssql/server
+    networks: 
+      - rentacme_network
+
+  apigateway:
+    image: ${DOCKER_REGISTRY-}apigateway
+    build:
+      context: .
+      dockerfile: Gateways/APIGateway/Dockerfile
+    networks:
+      - rentacme_network
+
+  user.api:
+    image: ${DOCKER_REGISTRY-}userapi
+    build:
+      context: .
+      dockerfile: Services/User/User.API/Dockerfile
+    networks: 
+      - rentacme_network
+
+  inventory.api:
+    image: ${DOCKER_REGISTRY-}inventoryapi
+    build:
+      context: .
+      dockerfile: Services/Inventory/Inventory.API/Dockerfile
+    networks: 
+      - rentacme_network
+
+  reservation.api:
+    image: ${DOCKER_REGISTRY-}reservationapi
+    build:
+      context: .
+      dockerfile: Services/Reservation/Reservation.API/Dockerfile
+    networks: 
+      - rentacme_network
+
+  notification.api:
+    image: ${DOCKER_REGISTRY-}notificationapi
+    build:
+      context: .
+      dockerfile: Services/Notification/Notification.API/Dockerfile
+    networks: 
+      - rentacme_network
+
+  payment.api:
+    image: ${DOCKER_REGISTRY-}paymentapi
+    build:
+      context: ..
+      dockerfile: src/Services/Payment/Payment.API/Dockerfile
+    networks:
+      - rentacme_network
+
+  saga_orchestration_statemachine:
+    image: ${DOCKER_REGISTRY-}sagaorchestrationstatemachine
+    build:
+      context: .
+      dockerfile: StateMachines/SagaOrchestrationStateMachine/Dockerfile
+    networks:
+      - rentacme_network
+
+networks:
+  rentacme_network:
+
+
+
+
+
+
+
+
