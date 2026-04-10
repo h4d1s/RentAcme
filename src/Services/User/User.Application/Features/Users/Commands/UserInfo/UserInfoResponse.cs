@@ -8,5 +8,5 @@ namespace User.Application.Features.Users.Commands.UserInfo;
 
 public record UserInfoResponse
 {
-    public Dictionary<string, object> Claims { get; set; }
+    public Dictionary<string, object> Claims { get; set; } = new Dictionary<string, object>();
 }

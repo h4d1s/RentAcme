@@ -19,7 +19,7 @@ public class DeleteVehicleHandler : IRequestHandler<DeleteVehicleCommand, Unit>
     {
         var vehicle = await _unitOfWork.VehicleRepository.GetByIdAsync(request.Id);
 
-        if (vehicle == null)
+        if (vehicle is null)
         {
             throw new NotFoundException($"Vehicle with {request.Id} not found.");
         }

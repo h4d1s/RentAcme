@@ -3,8 +3,8 @@ using User.Application;
 using User.Infrastructure.Persistence;
 using Asp.Versioning;
 using User.API.Middleware;
-using Microsoft.OpenApi.Models;
 using User.API;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 

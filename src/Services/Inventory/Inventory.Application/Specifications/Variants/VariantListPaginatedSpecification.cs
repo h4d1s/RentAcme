@@ -18,7 +18,7 @@ public class VariantListPaginatedSpecification : BaseSpecification<Variant>
         int? pageSize,
         string? order,
         string? orderBy)
-        : base(null)
+        : base(u => true)
     {
         if (!string.IsNullOrEmpty(orderBy))
         {

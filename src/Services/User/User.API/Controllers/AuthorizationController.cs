@@ -46,7 +46,7 @@ public class AuthorizationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Exchange()
     {
-        var request = HttpContext.GetOpenIddictServerRequest() ?? 
+        var request = HttpContext.GetOpenIddictServerRequest() ??
             throw new InvalidOperationException("The OpenID Connect request cannot be retrieved.");
 
         if (request.IsPasswordGrantType())
@@ -54,8 +54,8 @@ public class AuthorizationController : ControllerBase
             var scopes = new[] { "api" }.Intersect(request.GetScopes());
             var command = new SignInCommand
             {
-                Username = request.Username,
-                Password = request.Password,
+                Username = request.Username ?? throw new InvalidOperationException("Username is missing."),
+                Password = request.Password ?? throw new InvalidOperationException("Password is missing."),
                 Scopes = scopes.ToList(),
             };
             var response = await _mediator.Send(command);
@@ -63,7 +63,8 @@ public class AuthorizationController : ControllerBase
         }
         else if (request.IsRefreshTokenGrantType())
         {
-            var claimsPrincipal = (await HttpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme)).Principal;
+            var claimsPrincipal = (await HttpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme)).Principal
+                    ?? throw new InvalidOperationException("Claims principal is missing.");
 
             return SignIn(claimsPrincipal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
         }
@@ -78,7 +79,7 @@ public class AuthorizationController : ControllerBase
     [Authorize(AuthenticationSchemes = OpenIddictServerAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> Userinfo()
     {
-        var id = User.GetClaim(Claims.Subject);
+        var id = User.GetClaim(Claims.Subject) ?? throw new InvalidOperationException("Subject is missing.");
         var command = new UserInfoCommand { Id = Guid.Parse(id) };
         var response = await _mediator.Send(command);
         return Ok(response);

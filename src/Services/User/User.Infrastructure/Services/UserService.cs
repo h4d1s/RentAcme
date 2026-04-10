@@ -59,6 +59,10 @@ public class UserService : IUserService
     {
         var user = await _userManager.FindByIdAsync(id.ToString());
 
+        if (user is null) {
+            return new Dictionary<string, object>();
+        }
+
         var principal = await CreateUserPrincipalAsync(user);
 
         var claims = new Dictionary<string, object>(StringComparer.Ordinal)
@@ -68,13 +72,13 @@ public class UserService : IUserService
 
         if (principal.HasScope(Scopes.Email))
         {
-            claims[Claims.Email] = await _userManager.GetEmailAsync(user);
+            claims[Claims.Email] = await _userManager.GetEmailAsync(user) ?? "";
             claims[Claims.EmailVerified] = await _userManager.IsEmailConfirmedAsync(user);
         }
 
         if (principal.HasScope(Scopes.Phone))
         {
-            claims[Claims.PhoneNumber] = await _userManager.GetPhoneNumberAsync(user);
+            claims[Claims.PhoneNumber] = await _userManager.GetPhoneNumberAsync(user) ?? "";
             claims[Claims.PhoneNumberVerified] = await _userManager.IsPhoneNumberConfirmedAsync(user);
         }
 
@@ -301,7 +305,7 @@ public class UserService : IUserService
             case Claims.Name or Claims.PreferredUsername:
                 yield return Destinations.AccessToken;
 
-                if (claim.Subject.HasScope(Scopes.Profile))
+                if (claim.Subject != null && claim.Subject.HasScope(Scopes.Profile))
                     yield return Destinations.IdentityToken;
 
                 yield break;
@@ -309,7 +313,7 @@ public class UserService : IUserService
             case Claims.Email:
                 yield return Destinations.AccessToken;
 
-                if (claim.Subject.HasScope(Scopes.Email))
+                if (claim.Subject != null && claim.Subject.HasScope(Scopes.Email))
                     yield return Destinations.IdentityToken;
 
                 yield break;
@@ -317,7 +321,7 @@ public class UserService : IUserService
             case Claims.Role:
                 yield return Destinations.AccessToken;
 
-                if (claim.Subject.HasScope(Scopes.Roles))
+                if (claim.Subject != null && claim.Subject.HasScope(Scopes.Roles))
                     yield return Destinations.IdentityToken;
 
                 yield break;

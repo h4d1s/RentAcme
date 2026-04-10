@@ -39,6 +39,6 @@ public class UpdateModelValidator : AbstractValidator<UpdateModelCommand>
     private async Task<bool> ModelIdMustExist(Guid id, CancellationToken arg2)
     {
         var model = await _unitOfWork.ModelRepository.GetByIdAsync(id);
-        return model != null;
+        return model is not null;
     }
 }

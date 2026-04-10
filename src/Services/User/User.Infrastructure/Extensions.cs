@@ -38,7 +38,7 @@ public static class Extensions
         hcBuilder
             .AddCheck("self", () => HealthCheckResult.Healthy())
             .AddSqlServer(
-                configuration["ConnectionStrings:UserDbContext"],
+                configuration["ConnectionStrings:UserDbContext"] ?? "",
                 name: "UserDB-check",
                 tags: new string[] { "userdb" });
 
@@ -61,9 +61,9 @@ public static class Extensions
             new ConsulServiceRegistration(
                 provider.GetRequiredService<IConsulClient>(),
                 provider.GetRequiredService<ILogger<ConsulServiceRegistration>>(),
-                configuration["Consul:Service:Host"],
-                configuration["Consul:Service:Name"],
-                int.Parse(configuration["Consul:Service:Port"])
+                configuration["Consul:Service:Host"] ?? "",
+                configuration["Consul:Service:Name"] ?? "",
+                int.Parse(configuration["Consul:Service:Port"] ?? "0")
             ));
 
         // OpenIddict
@@ -83,8 +83,8 @@ public static class Extensions
                 options
                        .SetTokenEndpointUris("connect/token")
                        .SetIntrospectionEndpointUris("connect/introspect")
-                       .SetUserinfoEndpointUris("connect/userinfo")
-                       .SetLogoutEndpointUris("connect/logout");
+                       .SetUserInfoEndpointUris("/connect/userinfo")
+                       .SetEndSessionEndpointUris("/connect/logout");
 
                 options.RegisterScopes(Scopes.Email, Scopes.Profile, Scopes.Roles);
 
@@ -93,10 +93,9 @@ public static class Extensions
 
                 options.UseAspNetCore()
                        .EnableAuthorizationEndpointPassthrough()
-                       .EnableLogoutEndpointPassthrough()
                        .EnableTokenEndpointPassthrough()
-                       .EnableUserinfoEndpointPassthrough()
-                       .EnableStatusCodePagesIntegration();
+                       .EnableUserInfoEndpointPassthrough()
+                       .EnableEndSessionEndpointPassthrough();
 
                 options.AcceptAnonymousClients();
 
@@ -126,8 +125,8 @@ public static class Extensions
                     configuration["RabbitMQ:Hostname"],
                     "/",
                     hostConfigurator => {
-                        hostConfigurator.Username(configuration["RabbitMQ:Username"]);
-                        hostConfigurator.Password(configuration["RabbitMQ:Password"]);
+                        hostConfigurator.Username(configuration["RabbitMQ:Username"] ?? "");
+                        hostConfigurator.Password(configuration["RabbitMQ:Password"] ?? "");
                     });
                 busFactoryConfigurator.ConfigureEndpoints(context);
             });

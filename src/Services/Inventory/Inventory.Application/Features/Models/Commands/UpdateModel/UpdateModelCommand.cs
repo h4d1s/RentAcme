@@ -11,7 +11,7 @@ namespace Inventory.Application.Features.Models.Commands.UpdateModel;
 public record UpdateModelCommand : IRequest<Unit>
 {
     public Guid Id { get; set; }
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
     public int YearOfProduction { get; set; }
     public int NumberOfSeats { get; set; }
     public Category Category { get; set; }

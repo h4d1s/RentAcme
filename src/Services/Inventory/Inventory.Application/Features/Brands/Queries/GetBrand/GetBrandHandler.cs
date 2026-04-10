@@ -28,7 +28,7 @@ namespace Inventory.Application.Features.Brands.Queries.GetBrand
         {
             var brand = await _unitOfWork.BrandRepository.GetByIdAsync(request.Id);
 
-            if (brand == null)
+            if (brand is null)
             {
                 throw new NotFoundException($"Brand with Id {request.Id} not found.");
             }

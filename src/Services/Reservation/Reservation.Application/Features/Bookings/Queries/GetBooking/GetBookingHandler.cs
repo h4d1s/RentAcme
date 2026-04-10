@@ -24,7 +24,7 @@ public class GetBookingHandler : IRequestHandler<GetBookingQuery, Booking>
     {
         var booking = await _unitOfWork.BookingRepository.GetByIdAsync(request.Id);
 
-        if (booking == null)
+        if (booking is null)
         {
             throw new NotFoundException($"Booking with {request.Id} not found.");
         }

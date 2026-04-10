@@ -24,7 +24,7 @@ public class GetModelHandler : IRequestHandler<GetModelQuery, Model>
     {
         var model = await _unitOfWork.ModelRepository.GetByIdAsync(request.Id);
 
-        if (model == null)
+        if (model is null)
         {
             throw new NotFoundException($"Model with {request.Id} not found.");
         }
