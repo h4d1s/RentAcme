@@ -34,7 +34,7 @@ public class CompleteBookingHandler : IRequestHandler<CompleteBookingCommand, Un
 
         var bookingToUpdate = await _unitOfWork.BookingRepository.GetByIdAsync(request.BookingId);
 
-        if (bookingToUpdate == null)
+        if (bookingToUpdate is null)
         {
             throw new NotFoundException($"Booking with {request.BookingId} not found.");
         }

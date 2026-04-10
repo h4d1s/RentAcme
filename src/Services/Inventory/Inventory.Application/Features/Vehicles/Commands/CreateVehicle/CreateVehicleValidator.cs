@@ -43,6 +43,6 @@ public class CreateVehicleValidator : AbstractValidator<CreateVehicleCommand>
     private async Task<bool> VariantIdMustExist(Guid id, CancellationToken arg2)
     {
         var model = await _unitOfWork.ModelRepository.GetByIdAsync(id);
-        return model == null;
+        return model is null;
     }
 }

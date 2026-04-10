@@ -31,7 +31,7 @@ public class UserCreatedDomainEventHandler : INotificationHandler<UserCreatedDom
         var userCreatedEvent = new UserCreatedIntegrationEvent
         {
             Id = Guid.Parse(notification.User.Id),
-            Email = notification.User.Email,
+            Email = notification.User.Email ?? string.Empty,
             FirstName = notification.User.FirstName,
             LastName = notification.User.LastName,
         };

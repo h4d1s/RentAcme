@@ -7,7 +7,7 @@ using Inventory.Infrastructure;
 using Inventory.Infrastructure.Persistence;
 using MassTransit.Futures;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using OpenIddict.Validation.AspNetCore;
 using System.Reflection;
 
@@ -34,19 +34,9 @@ builder.Services.AddSwaggerGen(options => {
         BearerFormat = "JWT",
         Scheme = "bearer"
     });
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
     {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[]{}
-        }
+        [new OpenApiSecuritySchemeReference("bearer", document)] = []
     });
 });
 

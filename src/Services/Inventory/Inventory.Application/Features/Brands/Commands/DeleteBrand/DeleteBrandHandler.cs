@@ -24,7 +24,7 @@ public class DeleteBrandHandler : IRequestHandler<DeleteBrandCommand, Unit>
     {
         var brand = await _unitOfWork.BrandRepository.GetByIdAsync(request.Id);
 
-        if (brand == null)
+        if (brand is null)
         {
             throw new NotFoundException($"Brand with {request.Id} not found.");
         }

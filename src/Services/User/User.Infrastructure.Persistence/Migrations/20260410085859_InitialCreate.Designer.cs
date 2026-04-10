@@ -12,15 +12,15 @@ using User.Infrastructure.Persistence.Data;
 namespace User.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20240530102843_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20260410085859_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.5")
+                .HasAnnotation("ProductVersion", "10.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -353,8 +353,8 @@ namespace User.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(400)");
 
                     b.Property<string>("Type")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.HasKey("Id");
 

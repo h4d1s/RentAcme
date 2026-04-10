@@ -20,7 +20,7 @@ public static class Extensions
         IHostEnvironment environment)
     {
         services.AddMediatR(x => x.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-        services.AddAutoMapper(Assembly.GetExecutingAssembly());
+        services.AddAutoMapper(cfg => { });
 
         services.AddScoped<IValidator<SignInCommand>, SignInCommandValidator>();
         services.AddScoped<IValidator<SignUpCommand>, SignUpCommandValidator>();

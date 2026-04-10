@@ -1,28 +1,55 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Google.Protobuf" Version="3.27.2" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.63.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.64.0">
+    <PackageReference Include="Azure.Identity" Version="1.20.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.34.1" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.76.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.80.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.7" />
-    <PackageReference Include="MassTransit" Version="8.2.3" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="8.2.3" />
-    <PackageReference Include="OpenIddict.Validation" Version="5.7.0" />
-    <PackageReference Include="OpenIddict.Validation.AspNetCore" Version="5.7.0" />
-    <PackageReference Include="OpenIddict.Validation.SystemNetHttp" Version="5.7.0" />
-    <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="8.0.2" />
-    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.1" />
-    <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="8.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.5" />
+    <PackageReference Include="MassTransit" Version="9.1.0" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="9.1.0" />
+    <PackageReference Include="Microsoft.Bcl.Cryptography" Version="10.0.5" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient.SNI.runtime" Version="6.0.2" />
+    <PackageReference Include="Microsoft.Extensions.AmbientMetadata.Application" Version="10.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Compliance.Abstractions" Version="10.4.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.AutoActivation" Version="10.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.ExceptionSummarization" Version="10.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Http.Diagnostics" Version="10.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="10.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Resilience" Version="10.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Telemetry" Version="10.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Telemetry.Abstractions" Version="10.4.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.83.3" />
+    <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.83.3" />
+    <PackageReference Include="Microsoft.IdentityModel.Protocols" Version="8.17.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.17.0" />
+    <PackageReference Include="OpenIddict.Validation" Version="7.4.0" />
+    <PackageReference Include="OpenIddict.Validation.AspNetCore" Version="7.4.0" />
+    <PackageReference Include="OpenIddict.Validation.SystemNetHttp" Version="7.4.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="9.0.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="9.0.0" />
+    <PackageReference Include="Polly" Version="8.6.6" />
+    <PackageReference Include="Polly.Core" Version="8.6.6" />
+    <PackageReference Include="Polly.Extensions" Version="8.6.6" />
+    <PackageReference Include="Polly.RateLimiting" Version="8.6.6" />
+    <PackageReference Include="RabbitMQ.Client" Version="7.2.1" />
+    <PackageReference Include="runtime.native.System.Data.SqlClient.sni" Version="4.7.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.17.0" />
+    <PackageReference Include="System.Runtime.Caching" Version="10.0.5" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.5" />
   </ItemGroup>
 
   <ItemGroup>

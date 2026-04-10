@@ -29,6 +29,6 @@ public class UpdateVehicleValidator : AbstractValidator<UpdateVehicleCommand>
     private async Task<bool> VariantIdMustExist(Guid id, CancellationToken arg2)
     {
         var model = await _unitOfWork.VehicleRepository.GetByIdAsync(id);
-        return model != null;
+        return model is not null;
     }
 }

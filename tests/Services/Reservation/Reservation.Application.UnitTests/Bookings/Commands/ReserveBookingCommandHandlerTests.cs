@@ -2,6 +2,7 @@
 using FluentValidation;
 using FluentValidation.Results;
 using GrpcIntegrationHelpers.ClientServices;
+using GrpcIntegrationHelpers.Models;
 using Moq;
 using Reservation.Application.Features.Bookings.Commands.ReserveBooking;
 using Reservation.Domain.AggregatesModel.BookingAggregate;
@@ -43,6 +44,14 @@ namespace Reservation.Application.UnitTests.Bookings.Commands
             _mockUnitOfWork
                 .Setup(p => p.BookingRepository.AddAsync(It.IsAny<Booking>()))
                 .ReturnsAsync(fakeBooking.Id);
+
+            _mockMapper
+                .Setup(m => m.Map<Booking>(It.IsAny<ReserveBookingCommand>()))
+                .Returns(fakeBooking);
+
+            _mockInventoryGrpcService
+                .Setup(s => s.GetVehicleAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(new VehicleDto { RentalPricePerDay = 100m, RegistrationPlates = string.Empty, VariantId = Guid.NewGuid() });
 
             var handler = new ReserveBookingHandler(
                 _mockUnitOfWork.Object,

@@ -21,7 +21,7 @@ public static class Extensions
         IConfiguration configuration)
     {
         services.AddMediatR(x => x.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-        services.AddAutoMapper(Assembly.GetExecutingAssembly());
+        services.AddAutoMapper(cfg => { });
 
         // DI
         services.AddScoped<IValidator<CancelBookingCommand>, CancelBookingValidator>();

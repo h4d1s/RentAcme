@@ -26,6 +26,6 @@ public class CancelBookingValidator : AbstractValidator<CancelBookingCommand>
     private async Task<bool> BookingIdMustExist(Guid id, CancellationToken arg2)
     {
         var booking = await _unitOfWork.BookingRepository.GetByIdAsync(id);
-        return booking != null;
+        return booking is not null;
     }
 }

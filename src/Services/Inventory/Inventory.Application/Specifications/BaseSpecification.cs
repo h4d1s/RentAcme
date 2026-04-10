@@ -8,20 +8,15 @@ using Inventory.Domain.Common;
 
 namespace Inventory.Application.Specifications
 {
-    public abstract class BaseSpecification<T> : ISpecification<T>
+    public abstract class BaseSpecification<T>(Expression<Func<T, bool>> criteria) : ISpecification<T>
     {
-        protected BaseSpecification(Expression<Func<T, bool>> criteria)
-        {
-            Criteria = criteria;
-        }
-
-        public Expression<Func<T, bool>> Criteria { get; }
+        public Expression<Func<T, bool>> Criteria { get; } = criteria;
         public List<Expression<Func<T, object>>> Includes { get; } = new List<Expression<Func<T, object>>>();
         public List<string> IncludeStrings { get; } = new List<string>();
-        public Expression<Func<T, object>> OrderBy { get; private set; }
-        public Expression<Func<T, object>> OrderByDescending { get; private set; }
-        public string OrderByString { get; private set; }
-        public Expression<Func<T, object>> GroupBy { get; private set; }
+        public Expression<Func<T, object>> OrderBy { get; private set; } = default!;
+        public Expression<Func<T, object>> OrderByDescending { get; private set; } = default!;
+        public string OrderByString { get; private set; } = string.Empty;
+        public Expression<Func<T, object>> GroupBy { get; private set; } = default!;
 
         public int Take { get; private set; }
         public int Skip { get; private set; }
@@ -54,7 +49,6 @@ namespace Inventory.Application.Specifications
             OrderByDescending = orderByDescendingExpression;
         }
 
-        //Not used anywhere at the moment, but someone requested an example of setting this up.
         protected virtual void ApplyGroupBy(Expression<Func<T, object>> groupByExpression)
         {
             GroupBy = groupByExpression;

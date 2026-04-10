@@ -16,7 +16,7 @@ public class BrandListPaginatedSpecification : BaseSpecification<Brand>
         int? pageSize,
         string? order,
         string? orderBy)
-        : base(null)
+        : base(u => true)
     {
         if (!string.IsNullOrEmpty(orderBy))
         {

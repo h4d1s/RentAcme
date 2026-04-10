@@ -25,7 +25,7 @@ public class GetVariantHandler : IRequestHandler<GetVariantQuery, Variant>
     {
         var variant = await _unitOfWork.VariantRepository.GetByIdAsync(request.Id);
 
-        if (variant == null)
+        if (variant is null)
         {
             throw new NotFoundException($"Variant with {request.Id} not found.");
         }
