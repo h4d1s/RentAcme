@@ -1,10 +1,8 @@
 ﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using User.API.Middleware;
-using User.Application.Infrastructure.Persistence;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Logging;
-using Diagnostics;
 
 namespace User.API;
 
@@ -29,6 +27,52 @@ public static class Extensions
             options.SubstituteApiVersionInUrl = true;
         });
 
+        // Auth
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.Authority = configuration["Keycloak:Authority"];
+                options.Audience = configuration["Keycloak:Audience"];
+                options.MetadataAddress = configuration["Keycloak:MetadataAddress"] ?? throw new ArgumentNullException("Keycloak metadataAddress is not configured");
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = configuration["Keycloak:Issuer"],
+                };
+            });
+        services.AddAuthorization();
+
+        // Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen(o =>
+        {
+            o.SwaggerDoc("v1", new() { Title = "User API", Version = "v1" });
+            o.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+            {
+                Type = SecuritySchemeType.OAuth2,
+                Flows = new OpenApiOAuthFlows
+                {
+                    AuthorizationCode = new OpenApiOAuthFlow
+                    {
+                        AuthorizationUrl = new Uri(configuration["Keycloak:AuthorizationUrl"] ?? throw new ArgumentNullException("Keycloak authorizationUrl is not configured")),
+                        TokenUrl = new Uri(configuration["Keycloak:TokenUrl"] ?? throw new ArgumentNullException("Keycloak tokenUrl is not configured")),
+                        Scopes = new Dictionary<string, string>
+                        {
+                            { "openid", "OpenID" },
+                            { "profile", "Profile" },
+                            { "email", "Email" }
+                        }
+                    }
+                }
+            });
+            o.AddSecurityRequirement((document) => new OpenApiSecurityRequirement()
+            {
+                [new OpenApiSecuritySchemeReference("oauth2", document)] = ["openid", "profile", "email"]
+            });
+        });
+
+
+
         return services;
     }
 
@@ -37,6 +81,17 @@ public static class Extensions
         IHostEnvironment environment,
         IServiceProvider serviceProvider)
     {
+        // Authentication
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        // Swagger
+        if (environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
         // Middleware
         app.UseMiddleware<ExceptionMiddleware>();
 

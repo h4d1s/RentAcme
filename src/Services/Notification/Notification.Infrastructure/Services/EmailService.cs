@@ -21,8 +21,8 @@ public class EmailService : IEmailService
     {
         _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-        var server = _configuration["Smtp:Server"] ?? "";
-        var port = int.Parse(_configuration["Smtp:Port"] ?? "587");
+        var server = _configuration["Smtp:Server"] ?? throw new ArgumentNullException("Smtp server is not configured");
+        var port = int.Parse(_configuration["Smtp:Port"] ?? throw new ArgumentNullException("Smtp port is not configured"));
         var username = _configuration["Smtp:Username"];
         var password = _configuration["Smtp:Password"];
 
@@ -31,13 +31,13 @@ public class EmailService : IEmailService
             Host = server,
             Port = port,
             Credentials = new NetworkCredential(username, password),
-            EnableSsl = true,
+            EnableSsl = false,
         };
     }
 
     public async Task SendAsync(string recipient, string subject, string message)
     {
-        var from = _configuration["Smtp:FromEmail"] ?? "";
+        var from = _configuration["Smtp:FromEmail"] ?? throw new ArgumentNullException("Smtp from email is not configured");
         var mailMessage = new MailMessage
         {
             From = new MailAddress(from),

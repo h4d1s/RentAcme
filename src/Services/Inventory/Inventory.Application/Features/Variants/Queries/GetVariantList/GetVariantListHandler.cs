@@ -15,15 +15,15 @@ namespace Inventory.Application.Features.Variants.Queries.GetVariantList;
 
 public class GetVariantListHandler : IRequestHandler<GetVariantListQuery, PagedResponse<Variant>>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IVariantRepository _variantRepository;
     private readonly IMapper _mapper;
 
     public GetVariantListHandler(
-        IUnitOfWork unitOfWork,
+        IVariantRepository variantRepository,
         IMapper mapper)
     {
-        _unitOfWork = unitOfWork;
-        _mapper = mapper;
+        _variantRepository = variantRepository ?? throw new ArgumentNullException(nameof(variantRepository));
+        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
     public async Task<PagedResponse<Variant>> Handle(GetVariantListQuery request, CancellationToken cancellationToken)
@@ -33,14 +33,14 @@ public class GetVariantListHandler : IRequestHandler<GetVariantListQuery, PagedR
             request.PageSize,
             request.Order,
             request.OrderBy);
-        var variantList = await _unitOfWork.VariantRepository.ListAsync(specification);
+        var variantList = await _variantRepository.ListAsync(specification);
 
         specification = new VariantListPaginatedSpecification(
             null,
             null,
             request.Order,
             request.OrderBy);
-        var variantListAllCount = await _unitOfWork.VariantRepository.CountAsync(specification);
+        var variantListAllCount = await _variantRepository.CountAsync(specification);
 
         return new PagedResponse<Variant>(
             request.Page,

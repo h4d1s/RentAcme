@@ -7,11 +7,11 @@ using MediatR;
 using User.Domain.Common;
 using User.Infrastructure.Persistence.Data;
 
-namespace Inventory.Infrastructure.Persistence.MediatR;
+namespace User.Infrastructure.Persistence.MediatR;
 
-static class Extensions
+public static class Extensions
 {
-    public static async Task DispatchDomainEventsAsync(this IMediator mediator, UserContext ctx)
+    public static async Task DispatchDomainEventsAsync(this IMediator mediator, ApplicationUserDbContext ctx)
     {
         var domainEntities = ctx.ChangeTracker
             .Entries<Entity>()

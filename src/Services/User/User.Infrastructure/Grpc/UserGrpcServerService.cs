@@ -1,35 +1,29 @@
 ﻿using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Channels;
-using System.Threading.Tasks;
-using User.Application.Infrastructure.Services;
+using User.Domain.AggregatesModel.ApplicationUserAggregate;
 using Userproto;
-using User.Infrastructure.Services;
-using User.Domain.AggregatesModel.ApplicationUser;
 
 namespace User.Infrastructure.Grpc;
 
+[Authorize]
 public class UserGrpcServerService : UserProtoService.UserProtoServiceBase
 {
     private readonly ILogger<UserGrpcServerService> _logger;
-    private readonly IUserService _userService;
+    private readonly IApplicationUserRepository _applicationUserRepository;
 
     public UserGrpcServerService(
         ILogger<UserGrpcServerService> logger,
-        IUserService userService)
+        IApplicationUserRepository applicationUserRepository)
     {
         _logger = logger;
-        _userService = userService;
+        _applicationUserRepository = applicationUserRepository;
     }
 
     public override async Task<UserStatusResponse> CheckUser(CheckUserRequest request, ServerCallContext context)
     {
         _logger.LogInformation("Checking user {Id}", request.UserId);
-        var isExists = await _userService.ExistsAsync(Guid.Parse(request.UserId));
+        var isExists = await _applicationUserRepository.GetByIdAsync(Guid.Parse(request.UserId)) is not null;
 
         var response = new UserStatusResponse
         {
@@ -47,7 +41,7 @@ public class UserGrpcServerService : UserProtoService.UserProtoServiceBase
         try
         {
             var id = Guid.Parse(request.UserId);
-            user = await _userService.GetByIdAsync(id);
+            user = await _applicationUserRepository.GetByIdAsync(id);
         }
         catch (Exception ex)
         {
@@ -56,7 +50,32 @@ public class UserGrpcServerService : UserProtoService.UserProtoServiceBase
 
         return new GetUserResponse
         {
-            Id = user?.Id,
+            Id = user?.Id.ToString(),
+            ExternalId = user?.ExternalId,
+            Email = user?.Email,
+            FirstName = user?.FirstName,
+            LastName = user?.LastName,
+        };
+    }
+
+    public override async Task<GetUserByExternalIdResponse> GetUserByExternalId(GetUserByExternalIdRequest request, ServerCallContext context)
+    {
+        _logger.LogInformation("Getting user by external id: {Id}", request.UserExternalId);
+        ApplicationUser? user;
+
+        try
+        {
+            user = await _applicationUserRepository.GetByExternalIdAsync(request.UserExternalId);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+
+        return new GetUserByExternalIdResponse
+        {
+            Id = user?.Id.ToString(),
+            ExternalId = user?.ExternalId,
             Email = user?.Email,
             FirstName = user?.FirstName,
             LastName = user?.LastName,

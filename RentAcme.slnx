@@ -10,12 +10,17 @@
     <Project Path="src/BuildingBlocks/Diagnostics/Diagnostics.csproj" />
     <Project Path="src/BuildingBlocks/EventBus/EventBus.csproj" />
     <Project Path="src/BuildingBlocks/GrpcIntegrationHelpers/GrpcIntegrationHelpers.csproj" />
+    <Project Path="src/BuildingBlocks/Identity/Identity.csproj" Id="bb05945e-d979-4725-8017-6ff744bbf480" />
     <Project Path="src/BuildingBlocks/Logging/Logging.csproj" />
     <Project Path="src/BuildingBlocks/Persistence/Persistence.csproj" />
   </Folder>
   <Folder Name="/src/BuildingBlocks/configs/" />
   <Folder Name="/src/BuildingBlocks/configs/grafana/">
     <File Path="src/BuildingBlocks/configs/grafana/datasource.yml" />
+  </Folder>
+  <Folder Name="/src/BuildingBlocks/configs/keycloak/">
+    <File Path="src/BuildingBlocks/configs/keycloak/keycloak-to-rabbit-3.0.5.jar" />
+    <File Path="src/BuildingBlocks/configs/keycloak/realm-rent-acme.json" />
   </Folder>
   <Folder Name="/src/BuildingBlocks/configs/loki/">
     <File Path="src/BuildingBlocks/configs/loki/loki.yml" />

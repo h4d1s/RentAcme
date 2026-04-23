@@ -3,6 +3,7 @@ using FluentValidation;
 using Inventory.Application.Exceptions;
 using Inventory.Application.Features.Brands.Commands.CreateBrand;
 using Inventory.Application.Features.Models.Commands.CreateModel;
+using Inventory.Domain.AggregatesModel.ModelAggregate;
 using Inventory.Domain.AggregatesModel.VariantAggreate;
 using Inventory.Domain.Common;
 using MediatR;
@@ -17,20 +18,17 @@ namespace Inventory.Application.Features.Variants.Commands.CreateVariant;
 
 public class CreateVariantHandler : IRequestHandler<CreateVariantCommand, Guid>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IVariantRepository _variantRepository;
     private readonly IValidator<CreateVariantCommand> _validator;
-    private readonly IMapper _mapper;
     private readonly ILogger<CreateBrandHandler> _logger;
 
     public CreateVariantHandler(
-        IUnitOfWork unitOfWork,
+        IVariantRepository variantRepository,
         IValidator<CreateVariantCommand> validator,
-        IMapper mapper,
         ILogger<CreateBrandHandler> logger)
     {
-        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+        _variantRepository = variantRepository ?? throw new ArgumentNullException(nameof(variantRepository));
         _validator = validator ?? throw new ArgumentNullException(nameof(validator));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -43,12 +41,18 @@ public class CreateVariantHandler : IRequestHandler<CreateVariantCommand, Guid>
             throw new BadRequestException("", validationResult);
         }
 
-        var variant = _mapper.Map<Variant>(request);
+        var variant = new Variant(
+            request.Name,
+            request.Gearbox,
+            request.FuelType,
+            request.Power,
+            request.EngineSize,
+            request.ModelId);
 
         _logger.LogInformation("Creating variant - Variant: {@variant}", variant);
 
-        var id = await _unitOfWork.VariantRepository.AddAsync(variant);
-        await _unitOfWork.SaveEntitiesAsync(cancellationToken);
+        var id = await _variantRepository.AddAsync(variant);
+        await _variantRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
         return id;
     }

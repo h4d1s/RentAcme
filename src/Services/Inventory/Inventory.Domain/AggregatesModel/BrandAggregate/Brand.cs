@@ -17,13 +17,19 @@ public class Brand
 
     public Brand(string name)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new InventoryDomainException($"Brand {nameof(name)} cannot be empty.");
-        }
+        ValidateName(name);
 
         Name = name;
         _models = new List<Model>();
+    }
+
+    public void UpdateName(string newName)
+    {
+        ValidateName(newName);
+        if (Name != newName)
+        {
+            Name = newName;
+        }
     }
 
     public void AddModel(string name, int yearOfProduction, int numberOfSeats, Category category)
@@ -36,11 +42,19 @@ public class Brand
     {
         var model = _models.SingleOrDefault(m => m.Id == id);
 
-        if (model == null)
+        if (model is null)
         {
             throw new InventoryDomainException("Model not found.");
         }
 
         _models.Remove(model);
+    }
+
+    private void ValidateName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new InventoryDomainException("The brand name cannot be empty.");
+        }
     }
 }

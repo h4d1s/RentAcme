@@ -10,7 +10,7 @@ using Reservation.Infrastructure.Persistence.Data;
 
 namespace Reservation.Infrastructure.Persistence.Migrations
 {
-    [DbContext(typeof(ReservationContext))]
+    [DbContext(typeof(ReservationDbContext))]
     partial class ReservationContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

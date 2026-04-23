@@ -11,7 +11,7 @@ namespace Inventory.Infrastructure.Persistence.MediatR;
 
 static class Extensions
 {
-    public static async Task DispatchDomainEventsAsync(this IMediator mediator, InventoryContext ctx)
+    public static async Task DispatchDomainEventsAsync(this IMediator mediator, InventoryDbContext ctx)
     {
         var domainEntities = ctx.ChangeTracker
             .Entries<Entity>()

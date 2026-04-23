@@ -13,21 +13,24 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.9" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.6" />
+	<FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ConsulIntegrationHelpers\ConsulIntegrationHelpers.csproj" />
+    <ProjectReference Include="..\Identity\Identity.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="..\Protos\inventory.proto" GrpcServices="Client">
+    <Protobuf Include="..\Protos\inventory.proto" GrpcServices="Both">
       <Link>Protos\inventory.proto</Link>
     </Protobuf>
-    <Protobuf Include="..\Protos\notification.proto" GrpcServices="Client">
+    <Protobuf Include="..\Protos\notification.proto" GrpcServices="Both">
       <Link>Protos\notification.proto</Link>
     </Protobuf>
-    <Protobuf Include="..\Protos\user.proto" GrpcServices="Client">
+    <Protobuf Include="..\Protos\user.proto" GrpcServices="Both">
       <Link>Protos\user.proto</Link>
     </Protobuf>
   </ItemGroup>

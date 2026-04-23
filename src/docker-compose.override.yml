@@ -1,4 +1,4 @@
-version: '3.4'
+name: rent-acme
 
 services:
   rabbitmq:
@@ -10,10 +10,57 @@ services:
       - 5672:5672
       - 15672:15672
 
+  mailhog:
+    container_name: mailhog
+    ports:
+      - 1025:1025
+      - 8025:8025
+
   consul:
     container_name: consul
     ports:
       - 8500:8500
+
+  keycloak_db:
+    container_name: keycloak_db
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: Passw0rd!
+    ports:
+      - 5432:5432 
+
+  keycloak:
+    container_name: keycloak
+    environment:
+    - KC_DB=postgres
+    - KC_DB_URL=jdbc:postgresql://keycloak_db:5432/keycloak
+    - KC_DB_USERNAME=keycloak
+    - KC_DB_PASSWORD=Passw0rd!
+    - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+    - KC_BOOTSTRAP_ADMIN_PASSWORD=Passw0rd!
+    - KK_TO_RMQ_URL=rabbitmq
+    - KK_TO_RMQ_PORT=5672
+    - KK_TO_RMQ_USERNAME=rentacme
+    - KK_TO_RMQ_PASSWORD=Passw0rd!
+    - KK_TO_RMQ_EXCHANGE=amq.topic
+    - KK_TO_RMQ_VHOST=/
+    - KC_OTEL=true
+    - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+    - OTEL_LOGS_EXPORTER=otlp
+    - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+    ports:
+      - 8080:8080
+    command:
+      - start-dev
+      - --import-realm
+    volumes:
+      - ./BuildingBlocks/configs/keycloak/realm-rent-acme.json:/opt/keycloak/data/import/realm-rent-acme.json
+      - ./BuildingBlocks/configs/keycloak/keycloak-to-rabbit-3.0.5.jar:/opt/keycloak/providers/keycloak-to-rabbit-3.0.5.jar
+    depends_on:
+      - keycloak_db
+      - otel-collector
+      - mailhog
 
   prometheus:
     container_name: prometheus
@@ -60,8 +107,8 @@ services:
       - ./BuildingBlocks/configs/tempo/tempo.yml:/etc/tempo.yaml
     ports:
       - 3200:3200 # tempo
-      - "4317:4317" # Tempo OTLP GRPC
-      - "4318:4318" # Tempo OTLP HTTP
+      - 4317:4317 # Tempo OTLP GRPC
+      - 4318:4318 # Tempo OTLP HTTP
     depends_on:
       - grafana
 
@@ -99,8 +146,8 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
     ports:
-      - "5000:8080"
-      - "5001:8081"
+      - 5000:8080
+      - 5001:8081
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
@@ -121,12 +168,13 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     ports:
-      - "5211:8080"
-      - "5212:8081"
+      - 5211:8080
+      - 5212:8081
     depends_on:
       - consul
       - sql_server
       - rabbitmq
+      - keycloak 
 
   inventory.api:
     container_name: inventory.api
@@ -135,8 +183,8 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
     ports:
-      - "5221:8080"
-      - "5222:8081"
+      - 5221:8080
+      - 5222:8081
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
@@ -155,8 +203,8 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     ports:
-      - "5231:8080"
-      - "5232:8081"
+      - 5231:8080
+      - 5232:8081
     depends_on:
       - consul
       - sql_server
@@ -169,8 +217,8 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
     ports:
-      - "5241:8080"
-      - "5242:8081"
+      - 5241:8080
+      - 5242:8081
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
@@ -186,8 +234,8 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
     ports:
-      - "5251:8080"
-      - "5252:8081"
+      - 5251:8080
+      - 5252:8081
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro

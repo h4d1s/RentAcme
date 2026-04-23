@@ -11,7 +11,7 @@ using Reservation.Infrastructure.Persistence.Data;
 
 namespace Reservation.Infrastructure.Persistence.Migrations
 {
-    [DbContext(typeof(ReservationContext))]
+    [DbContext(typeof(ReservationDbContext))]
     [Migration("20240723135812_InitialCreate")]
     partial class InitialCreate
     {

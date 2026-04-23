@@ -4,6 +4,6 @@ namespace Reservation.Domain.Common;
 
 public interface IUnitOfWork : IDisposable
 {
-    IBookingRepository BookingRepository { get; }
-    Task<int> SaveEntitiesAsync(CancellationToken cancellationToken);
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+    Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default);
 }

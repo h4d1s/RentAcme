@@ -1,4 +1,5 @@
-﻿using Inventory.Domain.AggregatesModel.BrandAggregate;
+﻿using Ardalis.Specification;
+using Inventory.Domain.AggregatesModel.BrandAggregate;
 using Inventory.Domain.AggregatesModel.ModelAggregate;
 using Inventory.Domain.AggregatesModel.VariantAggreate;
 using MassTransit.Transports;
@@ -11,40 +12,48 @@ using System.Threading.Tasks;
 
 namespace Inventory.Application.Specifications.Models;
 
-public class VariantListPaginatedSpecification : BaseSpecification<Variant>
+public class VariantListPaginatedSpecification : Specification<Variant>
 {
     public VariantListPaginatedSpecification(
         int? pageNumber,
         int? pageSize,
         string? order,
         string? orderBy)
-        : base(u => true)
     {
+        var querySpec = Query;
+
         if (!string.IsNullOrEmpty(orderBy))
         {
-            var ordering = "";
             switch (orderBy.ToLower())
             {
                 case "name":
-                    ordering = "Name";
+                    if (string.IsNullOrEmpty(order) || order.ToLower() == "desc")
+                    {
+                        querySpec.OrderBy(x => x.Name);
+                    }
+                    else
+                    {
+                        querySpec.OrderByDescending(x => x.Name);
+                    }
                     break;
                 default:
-                    ordering = "Id";
+                    if (string.IsNullOrEmpty(order) || order.ToLower() == "desc")
+                    {
+                        querySpec.OrderBy(x => x.Id);
+                    }
+                    else
+                    {
+                        querySpec.OrderByDescending(x => x.Id);
+                    }
                     break;
             }
-
-            var orderLinq = "asc";
-            if (string.IsNullOrEmpty(order) || order.ToLower() == "desc")
-            {
-                orderLinq = "desc";
-            }
-
-            ApplyOrderBy(ordering + " " + orderLinq);
         }
 
         if (pageNumber.HasValue && pageSize.HasValue)
         {
-            ApplyPaging((pageNumber.Value - 1) * pageSize.Value, pageSize.Value);
+            querySpec
+                .Skip((pageNumber.Value - 1) * pageSize.Value)
+                .Take(pageSize.Value);
         }
     }
 }

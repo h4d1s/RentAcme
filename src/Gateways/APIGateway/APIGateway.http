@@ -1,6 +1,93 @@
-@APIGateway_HostAddress = http://localhost:5259
+@gatewayHost = localhost
+@gatewayPort = 5001
+@gatewayUrl = https://{{gatewayHost}}:{{gatewayPort}}/api/v1
 
-GET {{APIGateway_HostAddress}}/weatherforecast/
-Accept: application/json
+# Identity Provider
+@keycloakUrl = http://localhost:8080
+@realm = rent-acme
+@contentType = application/json
 
-###
+### IDENTITY: Get Access Token
+# @name login
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id=client&username=rent-acme-admin&password=Passw0rd!
+
+### Capture the token [cite: 2]
+@authToken = {{login.response.body.$.access_token}}
+
+# ==========================================================
+# USER SERVICE
+# ==========================================================
+
+### Get a User
+# @no-ssl-verify
+GET {{gatewayUrl}}/user/users/3fa85f64-5717-4562-b3fc-2c963f66afa6
+Authorization: Bearer {{authToken}}
+Accept: {{contentType}}
+
+### Update a User
+# @no-ssl-verify
+PUT {{gatewayUrl}}/user/users/6F31CC35-8F8B-4A1A-F047-08DE9EB97C9F
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "id": "6F31CC35-8F8B-4A1A-F047-08DE9EB97C9F",
+  "email": "customer2@rent-acme.com",
+  "userName": "jdoe",
+  "firstName": "John",
+  "lastName": "Doe",
+  "phoneNumber": "+1234567890",
+  "street": "123 Main St",
+  "city": "Washington",
+  "postalCode": "12345",
+  "country": "USA"
+}
+
+# ==========================================================
+# INVENTORY SERVICE
+# ==========================================================
+
+### Get all vehicles
+# @no-ssl-verify
+GET {{gatewayUrl}}/inventory/vehicles?Page=1&PageSize=10
+
+### Create a new brand
+# @no-ssl-verify
+POST {{gatewayUrl}}/inventory/brands
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Tesla"
+}
+
+### Search vehicles
+# @no-ssl-verify
+GET {{gatewayUrl}}/inventory/vehicles/search?Gearbox=1&Category=1&Page=1&PageSize=10
+
+
+# ==========================================================
+# RESERVATION SERVICE
+# ==========================================================
+
+### Create a new booking
+# @no-ssl-verify
+POST {{gatewayUrl}}/reservation/bookings
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "vehicleId": "98A4CC18-D3DD-4FA9-CFE3-08DEA107C5C9",
+  "userId": "3FE11ACE-2C73-42DE-466D-08DEA107C3E0",
+  "pickupDate": "2026-06-20T10:00:00Z",
+  "returnDate": "2026-06-25T10:00:00Z"
+}
+
+### Get booking by ID
+# @no-ssl-verify
+GET {{gatewayUrl}}/reservation/bookings/123e4567-e89b-12d3-a456-426614174000
+Accept: {{contentType}}
+Authorization: Bearer {{authToken}}

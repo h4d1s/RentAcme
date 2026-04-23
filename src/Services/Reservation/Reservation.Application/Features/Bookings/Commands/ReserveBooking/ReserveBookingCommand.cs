@@ -1,13 +1,4 @@
-﻿using MediatR;
-using Reservation.Domain.AggregatesModel;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Reservation.Application.Features.Bookings.Commands.ReserveBooking;
+﻿namespace Reservation.Application.Features.Bookings.Commands.ReserveBooking;
 
 public class ReserveBookingCommand : IRequest<Guid>
 {

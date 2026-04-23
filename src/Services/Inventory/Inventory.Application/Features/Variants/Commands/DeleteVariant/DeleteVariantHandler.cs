@@ -1,5 +1,6 @@
 ﻿using Inventory.Application.Exceptions;
 using Inventory.Application.Features.Models.Commands.DeleteModel;
+using Inventory.Domain.AggregatesModel.VariantAggreate;
 using Inventory.Domain.Common;
 using MediatR;
 using System;
@@ -12,25 +13,25 @@ namespace Inventory.Application.Features.Variants.Commands.DeleteVariant;
 
 public class DeleteVariantHandler : IRequestHandler<DeleteVariantCommand, Unit>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IVariantRepository _variantRepository;
 
     public DeleteVariantHandler(
-        IUnitOfWork unitOfWork)
+        IVariantRepository variantRepository)
     {
-        _unitOfWork = unitOfWork;
+        _variantRepository = variantRepository;
     }
 
     public async Task<Unit> Handle(DeleteVariantCommand request, CancellationToken cancellationToken)
     {
-        var variant = await _unitOfWork.VariantRepository.GetByIdAsync(request.Id);
+        var variant = await _variantRepository.GetByIdAsync(request.Id);
 
         if (variant is null)
         {
             throw new NotFoundException($"Variant with {request.Id} not found.");
         }
 
-        _unitOfWork.VariantRepository.Delete(variant);
-        await _unitOfWork.SaveEntitiesAsync(cancellationToken);
+        _variantRepository.Delete(variant);
+        await _variantRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
     }

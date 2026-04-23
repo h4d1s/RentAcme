@@ -20,16 +20,47 @@ public class Booking
     {
     }
 
-    public Booking(string vehicleId, string userId, DateTime pickupDate, DateTime returnDate) : this()
+    public Booking(Guid vehicleId, Guid userId, DateTime pickupDate, DateTime returnDate) : this()
     {
-        VehicleId = Guid.Parse(vehicleId);
-        UserId = Guid.Parse(userId);
+        ValidateBookingDate(pickupDate);
+        if (returnDate <= pickupDate)
+        {
+            throw new ReservationDomainException("Return date must be later than the pickup date.");
+        }
+
+        VehicleId = vehicleId;
+        UserId = userId;
         PickupDate = pickupDate;
         ReturnDate = returnDate;
         Status = BookingStatus.Reserved;
         BookingDate = DateTime.UtcNow;
 
         AddDomainEvent(new BookingReservedDomainEvent(this));
+    }
+
+    public void UpdatePickupDate(DateTime pickupDate)
+    {
+        if (pickupDate >= ReturnDate)
+        {
+            throw new ReservationDomainException("Pickup date must be earlier than the return date.");
+        }
+
+        PickupDate = pickupDate;
+    }
+
+    public void UpdateReturnDate(DateTime returnDate)
+    {
+        if (returnDate <= PickupDate)
+        {
+            throw new ReservationDomainException("Return date must be later than the pickup date.");
+        }
+
+        ReturnDate = returnDate;
+    }
+
+    public void UpdateBookingDate(DateTime? bookingDate)
+    {
+        BookingDate = bookingDate;
     }
 
     public void SetPrice(decimal rentalPricePerDay)
@@ -63,5 +94,13 @@ public class Booking
     private void StatusChangeException(BookingStatus bookingStatusToChange)
     {
         throw new ReservationDomainException($"Is not possible to change the order status from {Status} to {bookingStatusToChange}.");
+    }
+
+    private void ValidateBookingDate(DateTime date)
+    {
+        if (date < DateTime.Now)
+        {
+            throw new ArgumentException("Booking date cannot be in the past.");
+        }
     }
 }

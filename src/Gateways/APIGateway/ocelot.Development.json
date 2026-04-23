@@ -2,56 +2,47 @@
   "Routes": [
     {
       "UseServiceDiscovery": true,
-      "DownstreamPathTemplate": "/api/{version}/{everything}",
       "ServiceName": "user",
+      "DownstreamPathTemplate": "/api/{version}/{everything}",
       "UpstreamPathTemplate": "/api/{version}/user/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
-      "AuthenticationOptions": {
-        "AllowedScopes": [ "api" ]
-      },
       "RateLimitOptions": {
-        "ClientWhitelist": [],
         "EnableRateLimiting": true,
         "Period": "1s",
-        "PeriodTimespan": 1,
-        "Limit": 1
+        "Limit": 10,
+        "PeriodTimespan": 1
       }
     },
     {
       "UseServiceDiscovery": true,
-      "DownstreamPathTemplate": "/api/{version}/{everything}",
       "ServiceName": "inventory",
+      "DownstreamPathTemplate": "/api/{version}/{everything}",
       "UpstreamPathTemplate": "/api/{version}/inventory/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
-      "AuthenticationOptions": {
-        "AllowedScopes": [ "api" ]
-      },
       "RateLimitOptions": {
-        "ClientWhitelist": [],
         "EnableRateLimiting": true,
         "Period": "1s",
-        "PeriodTimespan": 1,
-        "Limit": 1
+        "Limit": 10,
+        "PeriodTimespan": 1
       }
     },
     {
       "UseServiceDiscovery": true,
-      "DownstreamPathTemplate": "/api/{version}/{everything}",
       "ServiceName": "reservation",
+      "DownstreamPathTemplate": "/api/{version}/{everything}",
       "UpstreamPathTemplate": "/api/{version}/reservation/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
-      "AuthenticationOptions": {
-        "AllowedScopes": [ "api" ]
-      },
       "RateLimitOptions": {
-        "ClientWhitelist": [],
         "EnableRateLimiting": true,
         "Period": "1s",
-        "PeriodTimespan": 1,
-        "Limit": 1
+        "Limit": 10,
+        "PeriodTimespan": 1
       }
     }
   ],
@@ -61,6 +52,11 @@
       "Host": "consul",
       "Port": 8500,
       "Type": "Consul"
+    },
+    "RateLimitOptions": {
+      "DisableRateLimitHeaders": false,
+      "HttpStatusCode": 429,
+      "ClientIdHeader": "ClientId"
     }
   }
 }

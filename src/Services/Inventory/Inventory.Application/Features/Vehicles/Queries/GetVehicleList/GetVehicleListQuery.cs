@@ -23,8 +23,8 @@ public record GetVehicleListQuery : IRequest<PagedResponse<VehicleResponse>>
     public decimal? RentalPricePerDayTo { get; set; }
     public Guid? ModelId { get; set; }
 
-    public string orderBy { get; set; } = string.Empty;
-    public string order { get; set; } = string.Empty;
-    public int page { get; set; } = 1;
-    public int pageSize { get; set; } = 10;
+    public string OrderBy { get; set; } = "Id";
+    public string Order { get; set; } = "asc";
+    public int Page { get; set; } = 1;
+    public int PageSize { get; set; } = 10;
 }

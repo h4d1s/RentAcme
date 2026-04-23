@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Inventory.Application.Exceptions;
+using Inventory.Domain.AggregatesModel.BookingAggregate;
 using Inventory.Domain.AggregatesModel.BrandAggregate;
 using Inventory.Domain.Common;
 using MassTransit.Transports;
@@ -16,20 +17,17 @@ namespace Inventory.Application.Features.Brands.Commands.CreateBrand;
 
 public class CreateBrandHandler : IRequestHandler<CreateBrandCommand, Guid>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IBrandRepository _brandRepository;
     private readonly IValidator<CreateBrandCommand> _validator;
-    private readonly IMapper _mapper;
     private readonly ILogger<CreateBrandHandler> _logger;
 
     public CreateBrandHandler(
-        IUnitOfWork unitOfWork,
+        IBrandRepository brandRepository,
         IValidator<CreateBrandCommand> validator,
-        IMapper mapper,
         ILogger<CreateBrandHandler> logger)
     {
-        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+        _brandRepository = brandRepository ?? throw new ArgumentNullException(nameof(brandRepository));
         _validator = validator ?? throw new ArgumentNullException(nameof(validator));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -42,12 +40,12 @@ public class CreateBrandHandler : IRequestHandler<CreateBrandCommand, Guid>
             throw new BadRequestException("", validationResult);
         }
 
-        var brand = _mapper.Map<Brand>(request);
+        var brand = new Brand(request.Name);
 
         _logger.LogInformation("Creating brand - Brand: {@Brand}", brand);
 
-        var id = await _unitOfWork.BrandRepository.AddAsync(brand);
-        await _unitOfWork.SaveEntitiesAsync(cancellationToken);
+        var id = await _brandRepository.AddAsync(brand);
+        await _brandRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
         return id;
     }

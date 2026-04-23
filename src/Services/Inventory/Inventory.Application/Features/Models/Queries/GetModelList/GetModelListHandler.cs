@@ -15,14 +15,14 @@ namespace Inventory.Application.Features.Models.Queries.GetModelList;
 
 public class GetModelListHandler : IRequestHandler<GetModelListQuery, PagedResponse<Model>>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IModelRepository _modelRepository;
     private readonly IMapper _mapper;
 
     public GetModelListHandler(
-        IUnitOfWork unitOfWork,
+        IModelRepository modelRepository,
         IMapper mapper)
     {
-        _unitOfWork = unitOfWork;
+        _modelRepository = modelRepository;
         _mapper = mapper;
     }
 
@@ -33,14 +33,14 @@ public class GetModelListHandler : IRequestHandler<GetModelListQuery, PagedRespo
             request.PageSize, 
             request.Order,
             request.OrderBy);
-        var modelList = await _unitOfWork.ModelRepository.ListAsync(specification);
+        var modelList = await _modelRepository.ListAsync(specification);
 
         specification = new ModelListPaginatedSpecification(
             null,
             null,
             request.Order,
             request.OrderBy);
-        var modelListAllCount = await _unitOfWork.ModelRepository.CountAsync(specification);
+        var modelListAllCount = await _modelRepository.CountAsync(specification);
 
         return new PagedResponse<Model>(
             request.Page,

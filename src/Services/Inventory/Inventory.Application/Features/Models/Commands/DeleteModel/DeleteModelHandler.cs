@@ -1,5 +1,6 @@
 ﻿using Inventory.Application.Exceptions;
 using Inventory.Application.Features.Brands.Commands.DeleteBrand;
+using Inventory.Domain.AggregatesModel.ModelAggregate;
 using Inventory.Domain.Common;
 using MediatR;
 using System;
@@ -12,25 +13,25 @@ namespace Inventory.Application.Features.Models.Commands.DeleteModel;
 
 public class DeleteModelHandler : IRequestHandler<DeleteModelCommand, Unit>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IModelRepository _modelRepository;
 
     public DeleteModelHandler(
-        IUnitOfWork unitOfWork)
+        IModelRepository modelRepository)
     {
-        _unitOfWork = unitOfWork;
+        _modelRepository = modelRepository;
     }
 
     public async Task<Unit> Handle(DeleteModelCommand request, CancellationToken cancellationToken)
     {
-        var model = await _unitOfWork.ModelRepository.GetByIdAsync(request.Id);
+        var model = await _modelRepository.GetByIdAsync(request.Id);
 
         if (model is null)
         {
             throw new NotFoundException($"Model with {request.Id} not found.");
         }
 
-        _unitOfWork.ModelRepository.Delete(model);
-        await _unitOfWork.SaveEntitiesAsync(cancellationToken);
+        _modelRepository.Delete(model);
+        await _modelRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
     }

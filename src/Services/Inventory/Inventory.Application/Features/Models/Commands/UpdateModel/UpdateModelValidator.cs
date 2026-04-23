@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Inventory.Domain.AggregatesModel.ModelAggregate;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
 using Inventory.Domain.Common;
 using System;
@@ -11,12 +12,12 @@ namespace Inventory.Application.Features.Models.Commands.UpdateModel;
 
 public class UpdateModelValidator : AbstractValidator<UpdateModelCommand>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IModelRepository _modelRepository;
 
     public UpdateModelValidator(
-        IUnitOfWork unitOfWork)
+        IModelRepository modelRepository)
     {
-        _unitOfWork = unitOfWork;
+        _modelRepository = modelRepository;
 
         RuleFor(p => p.Id)
             .MustAsync(ModelIdMustExist)
@@ -38,7 +39,7 @@ public class UpdateModelValidator : AbstractValidator<UpdateModelCommand>
 
     private async Task<bool> ModelIdMustExist(Guid id, CancellationToken arg2)
     {
-        var model = await _unitOfWork.ModelRepository.GetByIdAsync(id);
+        var model = await _modelRepository.GetByIdAsync(id);
         return model is not null;
     }
 }

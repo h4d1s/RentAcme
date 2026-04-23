@@ -1,21 +1,16 @@
-﻿using FluentValidation;
+﻿using Reservation.Domain.AggregatesModel.BookingAggregate;
 using Reservation.Domain.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reservation.Application.Features.Bookings.Commands.CompleteBooking;
 
 public class CompleteBookingValidator : AbstractValidator<CompleteBookingCommand>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IBookingRepository _bookingRepository;
 
     public CompleteBookingValidator(
-        IUnitOfWork unitOfWork)
+        IBookingRepository bookingRepository)
     {
-        _unitOfWork = unitOfWork;
+        _bookingRepository = bookingRepository;
 
         RuleFor(p => p.BookingId)
             .NotEmpty()
@@ -25,7 +20,7 @@ public class CompleteBookingValidator : AbstractValidator<CompleteBookingCommand
 
     private async Task<bool> BookingIdMustExist(Guid id, CancellationToken arg2)
     {
-        var booking = await _unitOfWork.BookingRepository.GetByIdAsync(id);
+        var booking = await _bookingRepository.GetByIdAsync(id);
         return booking is not null;
     }
 }

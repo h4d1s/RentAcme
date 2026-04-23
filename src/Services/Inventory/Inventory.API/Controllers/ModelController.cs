@@ -1,16 +1,15 @@
-﻿using MediatR;
-using Asp.Versioning;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
+using Common.Models;
+using Identity.Models;
 using Inventory.Application.Features.Models.Commands.CreateModel;
-using Inventory.Application.Features.Models.Queries.GetModel;
-using Inventory.Application.Models;
-using Inventory.Application.Features.Models.Commands.UpdateModel;
 using Inventory.Application.Features.Models.Commands.DeleteModel;
+using Inventory.Application.Features.Models.Commands.UpdateModel;
+using Inventory.Application.Features.Models.Queries.GetModel;
 using Inventory.Application.Features.Models.Queries.GetModelList;
 using Inventory.Domain.AggregatesModel.ModelAggregate;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Common.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Inventory.API.Controllers;
 
@@ -29,7 +28,7 @@ public class ModelController : ControllerBase
 
     // POST api/models
     [HttpPost]
-    [Authorize]
+    [Authorize(Roles = UserRoles.Admin)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post([FromBody] CreateModelCommand command)
@@ -60,21 +59,26 @@ public class ModelController : ControllerBase
         return Ok(response);
     }
 
-    // PUT api/models
-    [HttpPut]
-    [Authorize]
+    // PUT api/models/{id}
+    [HttpPut("{id}")]   
+    [Authorize(Roles = UserRoles.Admin)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Put(UpdateModelCommand command)
+    public async Task<IActionResult> Put(Guid id, [FromBody] UpdateModelCommand command)
     {
+        if (id != command.Id)
+        {
+            return BadRequest("ID mismatch between URL and request body.");
+        }
+
         await _mediator.Send(command);
         return NoContent();
     }
 
     // DELETE api/models/{id}
     [HttpDelete("{id}")]
-    [Authorize]
+    [Authorize(Roles = UserRoles.Admin)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id)

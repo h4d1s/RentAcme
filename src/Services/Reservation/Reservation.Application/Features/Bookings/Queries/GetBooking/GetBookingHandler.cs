@@ -1,32 +1,52 @@
-﻿using MediatR;
+﻿using GrpcIntegrationHelpers.ClientServices;
+using Identity.Models;
+using Identity.Services;
 using Reservation.Application.Exceptions;
 using Reservation.Domain.AggregatesModel.BookingAggregate;
 using Reservation.Domain.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reservation.Application.Features.Bookings.Queries.GetBooking;
 
 public class GetBookingHandler : IRequestHandler<GetBookingQuery, Booking>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IBookingRepository _bookingRepository;
+    private readonly IIdentityService _identityService;
+    private readonly IUserGrpcClientService _userGrpcClientService;
 
     public GetBookingHandler(
-        IUnitOfWork unitOfWork)
+        IBookingRepository bookingRepository,
+        IIdentityService identityService,
+        IUserGrpcClientService userGrpcClientService)
     {
-        _unitOfWork = unitOfWork;
+        _bookingRepository = bookingRepository;
+        _identityService = identityService;
+        _userGrpcClientService = userGrpcClientService;
     }
 
     public async Task<Booking> Handle(GetBookingQuery request, CancellationToken cancellationToken)
     {
-        var booking = await _unitOfWork.BookingRepository.GetByIdAsync(request.Id);
+        var booking = await _bookingRepository.GetByIdAsync(request.Id);
 
         if (booking is null)
         {
             throw new NotFoundException($"Booking with {request.Id} not found.");
+        }
+
+        var currentUserId = _identityService.GetUserId() ?? throw new BadRequestException("User not authenticated.");
+        var currentRoles = _identityService.GetUserRoles() ?? throw new BadRequestException("User role not found.");
+
+        var user = await _userGrpcClientService.GetUserByExternalIdAsync(currentUserId);
+        if (user == null)
+        {
+            throw new BadRequestException("User not found.");
+        }
+
+        var isOwner = booking.UserId == user.Id;
+        var isAdmin = currentRoles.Contains(UserRoles.Admin);
+
+        if (!isOwner && !isAdmin)
+        {
+            throw new AuthenticationException("You are not authorized to reserve this booking.");
         }
 
         return booking;

@@ -29,7 +29,5 @@ public class VehicleProfile : Profile
             .ForMember(d => d.Category, o => o.MapFrom(x => x.Variant.Model.Category))
             .ForMember(d => d.NumberOfSeats, o => o.MapFrom(x => x.Variant.Model.NumberOfSeats))
             .ForMember(d => d.Power, o => o.MapFrom(x => x.Variant.Power));
-
-        //CreateMap<CreateBrandCommand, Brand>();
     }
 }

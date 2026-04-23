@@ -13,17 +13,17 @@ namespace Inventory.Application.Features.Variants.Queries.GetVariant;
 
 public class GetVariantHandler : IRequestHandler<GetVariantQuery, Variant>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IVariantRepository _variantRepository;
 
     public GetVariantHandler(
-        IUnitOfWork unitOfWork)
+        IVariantRepository variantRepository)
     {
-        _unitOfWork = unitOfWork;
+        _variantRepository = variantRepository;
     }
 
     public async Task<Variant> Handle(GetVariantQuery request, CancellationToken cancellationToken)
     {
-        var variant = await _unitOfWork.VariantRepository.GetByIdAsync(request.Id);
+        var variant = await _variantRepository.GetByIdAsync(request.Id);
 
         if (variant is null)
         {

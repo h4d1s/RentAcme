@@ -1,28 +1,22 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using MassTransit;
-using User.Domain.AggregatesModel.ApplicationUser;
-using Microsoft.AspNetCore.Identity;
-using User.Infrastructure.Persistence.Data;
-using User.Infrastructure.Services;
-using User.Application.Infrastructure.Services;
-using Microsoft.Extensions.Logging;
-using User.Infrastructure.Grpc;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using HealthChecks.UI.Client;
-using Logging;
-using Diagnostics;
-using Microsoft.AspNetCore.Routing;
-using User.Infrastructure.HostedServices;
-using static OpenIddict.Abstractions.OpenIddictConstants;
-using EventBus;
-using EventBus.Services;
+﻿using Consul;
 using ConsulIntegrationHelpers.HostedServices;
 using ConsulIntegrationHelpers.Services;
-using Consul;
+using Diagnostics;
+using EventBus;
+using HealthChecks.UI.Client;
+using Identity;
+using Logging;
+using MassTransit;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using User.Infrastructure.Grpc;
+using User.Infrastructure.IntegrationEvents.EventHandling;
 
 namespace User.Infrastructure;
 
@@ -38,22 +32,14 @@ public static class Extensions
         hcBuilder
             .AddCheck("self", () => HealthCheckResult.Healthy())
             .AddSqlServer(
-                configuration["ConnectionStrings:UserDbContext"] ?? "",
+                configuration["ConnectionStrings:UserDbContext"] ?? throw new ArgumentNullException("User Db context is not configured"),
                 name: "UserDB-check",
                 tags: new string[] { "userdb" });
-
-        // Identity
-        services
-            .AddIdentity<ApplicationUser, IdentityRole>()
-            .AddEntityFrameworkStores<UserContext>()
-            .AddDefaultTokenProviders();
-
-        services.AddScoped<IUserService, UserService>();
 
         // Consul
         services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
         {
-            var address = configuration["Consul:Address"] ?? "";
+            var address = configuration["Consul:Address"] ?? throw new ArgumentNullException("Consul address is not configured");
             consulConfig.Address = new Uri(address);
         }));
         services.AddScoped<IConsulServiceDiscovery, ConsulServiceDiscovery>();
@@ -61,74 +47,42 @@ public static class Extensions
             new ConsulServiceRegistration(
                 provider.GetRequiredService<IConsulClient>(),
                 provider.GetRequiredService<ILogger<ConsulServiceRegistration>>(),
-                configuration["Consul:Service:Host"] ?? "",
-                configuration["Consul:Service:Name"] ?? "",
-                int.Parse(configuration["Consul:Service:Port"] ?? "0")
+                configuration["Consul:Service:Host"] ?? throw new ArgumentNullException("Consul host is not configured"),
+                configuration["Consul:Service:Name"] ?? throw new ArgumentNullException("Consul service name is not configured"),
+                int.Parse(configuration["Consul:Service:Port"] ?? throw new ArgumentNullException("Consul service port is not configured"))
             ));
 
-        // OpenIddict
-        services.AddOpenIddict()
-            .AddCore(options =>
-            {
-                options.UseEntityFrameworkCore()
-                       .UseDbContext<UserContext>();
-            })
-            .AddServer(options =>
-            {
-                options
-                       .RequireProofKeyForCodeExchange()
-                       .AllowRefreshTokenFlow()
-                       .AllowPasswordFlow();
-
-                options
-                       .SetTokenEndpointUris("connect/token")
-                       .SetIntrospectionEndpointUris("connect/introspect")
-                       .SetUserInfoEndpointUris("/connect/userinfo")
-                       .SetEndSessionEndpointUris("/connect/logout");
-
-                options.RegisterScopes(Scopes.Email, Scopes.Profile, Scopes.Roles);
-
-                options.AddDevelopmentEncryptionCertificate()
-                       .AddDevelopmentSigningCertificate();
-
-                options.UseAspNetCore()
-                       .EnableAuthorizationEndpointPassthrough()
-                       .EnableTokenEndpointPassthrough()
-                       .EnableUserInfoEndpointPassthrough()
-                       .EnableEndSessionEndpointPassthrough();
-
-                options.AcceptAnonymousClients();
-
-                var httpsPort = Environment.GetEnvironmentVariable("SERVICE_HTTPS_PORTS");
-
-                options.Configure(options =>
-                {
-                    options.TokenValidationParameters.ValidIssuers = new List<string>
-                    {
-                        $"https://localhost:{httpsPort}/",
-                    };
-                });
-            })
-            .AddValidation(options =>
-            {
-                options.UseLocalServer();
-                options.UseAspNetCore();
-            });
-        services.AddHostedService<OpenIdDictServiceRegistration>();
+        // DI
 
         // Mass Transit
         services.AddMassTransit(x =>
         {
+            x.AddConsumer<IdentityIntegrationEventConsumer>();
+
             x.UsingRabbitMq((context, busFactoryConfigurator) =>
             {
                 busFactoryConfigurator.Host(
                     configuration["RabbitMQ:Hostname"],
                     "/",
                     hostConfigurator => {
-                        hostConfigurator.Username(configuration["RabbitMQ:Username"] ?? "");
-                        hostConfigurator.Password(configuration["RabbitMQ:Password"] ?? "");
+                        hostConfigurator.Username(
+                            configuration["RabbitMQ:Username"] ??
+                            throw new ArgumentNullException("RabbitMQ Username is not configured"));
+                        hostConfigurator.Password(
+                            configuration["RabbitMQ:Password"] ??
+                            throw new ArgumentNullException("RabbitMQ Password is not configured"));
                     });
-                busFactoryConfigurator.ConfigureEndpoints(context);
+                busFactoryConfigurator.ReceiveEndpoint("keycloak-client-event-queue", e =>
+                {
+                    e.Bind("amq.topic", s =>
+                    {
+                        s.RoutingKey = "KK.EVENT.CLIENT.rent-acme.#";
+                        s.ExchangeType = "topic";
+                    });
+
+                    e.UseRawJsonDeserializer();
+                    e.ConfigureConsumer<IdentityIntegrationEventConsumer>(context);
+                });
             });
         });
 
@@ -146,7 +100,6 @@ public static class Extensions
                     .AllowAnyMethod()
                     .AllowCredentials())
         );
-        services.AddAuthorization();
 
         // Serilog
         services.AddLoggingSerilog(builder);
@@ -156,6 +109,9 @@ public static class Extensions
 
         // Event Bus
         services.AddEventBus();
+
+        // Identity
+        services.AddIdentityServices(builder, configuration);
 
         return services;
     }
@@ -173,10 +129,6 @@ public static class Extensions
             Predicate = _ => true,
             ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
         });
-
-        // Authentication
-        app.UseAuthentication();
-        app.UseAuthorization();
 
         // CORS
         app.UseCors("RentAcmeOrigins");

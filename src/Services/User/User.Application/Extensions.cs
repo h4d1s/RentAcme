@@ -7,9 +7,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using User.Application.Features.Users.Commands.SignIn;
-using User.Application.Features.Users.Commands.SignUp;
-using User.Application.Features.Users.Commands.UserInfo;
+using User.Application.Features.Users.Commands.DeleteUser;
+using User.Application.Features.Users.Commands.UpdateUser;
+using User.Application.Features.Users.Queries.GetUser;
 
 namespace User.Application;
 
@@ -19,12 +19,12 @@ public static class Extensions
         this IServiceCollection services,
         IHostEnvironment environment)
     {
-        services.AddMediatR(x => x.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-        services.AddAutoMapper(cfg => { });
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        services.AddAutoMapper(cfg => { }, Assembly.GetExecutingAssembly());
 
-        services.AddScoped<IValidator<SignInCommand>, SignInCommandValidator>();
-        services.AddScoped<IValidator<SignUpCommand>, SignUpCommandValidator>();
-        services.AddScoped<IValidator<UserInfoCommand>, UserInfoCommandValidator>();
+        // DI
+        services.AddScoped<IValidator<DeleteUserCommand>, DeleteUserValidator>();
+        services.AddScoped<IValidator<UpdateUserCommand>, UpdateUserValidator>();
 
         return services;
     }

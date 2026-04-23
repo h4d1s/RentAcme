@@ -1,4 +1,5 @@
 ﻿using Inventory.Application.Exceptions;
+using Inventory.Domain.AggregatesModel.VehicleAggregate;
 using Inventory.Domain.Common;
 using MediatR;
 using System.ComponentModel.DataAnnotations;
@@ -7,25 +8,25 @@ namespace Inventory.Application.Features.Vehicles.Commands.DeleteVehicle;
 
 public class DeleteVehicleHandler : IRequestHandler<DeleteVehicleCommand, Unit>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IVehicleRepository _vehicleRepository;
 
     public DeleteVehicleHandler(
-        IUnitOfWork unitOfWork)
+        IVehicleRepository vehicleRepository)
     {
-        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+        _vehicleRepository = vehicleRepository ?? throw new ArgumentNullException(nameof(vehicleRepository));
     }
 
     public async Task<Unit> Handle(DeleteVehicleCommand request, CancellationToken cancellationToken)
     {
-        var vehicle = await _unitOfWork.VehicleRepository.GetByIdAsync(request.Id);
+        var vehicle = await _vehicleRepository.GetByIdAsync(request.Id);
 
         if (vehicle is null)
         {
             throw new NotFoundException($"Vehicle with {request.Id} not found.");
         }
 
-        _unitOfWork.VehicleRepository.Delete(vehicle);
-        await _unitOfWork.SaveEntitiesAsync(cancellationToken);
+        _vehicleRepository.Delete(vehicle);
+        await _vehicleRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
         return Unit.Value;
     }

@@ -9,31 +9,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Inventory.Application.Features.Brands.Queries.GetBrand
+namespace Inventory.Application.Features.Brands.Queries.GetBrand;
+
+public class GetBrandHandler : IRequestHandler<GetBrandQuery, Brand>
 {
-    public class GetBrandHandler : IRequestHandler<GetBrandQuery, Brand>
+    private readonly IBrandRepository _brandRepository;
+
+    public GetBrandHandler(
+        IBrandRepository brandRepository)
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        _brandRepository = brandRepository ?? throw new ArgumentNullException(nameof(brandRepository));
+    }
 
-        public GetBrandHandler(
-            IUnitOfWork unitOfWork,
-            IMapper mapper)
+    public async Task<Brand> Handle(GetBrandQuery request, CancellationToken cancellationToken)
+    {
+        var brand = await _brandRepository.GetByIdAsync(request.Id);
+
+        if (brand is null)
         {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            throw new NotFoundException($"Brand with Id {request.Id} not found.");
         }
 
-        public async Task<Brand> Handle(GetBrandQuery request, CancellationToken cancellationToken)
-        {
-            var brand = await _unitOfWork.BrandRepository.GetByIdAsync(request.Id);
-
-            if (brand is null)
-            {
-                throw new NotFoundException($"Brand with Id {request.Id} not found.");
-            }
-
-            return brand;
-        }
+        return brand;
     }
 }

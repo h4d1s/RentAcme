@@ -28,8 +28,8 @@ public static class Extensions
         IHostEnvironment environment,
         IConfiguration configuration)
     {
-        services.AddAutoMapper(cfg => { });
-        services.AddMediatR(x => x.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        services.AddAutoMapper(cfg => { }, Assembly.GetExecutingAssembly());
 
         // DI
         services.AddScoped<IValidator<CreateVehicleCommand>, CreateVehicleValidator>();
