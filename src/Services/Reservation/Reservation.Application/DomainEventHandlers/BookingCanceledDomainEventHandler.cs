@@ -31,7 +31,9 @@ public class BookingCanceledDomainEventHandler : INotificationHandler<BookingCan
 
         var bookingCanceledEvent = new BookingCanceledIntegrationEvent
         {
-            VehicleId = notification.Booking.VehicleId
+            BookingId = notification.Booking.Id,
+            VehicleId = notification.Booking.VehicleId,
+            UserId = notification.Booking.UserId
         };
         await _integrationEventService.PublishAsync(bookingCanceledEvent);
     }

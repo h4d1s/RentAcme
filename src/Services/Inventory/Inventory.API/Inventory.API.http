@@ -1,6 +1,207 @@
-@Inventory.API_HostAddress = http://localhost:5096
+@hostname = localhost
+@port = 5222
+@baseUrl = https://{{hostname}}:{{port}}/api/v1
+@contentType = application/json
 
-GET {{Inventory.API_HostAddress}}/weatherforecast/
-Accept: application/json
+# --- Identity Provider Configuration ---
+@keycloakUrl = http://localhost:8080
+@realm = rent-acme
 
-###
+### IDENTITY: Get Access Token
+# @name login
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id=client&username=rent-acme-admin&password=Passw0rd!
+
+### Capture the token
+@authToken = {{login.response.body.$.access_token}}
+
+# --- Resource Variables ---
+# These will be populated automatically if you @name your POST requests
+@brandId = {{createBrand.response.body.id}}
+@modelId = {{createModel.response.body.id}}
+@vehicleId = {{createVehicle.response.body.id}}
+
+# ==========================================================
+# BRANDS
+# ==========================================================
+
+### Get all brands
+# @no-ssl-verify
+GET {{baseUrl}}/brands?Page=1&PageSize=10&OrderBy=name&Order=asc
+
+### Create a new brand
+# @no-ssl-verify
+# @name createBrand
+POST {{baseUrl}}/brands
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Tesla"
+}
+
+### Get brand by ID
+# @no-ssl-verify
+GET {{baseUrl}}/brands/{{brandId}}
+
+### Update brand
+# @no-ssl-verify
+PUT {{baseUrl}}/brands/{{brandId}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "id": "{{brandId}}",
+  "name": "BYD"
+}
+
+### Delete brand
+# @no-ssl-verify
+DELETE {{baseUrl}}/brands/{{brandId}}
+Authorization: Bearer {{authToken}}
+
+
+# ==========================================================
+# MODELS
+# ==========================================================
+
+### Get all models
+# @no-ssl-verify
+GET {{baseUrl}}/models?Page=1&PageSize=10
+
+### Create a new model
+# @no-ssl-verify
+# @name createModel
+POST {{baseUrl}}/models
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "M3",
+  "yearOfProduction": 2024,
+  "numberOfSeats": 5,
+  "category": 1,
+  "brandId": "{{brandId}}"
+}
+
+### Get model by ID
+# @no-ssl-verify
+GET {{baseUrl}}/models/{{modelId}}
+
+### Update model
+# @no-ssl-verify
+PUT {{baseUrl}}/models
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "id": "{{modelId}}",
+  "name": "M3 Competition",
+  "yearOfProduction": 2024,
+  "numberOfSeats": 4,
+  "category": 1,
+  "brandId": "{{brandId}}"
+}
+
+### Delete model
+# @no-ssl-verify
+DELETE {{baseUrl}}/models/{{modelId}}
+Authorization: Bearer {{authToken}}
+
+
+# ==========================================================
+# VARIANTS
+# ==========================================================
+
+### Get all variants
+# @no-ssl-verify
+GET {{baseUrl}}/variants?Page=1&PageSize=10
+
+### Create a new variant
+# @no-ssl-verify
+# @name createVariant
+POST {{baseUrl}}/variants
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "M3 xDrive",
+  "gearbox": 1,
+  "fuelType": 0,
+  "power": 503,
+  "engineSize": 3000,
+  "modelId": "{{modelId}}"
+}
+
+### Get variant by ID
+# @no-ssl-verify
+GET {{baseUrl}}/variants/{{variantId}}
+
+### Update variant
+# @no-ssl-verify
+PUT {{baseUrl}}/variants
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "id": "{{variantId}}",
+  "name": "M3 xDrive Competition",
+  "gearbox": 1,
+  "fuelType": 0,
+  "power": 510,
+  "engineSize": 3000,
+  "modelId": "{{modelId}}"
+}
+
+### Delete variant
+# @no-ssl-verify
+DELETE {{baseUrl}}/variants/{{variantId}}
+Authorization: Bearer {{authToken}}
+
+
+# ==========================================================
+# VEHICLES
+# ==========================================================
+
+### Get all vehicles
+# @no-ssl-verify
+GET {{baseUrl}}/vehicles?Page=1&PageSize=10
+
+### Search vehicles (Advanced Search)
+# @no-ssl-verify
+GET {{baseUrl}}/vehicles/search?Gearbox=1&Category=1&Page=1&PageSize=10
+
+### Create a new vehicle
+# @no-ssl-verify
+# @name createVehicle
+POST {{baseUrl}}/vehicles
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "rentalPricePerDay": 150.00,
+  "variantId": "{{variantId}}"
+}
+
+### Get vehicle by ID
+# @no-ssl-verify
+GET {{baseUrl}}/vehicles/{{vehicleId}}
+
+### Update vehicle
+# @no-ssl-verify
+PUT {{baseUrl}}/vehicles
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "id": "{{vehicleId}}",
+  "rentalPricePerDay": 175.50,
+  "variantId": "{{variantId}}"
+}
+
+### Delete vehicle
+# @no-ssl-verify
+DELETE {{baseUrl}}/vehicles/{{vehicleId}}
+Authorization: Bearer {{authToken}}

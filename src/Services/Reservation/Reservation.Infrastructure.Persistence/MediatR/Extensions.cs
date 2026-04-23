@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Reservation.Domain.Common;
 using Reservation.Infrastructure.Persistence.Data;
 
 namespace Reservation.Infrastructure.Persistence.MediatR;
 
-static class Extensions
+public static class Extensions
 {
-    public static async Task DispatchDomainEventsAsync(this IMediator mediator, ReservationContext ctx)
+    public static async Task DispatchDomainEventsAsync(this IMediator mediator, ReservationDbContext ctx)
     {
         var domainEntities = ctx.ChangeTracker
             .Entries<Entity>()

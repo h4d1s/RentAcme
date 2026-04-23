@@ -9,17 +9,14 @@ namespace Inventory.Application.Features.Vehicles.Commands.UpdateVehicle;
 
 public class UpdateVehicleHandler : IRequestHandler<UpdateVehicleCommand, Unit>
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
+    private readonly IVehicleRepository _vehicleRepository;
     private readonly IValidator<UpdateVehicleCommand> _validator;
 
     public UpdateVehicleHandler(
-        IUnitOfWork unitOfWork,
-        IMapper mapper,
+        IVehicleRepository vehicleRepository,
         IValidator<UpdateVehicleCommand> validator)
     {
-        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        _vehicleRepository = vehicleRepository ?? throw new ArgumentNullException(nameof(vehicleRepository));
         _validator = validator ?? throw new ArgumentNullException(nameof(validator));
     }
 
@@ -32,17 +29,19 @@ public class UpdateVehicleHandler : IRequestHandler<UpdateVehicleCommand, Unit>
             throw new BadRequestException("Invalid Vehicle", validationResult);
         }
 
-        var vehicle = await _unitOfWork.VehicleRepository.GetByIdAsync(request.Id);
+        var vehicle = await _vehicleRepository.GetByIdAsync(request.Id);
 
         if (vehicle is null)
         {
             throw new NotFoundException($"Vehicle with {request.Id} not found.");
         }
 
-        _mapper.Map(request, vehicle);
+        vehicle.UpdateRentalPrice(request.RentalPricePerDay);
+        vehicle.UpdateVariantId(request.VariantId);
+        vehicle.UpdateRegistrationPlates(request.RegistrationPlates);
 
-        _unitOfWork.VehicleRepository.Update(vehicle);
-        await _unitOfWork.SaveEntitiesAsync(cancellationToken);
+        _vehicleRepository.Update(vehicle);
+        await _vehicleRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
         return Unit.Value;
     }

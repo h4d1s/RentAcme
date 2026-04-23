@@ -5,17 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Inventory.Domain.Common;
+using Inventory.Domain.AggregatesModel.VehicleAggregate;
 
 namespace Inventory.Application.Features.Vehicles.Commands.UpdateVehicle;
 
 public class UpdateVehicleValidator : AbstractValidator<UpdateVehicleCommand>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IVehicleRepository _vehicleRepository;
 
     public UpdateVehicleValidator(
-        IUnitOfWork unitOfWork)
+        IVehicleRepository vehicleRepository)
     {
-        _unitOfWork = unitOfWork;
+        _vehicleRepository = vehicleRepository ?? throw new ArgumentNullException(nameof(vehicleRepository));
 
         RuleFor(p => p.RentalPricePerDay)
             .NotEmpty()
@@ -28,7 +29,7 @@ public class UpdateVehicleValidator : AbstractValidator<UpdateVehicleCommand>
 
     private async Task<bool> VariantIdMustExist(Guid id, CancellationToken arg2)
     {
-        var model = await _unitOfWork.VehicleRepository.GetByIdAsync(id);
+        var model = await _vehicleRepository.GetByIdAsync(id);
         return model is not null;
     }
 }

@@ -11,19 +11,16 @@ namespace Inventory.Application.Features.Vehicles.Commands.CreateVehicle;
 
 public class CreateVehicleHandler : IRequestHandler<CreateVehicleCommand, Guid>
 {
-    private IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
+    private readonly IVehicleRepository _vehicleRepository;
     private readonly IValidator<CreateVehicleCommand> _validator;
     private readonly ILogger<CreateBrandHandler> _logger;
 
     public CreateVehicleHandler(
-        IUnitOfWork unitOfWork,
-        IMapper mapper,
+        IVehicleRepository vehicleRepository,
         IValidator<CreateVehicleCommand> validator,
         ILogger<CreateBrandHandler> logger)
     {
-        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        _vehicleRepository = vehicleRepository ?? throw new ArgumentNullException(nameof(vehicleRepository));
         _validator = validator ?? throw new ArgumentNullException(nameof(validator));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -37,13 +34,15 @@ public class CreateVehicleHandler : IRequestHandler<CreateVehicleCommand, Guid>
             throw new BadRequestException("", validationResult);
         }
 
-        var vehicle = _mapper.Map<Vehicle>(request);
+        var vehicle = new Vehicle(request.RentalPricePerDay, request.RegistrationPlates, request.VariantId);
 
         _logger.LogInformation("Creating vehicle - Vehicle: {@vehicle}", vehicle);
 
-        var id = await _unitOfWork.VehicleRepository.AddAsync(vehicle);
-        await _unitOfWork.SaveEntitiesAsync(cancellationToken);
+        var id = await _vehicleRepository.AddAsync(vehicle);
+        await _vehicleRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
         return id;
     }
+
+
 }

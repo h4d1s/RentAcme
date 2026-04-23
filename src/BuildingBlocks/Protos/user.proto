@@ -4,6 +4,7 @@ package userproto;
 
 service UserProtoService {
 	rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
+	rpc GetUserByExternalId(GetUserByExternalIdRequest) returns (GetUserByExternalIdResponse) {}
 	rpc CheckUser(CheckUserRequest) returns (UserStatusResponse) {}
 }
 
@@ -13,9 +14,22 @@ message GetUserRequest {
 }
 message GetUserResponse {
     string id = 1;
-    string first_name = 2;
-	string last_name = 3;
-    string email = 4;
+	string externalId = 2;
+    string first_name = 3;
+	string last_name = 4;
+    string email = 5;
+}
+
+// Get User By External Id
+message GetUserByExternalIdRequest {
+	string user_external_id = 1;
+}
+message GetUserByExternalIdResponse {
+    string id = 1;
+	string externalId = 2;
+    string first_name = 3;
+	string last_name = 4;
+    string email = 5;
 }
 
 // Check User

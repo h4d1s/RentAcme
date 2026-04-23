@@ -8,10 +8,6 @@ namespace Inventory.Domain.Common;
 
 public interface IUnitOfWork : IDisposable
 {
-    IVehicleRepository VehicleRepository { get; }
-    IBookingRepository BookingRepository { get; }
-    IBrandRepository BrandRepository { get; }
-    IModelRepository ModelRepository { get; }
-    IVariantRepository VariantRepository { get; }
-    Task<int> SaveEntitiesAsync(CancellationToken cancellationToken);
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+    Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default);
 }

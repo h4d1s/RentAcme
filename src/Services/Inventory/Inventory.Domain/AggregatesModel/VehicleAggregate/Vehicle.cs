@@ -32,22 +32,33 @@ public class Vehicle
         string registrationPlates,
         Guid variantId) : this()
     {
-        if (rentalPricePerDay < 0)
-        {
-            throw new InventoryDomainException($"{nameof(rentalPricePerDay)} must be grater than 0");
-        }
+        ValidateRentalPrice(rentalPricePerDay);
+        ValidateRegistrationPlates(registrationPlates);
+        ValidateVariantId(variantId);
 
         RentalPricePerDay = rentalPricePerDay;
-
-        if (string.IsNullOrEmpty(registrationPlates))
-        {
-            throw new InventoryDomainException($"{nameof(registrationPlates)} must not be empty.");
-        }
-
         RegistrationPlates = registrationPlates;
         VariantId = variantId;
 
         AddDomainEvent(new VehicleCreatedDomainEvent(this));
+    }
+
+    public void UpdateRentalPrice(decimal price)
+    {
+        ValidateRentalPrice(price);
+        RentalPricePerDay = price;
+    }
+
+    public void UpdateRegistrationPlates(string plates)
+    {
+        ValidateRegistrationPlates(plates);
+        RegistrationPlates = plates;
+    }
+
+    public void UpdateVariantId(Guid variantId)
+    {
+        ValidateVariantId(variantId);
+        VariantId = variantId;
     }
 
     public void AddBooking(BookingStatus status, DateTime? PickupDate, DateTime? ReturnDate)
@@ -62,11 +73,35 @@ public class Vehicle
     {
         var booking = _bookings.SingleOrDefault(r => r.Id == id);
 
-        if (booking == null)
+        if (booking is null)
         {
             throw new InventoryDomainException("Booking not found.");
         }
 
         _bookings.Remove(booking);
+    }
+
+    private void ValidateRentalPrice(decimal price)
+    {
+        if (price <= 0)
+        {
+            throw new InventoryDomainException("Rental price must be greater than zero.");
+        }
+    }
+
+    private void ValidateRegistrationPlates(string plates)
+    {
+        if (string.IsNullOrWhiteSpace(plates))
+        {
+            throw new InventoryDomainException("Registration plates cannot be empty.");
+        }
+    }
+
+    private void ValidateVariantId(Guid variantId)
+    {
+        if (variantId == Guid.Empty)
+        {
+            throw new InventoryDomainException("VariantId must be a valid, non-empty Guid.");
+        }
     }
 }

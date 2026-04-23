@@ -32,6 +32,7 @@ public class StripePaymentGateway : IPaymentGateway
             Amount = (long)amount,
             Currency = "usd",
             Customer = customerId,
+            PaymentMethod = "pm_card_visa",
             AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
             {
                 Enabled = true,
@@ -39,31 +40,45 @@ public class StripePaymentGateway : IPaymentGateway
             Confirm = true,
             OffSession = true,
         };
-        await service.CreateAsync(options);
+        try
+        {
+            await service.CreateAsync(options);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
-    public async Task<CustomerDto> GetCustomerByEmailAsync(string email)
+    public async Task<CustomerDto?> GetCustomerByEmailAsync(string email)
     {
-        var service = new CustomerService();
-        var stripeCustomers = await service.ListAsync(new CustomerListOptions()
-        {
-            Email = email
-        });
+        var customerModel = new CustomerDto();
 
-        if (!stripeCustomers.Any())
+        try
         {
-            return null;
+            var service = new CustomerService();
+            var stripeCustomers = await service.ListAsync(new CustomerListOptions()
+            {
+                Email = email
+            });
+
+            if (!stripeCustomers.Any())
+            {
+                return null;
+            }
+
+            var stripeCustomer = stripeCustomers.First();
+
+            customerModel.Id = stripeCustomer.Id;
+            customerModel.Email = stripeCustomer.Email;
+            customerModel.Name = stripeCustomer.Name;
+
         }
-
-        var stripeCustomer = stripeCustomers.First();
-
-        var customerModel = new CustomerDto()
+        catch (Exception)
         {
-            Id = stripeCustomer.Id,
-            Email = email,
-            Name = stripeCustomer.Name
-        };
-
+            throw;
+        }
+        
         return customerModel;
     }
 

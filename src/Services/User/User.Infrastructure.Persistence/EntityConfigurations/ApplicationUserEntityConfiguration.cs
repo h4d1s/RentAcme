@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using User.Domain.AggregatesModel.ApplicationUser;
+using User.Domain.AggregatesModel.ApplicationUserAggregate;
 
 namespace User.Infrastructure.Persistence.EntityConfigurations;
 

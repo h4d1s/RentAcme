@@ -11,43 +11,42 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Inventory.Application.Features.Brands.Queries.GetBrandList
+namespace Inventory.Application.Features.Brands.Queries.GetBrandList;
+
+public class GetBrandListHandler : IRequestHandler<GetBrandListQuery, PagedResponse<Brand>>
 {
-    public class GetBrandListHandler : IRequestHandler<GetBrandListQuery, PagedResponse<Brand>>
+    private readonly IBrandRepository _brandRepository;
+    private readonly IMapper _mapper;
+
+    public GetBrandListHandler(
+        IBrandRepository brandRepository,
+        IMapper mapper)
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        _brandRepository = brandRepository ?? throw new ArgumentNullException(nameof(brandRepository));
+        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+    }
 
-        public GetBrandListHandler(
-            IUnitOfWork unitOfWork,
-            IMapper mapper)
-        {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-        }
+    public async Task<PagedResponse<Brand>> Handle(GetBrandListQuery request, CancellationToken cancellationToken)
+    {
+        var specification = new BrandListPaginatedSpecification(
+            request.Page,
+            request.PageSize,
+            request.Order,
+            request.OrderBy);
+        var brandList = await _brandRepository.ListAsync(specification);
 
-        public async Task<PagedResponse<Brand>> Handle(GetBrandListQuery request, CancellationToken cancellationToken)
-        {
-            var specification = new BrandListPaginatedSpecification(
-                request.Page,
-                request.PageSize,
-                request.Order,
-                request.OrderBy);
-            var brandList = await _unitOfWork.BrandRepository.ListAsync(specification);
+        specification = new BrandListPaginatedSpecification(
+            null,
+            null,
+            request.Order,
+            request.OrderBy);
+        var brandListAllCount = await _brandRepository.CountAsync(specification);
 
-            specification = new BrandListPaginatedSpecification(
-                null,
-                null,
-                request.Order,
-                request.OrderBy);
-            var brandListAllCount = await _unitOfWork.BrandRepository.CountAsync(specification);
-
-            return new PagedResponse<Brand>(
-                request.Page,
-                request.PageSize,
-                brandListAllCount,
-                brandList
-            );
-        }
+        return new PagedResponse<Brand>(
+            request.Page,
+            request.PageSize,
+            brandListAllCount,
+            brandList
+        );
     }
 }

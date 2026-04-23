@@ -18,16 +18,16 @@ public class CompletePaymentCommandIntegrationEventConsumer : IConsumer<Complete
 {
     private readonly ILogger<CompletePaymentCommandIntegrationEventConsumer> _logger;
     private readonly IPaymentGateway _paymentGateway;
-    private readonly IUserGrpcClientService _userService;
+    private readonly IUserGrpcClientService _userGrpcClientService;
 
     public CompletePaymentCommandIntegrationEventConsumer(
         ILogger<CompletePaymentCommandIntegrationEventConsumer> logger,
         IPaymentGateway paymentGateway,
-        IUserGrpcClientService userService)
+        IUserGrpcClientService userGrpcClientService)
     {
         _logger = logger;
         _paymentGateway = paymentGateway;
-        _userService = userService;
+        _userGrpcClientService = userGrpcClientService;
     }
 
     public async Task Consume(ConsumeContext<CompletePaymentCommand> context)
@@ -35,7 +35,7 @@ public class CompletePaymentCommandIntegrationEventConsumer : IConsumer<Complete
         var userId = context.Message.UserId;
         var amount = context.Message.TotalPrice;
 
-        var user = await _userService.GetUserAsync(userId);
+        var user = await _userGrpcClientService.GetUserAsync(userId);
         var customer = await _paymentGateway.GetCustomerByEmailAsync(user.Email);
 
         if (customer == null)
@@ -63,6 +63,7 @@ public class CompletePaymentCommandIntegrationEventConsumer : IConsumer<Complete
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Could not charge customer with email: {user.Email}, {ex}");
                 var paymentFailedIntegrationEvent = new PaymentFailedIntegrationEvent
                 {
                     CorrelationId = context.Message.CorrelationId,

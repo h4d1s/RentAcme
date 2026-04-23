@@ -1,10 +1,15 @@
 ﻿using Inventory.Application.Infrastructure.Persistence;
+using Inventory.Domain.AggregatesModel.BookingAggregate;
+using Inventory.Domain.AggregatesModel.BrandAggregate;
+using Inventory.Domain.AggregatesModel.ModelAggregate;
+using Inventory.Domain.AggregatesModel.VariantAggreate;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
 using Inventory.Domain.Common;
 using Inventory.Infrastructure.Persistence.Data;
 using Inventory.Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,16 +29,27 @@ public static class Extensions
         IConfiguration configuration)
     {
         // Entity Framework
-        services.AddDbContext<InventoryContext>(options => options.UseSqlServer(
+        services.AddDbContext<InventoryDbContext>(options => options.UseSqlServer(
             configuration.GetConnectionString("InventoryDbContext") ??
                 throw new InvalidOperationException("Connection string 'InventoryDbContext' not found.")
             )
         );
 
-        services.AddMigration<InventoryContext, InventoryContextSeed>();
+        // Seed DB
+        var serviceProvider = services.BuildServiceProvider();
+        var env = serviceProvider.GetRequiredService<IHostEnvironment>();
+
+        if (env.IsDevelopment())
+        {
+            services.AddMigration<InventoryDbContext, InventoryDbContextSeed>();
+        }
 
         // DI
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IUnitOfWork, InventoryDbContext>();
+        services.AddScoped<IBookingRepository, BookingRepository>();
+        services.AddScoped<IBrandRepository, BrandRepository>();
+        services.AddScoped<IModelRepository, ModelRepository>();
+        services.AddScoped<IVariantRepository, VariantRepository>();
         services.AddScoped<IVehicleRepository, VehicleRepository>();
 
         return services;

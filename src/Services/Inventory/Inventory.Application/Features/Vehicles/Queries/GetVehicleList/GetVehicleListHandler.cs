@@ -6,33 +6,32 @@ using Inventory.Application.Specifications.Vehicles;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
 using Inventory.Domain.Common;
 using MediatR;
-using System.Linq.Dynamic.Core;
 
 namespace Inventory.Application.Features.Vehicles.Queries.GetVehicleList;
 
 public class GetVehicleListHandler : IRequestHandler<GetVehicleListQuery, PagedResponse<VehicleResponse>>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IVehicleRepository _vehicleRepository;
     private readonly IMapper _mapper;
 
     public GetVehicleListHandler(
-        IUnitOfWork unitOfWork,
+        IVehicleRepository vehicleRepository,
         IMapper mapper)
     {
-        _unitOfWork = unitOfWork;
-        _mapper = mapper;
+        _vehicleRepository = vehicleRepository ?? throw new ArgumentNullException(nameof(vehicleRepository));
+        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
     public async Task<PagedResponse<VehicleResponse>> Handle(GetVehicleListQuery request, CancellationToken cancellationToken)
     {
         var specification = new VehicleListPaginatedSpecification(
-            request.page,
-            request.pageSize,
-            request.order,
-            request.orderBy,
+            request.Page,
+            request.PageSize,
+            request.Order,
+            request.OrderBy,
             request.RentalPricePerDayFrom,
             request.RentalPricePerDayTo);
-        var vehicleList = await _unitOfWork.VehicleRepository.ListAsync(specification);
+        var vehicleList = await _vehicleRepository.ListAsync(specification);
 
         var vehicleResponseList = vehicleList
             .Select(vehicle => _mapper.Map<VehicleResponse>(vehicle));
@@ -40,16 +39,16 @@ public class GetVehicleListHandler : IRequestHandler<GetVehicleListQuery, PagedR
         specification = new VehicleListPaginatedSpecification(
             null,
             null,
-            request.order,
-            request.orderBy,
+            request.Order,
+            request.OrderBy,
             request.RentalPricePerDayFrom,
             request.RentalPricePerDayTo);
-        var bookingListAllCount = await _unitOfWork.VehicleRepository.CountAsync(specification);
+        var vehiclesListAllCount = await _vehicleRepository.CountAsync(specification);
 
         return new PagedResponse<VehicleResponse>(
-            request.page,
-            request.pageSize,
-            bookingListAllCount,
+            request.Page,
+            request.PageSize,
+            vehiclesListAllCount,
             vehicleResponseList
         );
     }

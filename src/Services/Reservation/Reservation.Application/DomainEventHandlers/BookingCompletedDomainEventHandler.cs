@@ -31,6 +31,11 @@ public class BookingCompletedDomainEventHandler : INotificationHandler<BookingCo
         var bookingCompletedEvent = new BookingCompletedIntegrationEvent
         {
             BookingId = notification.Booking.Id,
+            UserId = notification.Booking.UserId,
+            VehicleId = notification.Booking.VehicleId,
+            PickupDate = notification.Booking.PickupDate,
+            ReturnDate = notification.Booking.ReturnDate,
+            Price = notification.Booking.Price,
         };
         await _integrationEventService.PublishAsync(bookingCompletedEvent);
     }

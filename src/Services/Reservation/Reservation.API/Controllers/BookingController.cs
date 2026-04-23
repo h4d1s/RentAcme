@@ -1,14 +1,14 @@
 ﻿using Asp.Versioning;
-using MediatR;
+using Common.Models;
+using Identity.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Reservation.Application.Features.Bookings.Queries.GetBooking;
 using Reservation.Application.Features.Bookings.Commands.CancelBooking;
+using Reservation.Application.Features.Bookings.Commands.CompleteBooking;
 using Reservation.Application.Features.Bookings.Commands.ReserveBooking;
+using Reservation.Application.Features.Bookings.Queries.GetBooking;
 using Reservation.Application.Features.Bookings.Queries.GetBookingList;
 using Reservation.Domain.AggregatesModel.BookingAggregate;
-using Reservation.Application.Features.Bookings.Commands.CompleteBooking;
-using Microsoft.AspNetCore.Authorization;
-using Common.Models;
 
 namespace Reservation.API.Controllers;
 
@@ -28,6 +28,7 @@ public class BookingController : ControllerBase
 
     // POST api/bookings
     [HttpPost]
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Customer}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post([FromBody] ReserveBookingCommand command)
@@ -38,6 +39,7 @@ public class BookingController : ControllerBase
 
     // POST api/bookings/cancel
     [HttpPost("cancel")]
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Customer}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post([FromBody] CancelBookingCommand command)
@@ -48,6 +50,7 @@ public class BookingController : ControllerBase
 
     // POST api/bookings/complete
     [HttpPost("complete")]
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Customer}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post([FromBody] CompleteBookingCommand command)
@@ -58,6 +61,7 @@ public class BookingController : ControllerBase
 
     // GET api/bookings/{id}
     [HttpGet("{id}")]
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Customer}")]
     [ProducesResponseType(typeof(Booking), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -70,7 +74,7 @@ public class BookingController : ControllerBase
 
     // GET api/bookings
     [HttpGet]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Customer}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<PagedResponse<Booking>>> Get([FromQuery] GetBookingListQuery query)

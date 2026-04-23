@@ -14,20 +14,20 @@ namespace Inventory.Application.Features.Vehicles.Queries.GetVehicle;
 
 public class GetVehicleHandler : IRequestHandler<GetVehicleQuery, VehicleResponse>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IVehicleRepository _vehicleRepository;
     private readonly IMapper _mapper;
 
     public GetVehicleHandler(
-        IUnitOfWork unitOfWork,
+        IVehicleRepository vehicleRepository,
         IMapper mapper)
     {
-        _unitOfWork = unitOfWork;
-        _mapper = mapper;
+        _vehicleRepository = vehicleRepository ?? throw new ArgumentNullException(nameof(vehicleRepository));
+        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
     public async Task<VehicleResponse> Handle(GetVehicleQuery request, CancellationToken cancellationToken)
     {
-        var vehicle = await _unitOfWork.VehicleRepository.GetByIdAsync(request.Id);
+        var vehicle = await _vehicleRepository.GetByIdAsync(request.Id);
 
         if (vehicle is null)
         {

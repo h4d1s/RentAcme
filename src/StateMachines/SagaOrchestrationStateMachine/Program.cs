@@ -23,8 +23,8 @@ builder.Services.AddMassTransit(cfg =>
             configuration["RabbitMQ:Hostname"],
             "/",
             hostConfigurator => {
-                hostConfigurator.Username(configuration["RabbitMQ:Username"]);
-                hostConfigurator.Password(configuration["RabbitMQ:Password"]);
+                hostConfigurator.Username(configuration["RabbitMQ:Username"] ?? throw new ArgumentNullException("RabbitMQ:Username is not configured"));
+                hostConfigurator.Password(configuration["RabbitMQ:Password"] ?? throw new ArgumentNullException("RabbitMQ:Password is not configured"));
             });
         busFactoryConfigurator.ConfigureEndpoints(context);
     });

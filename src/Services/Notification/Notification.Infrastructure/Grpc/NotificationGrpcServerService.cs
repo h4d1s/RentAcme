@@ -3,12 +3,6 @@ using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using Notification.Appication.Infrastructure.Services;
 using Notificationproto;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Channels;
-using System.Threading.Tasks;
 
 namespace Notification.Infrastructure.Grpc;
 

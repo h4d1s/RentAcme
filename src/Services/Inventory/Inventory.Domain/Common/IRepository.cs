@@ -1,15 +1,16 @@
-﻿using Inventory.Domain.Common;
+﻿using Ardalis.Specification;
+using Inventory.Domain.Common;
 using System.Linq.Expressions;
 
 namespace Inventory.Domain.Common;
 
-public interface IRepository<T> where T : Entity
+public interface IRepository<T> where T : IAggregateRoot
 {
+    IUnitOfWork UnitOfWork { get; }
+
     Task<int> CountAsync();
-    Task<int> CountAsync(ISpecification<T> spec);
     Task<T?> GetByIdAsync(Guid id);
     Task<IReadOnlyList<T>> ListAllAsync();
-    Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec);
     Task<Guid> AddAsync(T entity);
     Task AddRangeAsync(IEnumerable<T> entities);
     void Update(T entity);

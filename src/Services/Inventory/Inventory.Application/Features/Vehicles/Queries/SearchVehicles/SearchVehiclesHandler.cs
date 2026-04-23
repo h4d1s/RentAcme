@@ -1,6 +1,5 @@
 ﻿using Inventory.Application.Models;
 using MediatR;
-using System.Linq.Dynamic.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,15 +16,15 @@ namespace Inventory.Application.Features.Vehicles.Queries.SearchVehicles;
 
 public class SearchVehiclesHandler : IRequestHandler<SearchVehiclesQuery, PagedResponse<VehicleSearchResponse>>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IVehicleRepository _vehicleRepository;
     private readonly IMapper _mapper;
 
     public SearchVehiclesHandler(
-        IUnitOfWork unitOfWork,
+        IVehicleRepository vehicleRepository,
         IMapper mapper)
     {
-        _unitOfWork = unitOfWork;
-        _mapper = mapper;
+        _vehicleRepository = vehicleRepository ?? throw new ArgumentNullException(nameof(vehicleRepository));
+        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
     public async Task<PagedResponse<VehicleSearchResponse>> Handle(SearchVehiclesQuery request, CancellationToken cancellationToken)
@@ -42,7 +41,7 @@ public class SearchVehiclesHandler : IRequestHandler<SearchVehiclesQuery, PagedR
             request.PickupDate,
             request.ReturnDate
         );
-        var vehicleList = await _unitOfWork.VehicleRepository.ListAsync(specification);
+        var vehicleList = await _vehicleRepository.ListAsync(specification);
 
         var vehicleResponseList = vehicleList
             .Select(vehicle => _mapper.Map<VehicleSearchResponse>(vehicle));
@@ -59,7 +58,7 @@ public class SearchVehiclesHandler : IRequestHandler<SearchVehiclesQuery, PagedR
             request.PickupDate,
             request.ReturnDate
         );
-        var vehicleListAllCount = await _unitOfWork.VehicleRepository.CountAsync(specification);
+        var vehicleListAllCount = await _vehicleRepository.CountAsync(specification);
 
         return new PagedResponse<VehicleSearchResponse>(
             request.Page,

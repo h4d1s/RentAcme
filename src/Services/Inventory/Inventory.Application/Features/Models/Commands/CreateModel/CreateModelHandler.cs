@@ -2,6 +2,7 @@
 using FluentValidation;
 using Inventory.Application.Exceptions;
 using Inventory.Application.Features.Brands.Commands.CreateBrand;
+using Inventory.Domain.AggregatesModel.BrandAggregate;
 using Inventory.Domain.AggregatesModel.ModelAggregate;
 using Inventory.Domain.Common;
 using MassTransit.DependencyInjection;
@@ -17,20 +18,17 @@ namespace Inventory.Application.Features.Models.Commands.CreateModel;
 
 public class CreateModelHandler : IRequestHandler<CreateModelCommand, Guid>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IModelRepository _modelRepository;
     private readonly IValidator<CreateModelCommand> _validator;
-    private readonly IMapper _mapper;
     private readonly ILogger<CreateBrandHandler> _logger;
 
     public CreateModelHandler(
-        IUnitOfWork unitOfWork,
+        IModelRepository modelRepository,
         IValidator<CreateModelCommand> validator,
-        IMapper mapper,
         ILogger<CreateBrandHandler> logger)
     {
-        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+        _modelRepository = modelRepository ?? throw new ArgumentNullException(nameof(modelRepository));
         _validator = validator ?? throw new ArgumentNullException(nameof(validator));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -43,12 +41,12 @@ public class CreateModelHandler : IRequestHandler<CreateModelCommand, Guid>
             throw new BadRequestException("", validationResult);
         }
 
-        var model = _mapper.Map<Model>(request);
+        var model = new Model(request.Name, request.YearOfProduction, request.NumberOfSeats, request.Category, request.BrandId);
 
         _logger.LogInformation("Creating model - Model: {@model}", model);
 
-        var id = await _unitOfWork.ModelRepository.AddAsync(model);
-        await _unitOfWork.SaveEntitiesAsync(cancellationToken);
+        var id = await _modelRepository.AddAsync(model);
+        await _modelRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
         return id;
     }

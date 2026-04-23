@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Inventory.Application.Exceptions;
+using Inventory.Domain.AggregatesModel.BrandAggregate;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
 using Inventory.Domain.Common;
 using MediatR;
@@ -14,17 +15,14 @@ namespace Inventory.Application.Features.Brands.Commands.UpdateBrand;
 
 public class UpdateBrandHandler : IRequestHandler<UpdateBrandCommand, Unit>
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
+    private readonly IBrandRepository _brandRepository;
     private readonly IValidator<UpdateBrandCommand> _validator;
 
     public UpdateBrandHandler(
-        IUnitOfWork unitOfWork,
-        IMapper mapper,
+        IBrandRepository brandRepository,
         IValidator<UpdateBrandCommand> validator)
     {
-        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        _brandRepository = brandRepository ?? throw new ArgumentNullException(nameof(brandRepository));
         _validator = validator ?? throw new ArgumentNullException(nameof(validator));
     }
 
@@ -37,17 +35,17 @@ public class UpdateBrandHandler : IRequestHandler<UpdateBrandCommand, Unit>
             throw new BadRequestException("Invalid Brand", validationResult);
         }
 
-        var brand = await _unitOfWork.BrandRepository.GetByIdAsync(request.Id);
+        var brand = await _brandRepository.GetByIdAsync(request.Id);
 
         if (brand is null)
         {
             throw new NotFoundException($"Brand with {request.Id} not found.");
         }
 
-        _mapper.Map(request, brand);
+        brand.UpdateName(request.Name);
 
-        _unitOfWork.BrandRepository.Update(brand);
-        await _unitOfWork.SaveEntitiesAsync(cancellationToken);
+        _brandRepository.Update(brand);
+        await _brandRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
     }

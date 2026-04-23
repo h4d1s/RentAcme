@@ -1,4 +1,7 @@
-﻿using GrpcIntegrationHelpers.ClientServices;
+﻿using Consul;
+using GrpcIntegrationHelpers.ClientServices;
+using Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -12,12 +15,16 @@ namespace GrpcIntegrationHelpers;
 public static class GrpcIntegrationHelpersExtensions
 {
     public static IServiceCollection AddGrpcIntegrationHelpers(
-        this IServiceCollection services)
+        this IServiceCollection services,
+        IHostBuilder builder,
+        IConfiguration configuration)
     {
         // DI
+        services.AddHttpContextAccessor();
         services.AddScoped<IInventoryGrpcClientService, InventoryGrpcClientService>();
         services.AddScoped<IUserGrpcClientService, UserGrpcClientService>();
-        services.AddScoped<INotificationGrpcClientService, NotificationGrpcClientService>();
+
+        services.AddIdentityServices(builder, configuration);
 
         return services;
     }
