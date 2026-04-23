@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,8 +11,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using User.Application.Infrastructure.Persistence;
-using User.Domain.AggregatesModel.ApplicationUser;
+using User.Domain.AggregatesModel.ApplicationUserAggregate;
+using User.Domain.Common;
 using User.Infrastructure.Persistence.Data;
+using User.Infrastructure.Persistence.Repositories;
 
 namespace User.Infrastructure.Persistence;
 
@@ -23,22 +25,25 @@ public static class Extensions
         IConfiguration configuration)
     {
         // Entity Framework
-        services.AddDbContext<UserContext>(options => {
+        services.AddDbContext<ApplicationUserDbContext>(options => {
             options.UseSqlServer(
                 configuration.GetConnectionString("UserDbContext") ??
                     throw new InvalidOperationException("Connection string 'UserDbContext' not found.")
                 );
-            options.UseOpenIddict();
         });
 
-        services.AddOpenIddict()
-            .AddCore(options =>
-            {
-                options.UseEntityFrameworkCore()
-                       .UseDbContext<UserContext>();
-            });
+        // Seed DB
+        var serviceProvider = services.BuildServiceProvider();
+        var env = serviceProvider.GetRequiredService<IHostEnvironment>();
 
-        services.AddMigration<UserContext, UserContextSeed>();
+        if (env.IsDevelopment())
+        {
+            services.AddMigration<ApplicationUserDbContext, ApplicationUserDbContextSeed>();
+        }
+
+        // DI
+        services.AddScoped<IUnitOfWork, ApplicationUserDbContext>();
+        services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
 
         return services;
     }

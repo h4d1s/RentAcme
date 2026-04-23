@@ -1,16 +1,9 @@
-﻿using Inventory.Domain.AggregatesModel.ModelAggregate;
-using Inventory.Domain.AggregatesModel.VariantAggreate;
+﻿using Ardalis.Specification;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
-using MassTransit.Transports;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Inventory.Application.Specifications.Vehicles;
 
-public class VehicleListPaginatedSpecification : BaseSpecification<Vehicle>
+public class VehicleListPaginatedSpecification : Specification<Vehicle>
 {
     public VehicleListPaginatedSpecification(
         int? pageNumber,
@@ -19,51 +12,89 @@ public class VehicleListPaginatedSpecification : BaseSpecification<Vehicle>
         string? orderBy,
         decimal? rentalPricePerDayFrom,
         decimal? rentalPricePerDayTo)
-        : base(i =>
-            (!rentalPricePerDayFrom.HasValue || i.RentalPricePerDay >= rentalPricePerDayFrom) &&
-            (!rentalPricePerDayTo.HasValue || i.RentalPricePerDay <= rentalPricePerDayTo)
-        )
     {
+        var querySpec = Query;
+
+        querySpec
+            .Where(i => i.RentalPricePerDay >= rentalPricePerDayFrom, rentalPricePerDayFrom.HasValue)
+            .Where(i => i.RentalPricePerDay <= rentalPricePerDayTo, rentalPricePerDayTo.HasValue);
+
         if (!string.IsNullOrEmpty(orderBy))
         {
-            var ordering = "";
             switch (orderBy.ToLower())
             {
                 case "brand":
-                    ordering = "Variant.Model.Brand.Name";
+                    if (string.IsNullOrEmpty(order) || order.ToLower() != "desc")
+                    {
+                        querySpec.OrderBy(x => x.Variant.Model.Brand.Name);
+                    }
+                    else
+                    {
+                        querySpec.OrderByDescending(x => x.Variant.Model.Brand.Name);
+                    }
                     break;
                 case "model":
-                    ordering = "Variant.Model.Name";
+                    if (string.IsNullOrEmpty(order) || order.ToLower() != "desc")
+                    {
+                        querySpec.OrderBy(x => x.Variant.Model.Name);
+                    }
+                    else
+                    {
+                        querySpec.OrderByDescending(x => x.Variant.Model.Name);
+                    }
                     break;
                 case "variant":
-                    ordering = "Variant.Name";
+                    if (string.IsNullOrEmpty(order) || order.ToLower() != "desc")
+                    {
+                        querySpec.OrderBy(x => x.Variant.Name);
+                    }
+                    else
+                    {
+                        querySpec.OrderByDescending(x => x.Variant.Name);
+                    }
                     break;
                 case "price":
-                    ordering = "RentalPricePerDay";
+                    if (string.IsNullOrEmpty(order) || order.ToLower() != "desc")
+                    {
+                        querySpec.OrderBy(x => x.RentalPricePerDay);
+                    }
+                    else
+                    {
+                        querySpec.OrderByDescending(x => x.RentalPricePerDay);
+                    }
                     break;
                 case "power":
-                    ordering = "";
+                    if (string.IsNullOrEmpty(order) || order.ToLower() != "desc")
+                    {
+                        querySpec.OrderBy(x => x.Variant.Power);
+                    }
+                    else
+                    {
+                        querySpec.OrderByDescending(x => x.RentalPricePerDay);
+                    }
                     break;
                 default:
-                    ordering = "Id";
+                    if (string.IsNullOrEmpty(order) || order.ToLower() != "desc")
+                    {
+                        querySpec.OrderBy(x => x.Id);
+                    }
+                    else
+                    {
+                        querySpec.OrderByDescending(x => x.Id);
+                    }
                     break;
             }
-
-            var orderLinq = "asc";
-            if (string.IsNullOrEmpty(order) || order.ToLower() == "desc")
-            {
-                orderLinq = "desc";
-            }
-
-            ApplyOrderBy(ordering + " " + orderLinq);
         }
 
-        AddInclude(o => o.Variant);
-        AddInclude($"{nameof(Vehicle.Variant)}.{nameof(Variant.Model)}.{nameof(Model.Brand)}");
+        querySpec
+            .Include(o => o.Variant)
+            .Include(o => o.Variant.Model.Brand);
 
         if (pageNumber.HasValue && pageSize.HasValue)
         {
-            ApplyPaging((pageNumber.Value - 1) * pageSize.Value, pageSize.Value);
+            querySpec
+                .Skip((pageNumber.Value - 1) * pageSize.Value)
+                .Take(pageSize.Value);
         }
     }
 }

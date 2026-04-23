@@ -1,10 +1,5 @@
-﻿using Consul;
-using Microsoft.AspNetCore.Mvc;
-using Reservation.API.Models;
+﻿using Reservation.API.Models;
 using Reservation.Application.Exceptions;
-using System;
-using System.Globalization;
-using System.Net;
 using System.Text.Json;
 
 namespace Reservation.API.Middleware;

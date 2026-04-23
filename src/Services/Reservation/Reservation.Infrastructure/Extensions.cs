@@ -1,33 +1,20 @@
-﻿using Diagnostics;
-using Google.Protobuf.WellKnownTypes;
+﻿using Consul;
+using ConsulIntegrationHelpers.HostedServices;
+using ConsulIntegrationHelpers.Services;
+using Diagnostics;
+using EventBus;
+using GrpcIntegrationHelpers;
+using HealthChecks.UI.Client;
+using Identity;
 using Logging;
 using MassTransit;
-using MassTransit.Configuration;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using HealthChecks.UI.Client;
-using OpenIddict.Validation.AspNetCore;
-using Microsoft.AspNetCore.Routing;
-using Consul;
-using EventBus;
-using EventBus.Services;
-using ConsulIntegrationHelpers.Services;
-using ConsulIntegrationHelpers.HostedServices;
 using Microsoft.Extensions.Logging;
-using GrpcIntegrationHelpers.ClientServices;
-using GrpcIntegrationHelpers;
 
 namespace Reservation.Infrastructure;
 
@@ -44,7 +31,7 @@ public static class Extensions
         services.AddHealthChecks()
             .AddCheck("self", () => HealthCheckResult.Healthy())
             .AddSqlServer(
-                configuration["ConnectionStrings:ReservationDbContext"],
+                configuration["ConnectionStrings:ReservationDbContext"] ?? throw new ArgumentNullException("ReservationDbContext is not configured"),
                 name: "ReservationDB-check",
                 tags: new string[] { "reservationdb" });
 
@@ -57,8 +44,8 @@ public static class Extensions
                     configuration["RabbitMQ:Hostname"],
                     "/",
                     hostConfigurator => {
-                        hostConfigurator.Username(configuration["RabbitMQ:Username"]);
-                        hostConfigurator.Password(configuration["RabbitMQ:Password"]);
+                        hostConfigurator.Username(configuration["RabbitMQ:Username"] ?? throw new ArgumentNullException("RabbitMQ username is not configured"));
+                        hostConfigurator.Password(configuration["RabbitMQ:Password"] ?? throw new ArgumentNullException("RabbitMQ password is not configured"));
                     });
                 busFactoryConfigurator.ConfigureEndpoints(context);
             });
@@ -67,7 +54,7 @@ public static class Extensions
         // Consul
         services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
         {
-            var address = configuration["Consul:Address"] ?? "";
+            var address = configuration["Consul:Address"] ?? throw new ArgumentNullException("Consul address is not configured");
             consulConfig.Address = new Uri(address);
         }));
         services.AddScoped<IConsulServiceDiscovery, ConsulServiceDiscovery>();
@@ -75,42 +62,10 @@ public static class Extensions
             new ConsulServiceRegistration(
                 provider.GetRequiredService<IConsulClient>(),
                 provider.GetRequiredService<ILogger<ConsulServiceRegistration>>(),
-                configuration["Consul:Service:Host"],
-                configuration["Consul:Service:Name"],
-                int.Parse(configuration["Consul:Service:Port"])
+                configuration["Consul:Service:Host"] ?? throw new ArgumentNullException("Consul host is not configured"),
+                configuration["Consul:Service:Name"] ?? throw new ArgumentNullException("Consul service name is not configured"),
+                int.Parse(configuration["Consul:Service:Port"] ?? throw new ArgumentNullException("Consul service port is not configured"))
             ));
-
-        // OpenIdDict
-        services.AddOpenIddict()
-            .AddValidation(options =>
-            {
-                var consulServiceDiscovery = services.BuildServiceProvider().GetRequiredService<IConsulServiceDiscovery>();
-                try
-                {
-                    var address = consulServiceDiscovery.GetServiceAddress("user").Result;
-                    var openIddictConfig = configuration.GetSection("OpenIddict");
-
-                    options.SetIssuer($"https://{address}");
-                    options.AddAudiences(openIddictConfig.GetSection("Audiences").Get<string[]>());
-
-                    options.UseIntrospection()
-                           .SetClientId(openIddictConfig["Introspection:ClientId"])
-                           .SetClientSecret(openIddictConfig["Introspection:ClientSecret"]);
-
-                    options
-                        .UseSystemNetHttp()
-                        .ConfigureHttpClientHandler(handler =>
-                        {
-                            handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-                        });
-
-                    options.UseAspNetCore();
-                }
-                catch (Exception)
-                {
-                    
-                }
-            });
 
         // CORS
         services.AddCors(options =>
@@ -120,12 +75,6 @@ public static class Extensions
                     .AllowAnyMethod()
                     .AllowCredentials())
         );
-
-        services.AddAuthentication(options => {
-            options.DefaultAuthenticateScheme = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
-        });
-        services.AddAuthorization();
 
         // Logging
         services.AddLoggingSerilog(builder);
@@ -137,7 +86,10 @@ public static class Extensions
         services.AddEventBus();
 
         // GrpcHelpers
-        services.AddGrpcIntegrationHelpers();
+        services.AddGrpcIntegrationHelpers(builder, configuration);
+
+        // Identity
+        services.AddIdentityServices(builder, configuration);
 
         return services;
     }
@@ -155,6 +107,10 @@ public static class Extensions
             Predicate = _ => true,
             ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
         });
+
+        // Auth
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         // CORS
         app.UseCors("RentAcmeOrigins");

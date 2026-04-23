@@ -9,16 +9,13 @@
   <ItemGroup>
     <PackageReference Include="Consul" Version="1.8.0" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
-    <PackageReference Include="MassTransit" Version="9.1.0" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="9.1.0" />
-    <PackageReference Include="RabbitMQ.Client" Version="7.2.1" />
-    <PackageReference Include="System.Threading.RateLimiting" Version="10.0.5" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\BuildingBlocks\ConsulIntegrationHelpers\ConsulIntegrationHelpers.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\EventBus\EventBus.csproj" />
     <ProjectReference Include="..\Notification.Appication\Notification.Appication.csproj" />
+	<ProjectReference Include="..\..\..\BuildingBlocks\GrpcIntegrationHelpers\GrpcIntegrationHelpers.csproj" />
   </ItemGroup>
 
 </Project>

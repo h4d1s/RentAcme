@@ -14,14 +14,14 @@ namespace Inventory.Infrastructure.IntegrationEvents.EventHandling;
 public class BookingCompletedIntegrationEventConsumer : IConsumer<BookingCompletedIntegrationEvent>
 {
     private readonly ILogger<BookingCompletedIntegrationEventConsumer> _logger;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IBookingRepository _bookingRepository;
 
     public BookingCompletedIntegrationEventConsumer(
         ILogger<BookingCompletedIntegrationEventConsumer> logger,
-        IUnitOfWork unitOfWork)
+        IBookingRepository bookingRepository)
     {
         _logger = logger;
-        _unitOfWork = unitOfWork;
+        _bookingRepository = bookingRepository;
     }
 
     public async Task Consume(ConsumeContext<BookingCompletedIntegrationEvent> context)
@@ -29,6 +29,15 @@ public class BookingCompletedIntegrationEventConsumer : IConsumer<BookingComplet
         var booking = new Booking(BookingStatus.Reserved, context.Message.VehicleId);
         booking.SetPickupDate(context.Message.PickupDate);
         booking.SetReturnDate(context.Message.ReturnDate);
-        await _unitOfWork.BookingRepository.AddAsync(booking);
+
+        try
+        {
+            await _bookingRepository.AddAsync(booking);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "BookingCompletedIntegrationEvent");
+            throw;
+        }
     }
 }

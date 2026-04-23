@@ -8,31 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.34.1" />
-    <PackageReference Include="Grpc.AspNetCore.Server" Version="2.76.0" />
-    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.76.0" />
+	<PackageReference Include="Grpc.AspNetCore.Server" Version="2.76.0" />
+	<PackageReference Include="Grpc.Net.ClientFactory" Version="2.76.0" />
     <PackageReference Include="Grpc.Tools" Version="2.80.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.5" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Diagnostics" Version="10.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Diagnostics.Abstractions" Version="10.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Primitives" Version="10.0.5" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Protobuf Include="..\..\..\BuildingBlocks\Protos\notification.proto" GrpcServices="Server">
-      <Link>Protos\notification.proto</Link>
-    </Protobuf>
   </ItemGroup>
 
 </Project>

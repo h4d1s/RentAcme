@@ -1,27 +1,13 @@
-using User.Infrastructure;
-using User.Application;
-using User.Infrastructure.Persistence;
-using Asp.Versioning;
-using User.API.Middleware;
 using User.API;
-using Microsoft.OpenApi;
+using User.Application;
+using User.Infrastructure;
+using User.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Version = "v1",
-        Title = "Users API",
-        Description = "Users microservice",
-    });
-});
 
 builder.Services
     .AddInfrastructurePersistenceServices(builder.Configuration)
@@ -30,13 +16,6 @@ builder.Services
     .AddApiServices(builder.Configuration, builder.Host);
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 app.UseHttpsRedirection();
 

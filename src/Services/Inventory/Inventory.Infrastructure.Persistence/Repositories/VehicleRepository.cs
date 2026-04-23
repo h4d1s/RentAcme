@@ -1,4 +1,6 @@
-﻿using Inventory.Application.Models;
+﻿using Ardalis.Specification;
+using Ardalis.Specification.EntityFrameworkCore;
+using Inventory.Application.Models;
 using Inventory.Domain.AggregatesModel.BrandAggregate;
 using Inventory.Domain.AggregatesModel.ModelAggregate;
 using Inventory.Domain.AggregatesModel.VariantAggreate;
@@ -11,8 +13,24 @@ namespace Inventory.Infrastructure.Persistence.Repositories;
 
 public class VehicleRepository : Repository<Vehicle>, IVehicleRepository
 {
-    public VehicleRepository(InventoryContext context) : base(context)
+    public VehicleRepository(InventoryDbContext context) : base(context)
     {
+    }
+
+    public virtual async Task<IReadOnlyList<Vehicle>> ListAsync(Specification<Vehicle> spec)
+    {
+        return await _context.Vehicles
+            .AsNoTracking()
+            .WithSpecification(spec)
+            .ToListAsync();
+    }
+
+    public virtual async Task<int> CountAsync(Specification<Vehicle> spec)
+    {
+        return await _context.Vehicles
+            .AsNoTracking()
+            .WithSpecification(spec)
+            .CountAsync();
     }
 
     public async override Task<Vehicle?> GetByIdAsync(Guid id)

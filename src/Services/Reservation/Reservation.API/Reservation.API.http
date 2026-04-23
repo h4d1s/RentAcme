@@ -1,6 +1,72 @@
-@Reservation.API_HostAddress = http://localhost:5056
+@hostname = localhost
+@port = 5232
+@baseUrl = https://{{hostname}}:{{port}}/api/v1
+@contentType = application/json
 
-GET {{Reservation.API_HostAddress}}/weatherforecast/
-Accept: application/json
+# --- Identity Provider Configuration ---
+@keycloakUrl = http://localhost:8080
+@realm = rent-acme
 
-###
+### IDENTITY: Get Access Token
+# @name login
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id=client&username=jsmith&password=Passw0rd!
+
+### Capture the token
+@authToken = {{login.response.body.$.access_token}}
+
+### BOOKING: Create a new booking
+# @no-ssl-verify
+# @name reserveBooking
+POST {{baseUrl}}/bookings
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "vehicleId": "98A4CC18-D3DD-4FA9-CFE3-08DEA107C5C9",
+  "userId": "3FE11ACE-2C73-42DE-466D-08DEA107C3E0",
+  "pickupDate": "2026-06-20T10:00:00Z",
+  "returnDate": "2026-06-25T10:00:00Z"
+}
+
+### BOOKING: Get a paginated list of bookings
+# @no-ssl-verify
+# Optional Query Parameters: userId, vehicleId, PickupDate, ReturnDate, Status, Order, OrderBy, Page, PageSize
+# @name getBookings
+GET {{baseUrl}}/bookings?Page=1&PageSize=10
+Accept: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+### Define a specific Booking ID for subsequent requests
+@targetBookingId = 123e4567-e89b-12d3-a456-426614174000
+
+### BOOKING: Get booking by ID
+# @no-ssl-verify
+# @name getBookingById
+GET {{baseUrl}}/bookings/{{targetBookingId}}
+Accept: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+### BOOKING: Complete a booking
+# @no-ssl-verify
+# @name completeBooking
+POST {{baseUrl}}/bookings/complete
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "bookingId": "{{targetBookingId}}"
+}
+
+### BOOKING: Cancel a booking
+# @no-ssl-verify
+# @name cancelBooking
+POST {{baseUrl}}/bookings/cancel
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "bookingId": "{{targetBookingId}}"
+}

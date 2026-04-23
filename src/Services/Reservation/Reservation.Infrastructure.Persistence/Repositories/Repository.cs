@@ -9,10 +9,11 @@ namespace Reservation.Infrastructure.Persistence.Repositories;
 
 public class Repository<T> : IRepository<T> where T : Entity, IAggregateRoot
 {
-    protected readonly ReservationContext _context;
-    protected readonly DbSet<T> _dbSet;
+    protected readonly ReservationDbContext _context;
+    public IUnitOfWork UnitOfWork => _context;
+    protected readonly DbSet<T> _dbSet;    
 
-    public Repository(ReservationContext context)
+    public Repository(ReservationDbContext context)
     {
         if (context == null)
         {
@@ -34,11 +35,6 @@ public class Repository<T> : IRepository<T> where T : Entity, IAggregateRoot
     {
         return await _dbSet
             .ToListAsync();
-    }
-
-    public virtual async Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec)
-    {
-        return await ApplySpecification(spec).ToListAsync();
     }
 
     public virtual async Task<Guid> AddAsync(T entity)
@@ -73,18 +69,5 @@ public class Repository<T> : IRepository<T> where T : Entity, IAggregateRoot
         return await _dbSet
             .AsNoTracking()
             .CountAsync();
-    }
-
-    public virtual async Task<int> CountAsync(ISpecification<T> spec)
-    {
-        return await ApplySpecification(spec)
-            .AsNoTracking()
-            .CountAsync();
-    }
-
-    private IQueryable<T> ApplySpecification(ISpecification<T> spec)
-    {
-        return SpecificationEvaluator<T>
-            .GetQuery(_dbSet.AsQueryable(), spec);
     }
 }

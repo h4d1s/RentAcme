@@ -2,6 +2,7 @@
 using FluentValidation;
 using Inventory.Application.Exceptions;
 using Inventory.Application.Features.Models.Commands.UpdateModel;
+using Inventory.Domain.AggregatesModel.VariantAggreate;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
 using Inventory.Domain.Common;
 using MediatR;
@@ -15,16 +16,16 @@ namespace Inventory.Application.Features.Variants.Commands.UpdateVariant;
 
 public class UpdateVariantHandler : IRequestHandler<UpdateVariantCommand, Unit>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IVariantRepository _variantRepository;
     private readonly IMapper _mapper;
     private readonly IValidator<UpdateVariantCommand> _validator;
 
     public UpdateVariantHandler(
-        IUnitOfWork unitOfWork,
+        IVariantRepository variantRepository,
         IMapper mapper,
         IValidator<UpdateVariantCommand> validator)
     {
-        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+        _variantRepository = variantRepository ?? throw new ArgumentNullException(nameof(variantRepository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _validator = validator ?? throw new ArgumentNullException(nameof(validator));
     }
@@ -38,17 +39,22 @@ public class UpdateVariantHandler : IRequestHandler<UpdateVariantCommand, Unit>
             throw new BadRequestException("Invalid Variant", validationResult);
         }
 
-        var variant = await _unitOfWork.VariantRepository.GetByIdAsync(request.Id);
+        var variant = await _variantRepository.GetByIdAsync(request.Id);
 
         if (variant is null)
         {
             throw new NotFoundException($"Variant with {request.Id} not found.");
         }
 
-        _mapper.Map(request, variant);
+        variant.UpdateName(request.Name);
+        variant.UpdateGearbox(request.Gearbox);
+        variant.UpdateFuelType(request.FuelType);
+        variant.UpdatePower(request.Power);
+        variant.UpdateEngineSize(request.EngineSize);
+        variant.UpdateModelId(request.ModelId);
 
-        _unitOfWork.VariantRepository.Update(variant);
-        await _unitOfWork.SaveEntitiesAsync(cancellationToken);
+        _variantRepository.Update(variant);
+        await _variantRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
     }

@@ -1,11 +1,6 @@
 ﻿using Grpc.Core;
 using Inventory.Domain.Common;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Inventoryproto;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
 
@@ -14,14 +9,14 @@ namespace Inventory.Infrastructure.Grpc;
 public class InventoryGrpcServerService : InventoryProtoService.InventoryProtoServiceBase
 {
     private readonly ILogger<InventoryGrpcServerService> _logger;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IVehicleRepository _vehicleRepository;
 
     public InventoryGrpcServerService(
         ILogger<InventoryGrpcServerService> logger,
-        IUnitOfWork unitOfWork)
+        IVehicleRepository vehicleRepository)
     {
         _logger = logger;
-        _unitOfWork = unitOfWork;
+        _vehicleRepository = vehicleRepository;
     }
 
     public override async Task<GetVehicleReponse> GetVehicle(GetVehicleRequest request, ServerCallContext context)
@@ -32,7 +27,7 @@ public class InventoryGrpcServerService : InventoryProtoService.InventoryProtoSe
         try
         {
             var id = Guid.Parse(request.VehicleId);
-            vehicle = await _unitOfWork.VehicleRepository.GetByIdAsync(id);
+            vehicle = await _vehicleRepository.GetByIdAsync(id);
         }
         catch (Exception ex)
         {
@@ -55,7 +50,7 @@ public class InventoryGrpcServerService : InventoryProtoService.InventoryProtoSe
         try
         {
             var id = Guid.Parse(request.VehicleId);
-            var vehicle = await _unitOfWork.VehicleRepository.GetByIdAsync(id);
+            var vehicle = await _vehicleRepository.GetByIdAsync(id);
             isExists = vehicle != null;
         }
         catch (Exception ex)

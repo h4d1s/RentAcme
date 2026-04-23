@@ -1,5 +1,7 @@
 ﻿using EventBus.Events;
+using GrpcIntegrationHelpers.ClientServices;
 using MassTransit;
+using Microsoft.Extensions.Logging;
 using Notification.Appication.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
@@ -9,19 +11,36 @@ using System.Threading.Tasks;
 
 namespace Notification.Infrastructure.IntegrationEvents.EventHandling;
 
-public class BookingCanceledIntegrationEventConsumer : IConsumer<BookingCompletedIntegrationEvent>
+public class BookingCanceledIntegrationEventConsumer : IConsumer<BookingCanceledIntegrationEvent>
 {
+    private readonly ILogger<BookingCanceledIntegrationEventConsumer> _logger;
     private readonly IEmailService _emailService;
+    private readonly IUserGrpcClientService _userGrpcClientService;
 
     public BookingCanceledIntegrationEventConsumer(
-        IEmailService emailService)
+        ILogger<BookingCanceledIntegrationEventConsumer> logger,
+        IEmailService emailService,
+        IUserGrpcClientService userGrpcClientService)
     {
+        _logger = logger;
         _emailService = emailService;
+        _userGrpcClientService = userGrpcClientService;
     }
 
-    public async Task Consume(ConsumeContext<BookingCompletedIntegrationEvent> context)
+    public async Task Consume(ConsumeContext<BookingCanceledIntegrationEvent> context)
     {
-        //var customerId = context.Message;
-        await _emailService.SendAsync("", "Booking canceled", "Your vehicle reservation has been canceled.");
+        var userId = context.Message.UserId;
+
+        try
+        {
+            var user = await _userGrpcClientService.GetUserAsync(userId);
+            await _emailService.SendAsync(user.Email, "Booking canceled", "Your vehicle reservation has been canceled.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "BookingCanceledIntegrationEvent");
+            throw;
+        }
+
     }
 }

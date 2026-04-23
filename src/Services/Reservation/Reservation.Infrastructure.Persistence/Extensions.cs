@@ -1,19 +1,12 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Persistence;
 using Reservation.Domain.AggregatesModel.BookingAggregate;
-using Reservation.Domain.Common;
 using Reservation.Infrastructure.Persistence.Data;
 using Reservation.Infrastructure.Persistence.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Reservation.Infrastructure.Persistence;
 
@@ -23,15 +16,24 @@ public static class Extensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Extensions).Assembly));
+
         // Entity Framework
-        services.AddDbContext<ReservationContext>(options => options.UseSqlServer(
+        services.AddDbContext<ReservationDbContext>(options => options.UseSqlServer(
             configuration.GetConnectionString("ReservationDbContext") ??
                 throw new InvalidOperationException("Connection string 'ReservationDbContext' not found.")
             )
         );
-        services.AddMigration<ReservationContext, ReservationContextSeed>();
 
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        // Seed DB
+        var serviceProvider = services.BuildServiceProvider();
+        var env = serviceProvider.GetRequiredService<IHostEnvironment>();
+
+        if (env.IsDevelopment())
+        {
+            services.AddMigration<ReservationDbContext, ReservationDbContextSeed>();
+        }
+
         services.AddScoped<IBookingRepository, BookingRepository>();
 
         return services;

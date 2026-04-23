@@ -1,8 +1,10 @@
-﻿using Inventory.Domain.AggregatesModel.BookingAggregate;
+﻿using Ardalis.Specification;
+using Inventory.Domain.AggregatesModel.BookingAggregate;
 using Inventory.Domain.AggregatesModel.BrandAggregate;
 using Inventory.Domain.AggregatesModel.ModelAggregate;
 using Inventory.Domain.AggregatesModel.VariantAggreate;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
+using MassTransit.SqlTransport.Topology;
 using MassTransit.Transports;
 using MediatR;
 using System;
@@ -14,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Inventory.Application.Specifications.Vehicles;
 
-public class VehicleFilterPaginatedSpecification : BaseSpecification<Vehicle>
+public class VehicleFilterPaginatedSpecification : Specification<Vehicle>
 {
     public VehicleFilterPaginatedSpecification(
         int? pageNumber,
@@ -27,46 +29,60 @@ public class VehicleFilterPaginatedSpecification : BaseSpecification<Vehicle>
         decimal? rentalPricePerDayTo,
         DateTime? pickupDate,
         DateTime? returnDate)
-            : base(i =>
-                (!gearbox.HasValue || i.Variant.Gearbox == gearbox) &&
-                (!category.HasValue || i.Variant.Model.Category == category) &&
-                (!rentalPricePerDayFrom.HasValue || i.RentalPricePerDay == rentalPricePerDayFrom) &&
-                (!rentalPricePerDayTo.HasValue || i.RentalPricePerDay == rentalPricePerDayTo) &&
-                ((!pickupDate.HasValue && !returnDate.HasValue) || !i.Bookings.Any(x =>
-                    x.PickupDate <= returnDate &&
-                    x.ReturnDate >= pickupDate &&
-                    x.Status == BookingStatus.Reserved))
-            )
     {
+        var querySpec = Query;
+
+        querySpec
+            .Where(i => i.Variant.Gearbox == gearbox, gearbox.HasValue)
+            .Where(i => i.Variant.Model.Category == category, category.HasValue)
+            .Where(i => i.RentalPricePerDay >= rentalPricePerDayFrom, rentalPricePerDayFrom.HasValue)
+            .Where(i => i.RentalPricePerDay <= rentalPricePerDayTo, rentalPricePerDayTo.HasValue);
+
+        if (pickupDate.HasValue && returnDate.HasValue)
+        {
+            querySpec.Where(i => !i.Bookings.Any(x =>
+                x.Status == BookingStatus.Reserved &&
+                x.PickupDate <= returnDate &&
+                x.ReturnDate >= pickupDate));
+        }
+
         if (!string.IsNullOrEmpty(orderBy))
         {
-            var ordering = "";
             switch (orderBy.ToLower())
             {
                 case "price":
-                    ordering = "RentalPricePerDay";
+                    if (string.IsNullOrEmpty(order) || order.ToLower() == "desc")
+                    {
+                        querySpec.OrderBy(x => x.RentalPricePerDay);
+                    }
+                    else
+                    {
+                        querySpec.OrderByDescending(x => x.RentalPricePerDay);
+                    }
                     break;
                 default:
-                    ordering = "Id";
+                    if (string.IsNullOrEmpty(order) || order.ToLower() == "desc")
+                    {
+                        querySpec.OrderBy(x => x.Id);
+                    }
+                    else
+                    {
+                        querySpec.OrderByDescending(x => x.Id);
+                    }
                     break;
             }
-
-            var orderLinq = "asc";
-            if (string.IsNullOrEmpty(order) || order.ToLower() == "desc")
-            {
-                orderLinq = "desc";
-            }
-
-            ApplyOrderBy(ordering + " " + orderLinq);
         }
 
-        AddInclude(o => o.Bookings);
-        AddInclude(o => o.Variant);
-        AddInclude($"{nameof(Vehicle.Variant)}.{nameof(Variant.Model)}.{nameof(Model.Brand)}");
+        querySpec
+            .Include(o => o.Bookings)
+            .Include(o => o.Variant)
+            .Include($"{nameof(Vehicle.Variant)}.{nameof(Variant.Model)}.{nameof(Model.Brand)}");
 
         if (pageNumber.HasValue && pageSize.HasValue)
         {
-            ApplyPaging((pageNumber.Value - 1) * pageSize.Value, pageSize.Value);
+            querySpec
+                .Skip((pageNumber.Value - 1) * pageSize.Value)
+                .Take(pageSize.Value);
         }
     }
 }

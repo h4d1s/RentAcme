@@ -15,9 +15,9 @@ namespace ConsulIntegrationHelpers.HostedServices;
 public class ConsulServiceRegistration : IHostedService
 {
     private readonly IConsulClient _consulClient;
-    private readonly Guid _serviceId;
     private readonly ILogger<ConsulServiceRegistration> _logger;
 
+    private readonly string _serviceId;
     private readonly string _serviceName;
     private readonly string _serviceHost;
     private readonly int _servicePort;
@@ -36,14 +36,14 @@ public class ConsulServiceRegistration : IHostedService
         _serviceName = serviceName ?? throw new ArgumentNullException(nameof(serviceName));
         _servicePort = servicePort;
 
-        _serviceId = Guid.NewGuid();
+        _serviceId = $"{serviceName}-{serviceHost}";
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         var registration = new AgentServiceRegistration()
         {
-            ID = _serviceId.ToString(),
+            ID = _serviceId,
             Name = _serviceName,
             Address = _serviceHost,
             Port = _servicePort,

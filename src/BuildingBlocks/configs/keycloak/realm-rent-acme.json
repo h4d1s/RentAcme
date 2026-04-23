@@ -1,0 +1,192 @@
+{
+  "realm": "rent-acme",
+  "enabled": true,
+  "registrationAllowed": true,
+  "resetPasswordAllowed": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+
+  "eventsEnabled": true,
+  "eventsListeners": [
+    "jboss-logging",
+    "keycloak-to-rabbitmq"
+  ],
+  "enabledEventTypes": [
+    "REGISTER",
+    "LOGIN",
+    "LOGOUT",
+    "CREATE_USER",
+    "DELETE_USER",
+    "UPDATE_PROFILE"
+  ],
+  "adminEventsEnabled": true,
+  "adminEventsDetailsEnabled": true,
+
+  "smtpServer": {
+    "host": "mailhog",
+    "port": "1025",
+    "from": "noreply@rent-acme.com",
+    "fromDisplayName": "Rent Acme Auth",
+    "auth": "false",
+    "ssl": "false",
+    "starttls": "false"
+  },
+
+  "roles": {
+    "realm": [
+      {
+        "name": "Admin",
+        "description": "Full access to all resources"
+      },
+      {
+        "name": "Customer",
+        "description": "Customer"
+      }
+    ]
+  },
+  "users": [
+    {
+      "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "username": "rent-acme-admin",
+      "email": "admin@rent-acme.com",
+      "firstName": "Admin",
+      "lastName": "Administrator",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Passw0rd!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [ "Admin" ]
+    },
+    {
+      "id": "a1b2c3d4-e5f6-47a8-9b0c-1d2e3f4a5b6c",
+      "username": "jsmith",
+      "email": "john.smith@rent-acme.com",
+      "firstName": "John",
+      "lastName": "Smith",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Passw0rd!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [ "Customer" ]
+    },
+
+    {
+      "username": "microservice-cli",
+      "enabled": true,
+      "totp": false,
+      "emailVerified": false,
+      "serviceAccountClientId": "microservice-client",
+      "realmRoles": [ "Admin" ],
+      "clientRoles": {
+        "realm-management": [
+          "manage-users",
+          "query-users",
+          "view-users"
+        ]
+      },
+      "notBefore": 0,
+      "access": {
+        "view": true,
+        "configure": true,
+        "manage": true
+      }
+    }
+  ],
+
+  "clients": [
+    {
+      "clientId": "client",
+      "name": "App",
+      "enabled": true,
+      "publicClient": true,
+      "serviceAccountsEnabled": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "fullScopeAllowed": true,
+      "redirectUris": [
+        "http://localhost:5211/swagger/oauth2-redirect.html",
+        "https://localhost:5212/swagger/oauth2-redirect.html",
+        "http://localhost:5221/swagger/oauth2-redirect.html",
+        "https://localhost:5222/swagger/oauth2-redirect.html",
+        "http://localhost:5231/swagger/oauth2-redirect.html",
+        "https://localhost:5232/swagger/oauth2-redirect.html"
+      ],
+      "webOrigins": [
+        "+"
+      ],
+      "protocolMappers": [
+        {
+          "name": "audience-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "account",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        },
+        {
+          "name": "flattened-roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "role",
+            "jsonType.label": "String"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "microservice-client",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "e4a7066a-7724-42b1-912b-3134608a0022",
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "directAccessGrantsEnabled": true,
+      "fullScopeAllowed": true,
+      "protocolMappers": [
+        {
+          "name": "audience-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "account",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        },
+        {
+          "name": "flattened-roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "role",
+            "jsonType.label": "String"
+          }
+        }
+      ]
+    }
+  ]
+}

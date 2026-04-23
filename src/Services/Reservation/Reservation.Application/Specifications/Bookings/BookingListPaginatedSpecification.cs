@@ -1,65 +1,79 @@
-﻿using Inventory.Application.Specifications;
-using Reservation.Domain.AggregatesModel.BookingAggregate;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Reservation.Domain.AggregatesModel.BookingAggregate;
 
-namespace Reservation.Application.Specifications.Bookings
+namespace Reservation.Application.Specifications.Bookings;
+
+public class BookingListPaginatedSpecification : Specification<Booking>
 {
-    public class BookingListPaginatedSpecification : BaseSpecification<Booking>
+    public BookingListPaginatedSpecification(
+        int? pageNumber,
+        int? pageSize,
+        string? order,
+        string? orderBy,
+        List<Guid> userIds,
+        Guid? vehicleId,
+        DateTime? pickupDate,
+        DateTime? returnDate,
+        BookingStatus? status)
     {
-        public BookingListPaginatedSpecification(
-            int? pageNumber,
-            int? pageSize,
-            string? order,
-            string? orderBy,
-            Guid? userId,
-            Guid? vehicleId,
-            DateTime? pickupDate,
-            DateTime? returnDate,
-            BookingStatus? status)
-        : base(i =>
-            (!vehicleId.HasValue || i.VehicleId == vehicleId) &&
-            (!userId.HasValue || i.UserId == userId) &&
-            (!pickupDate.HasValue || i.PickupDate >= pickupDate) &&
-            (!returnDate.HasValue || i.ReturnDate <= returnDate) &&
-            (!status.HasValue || i.Status == status)
-        )
+        Query.Where(i => i.VehicleId == vehicleId, vehicleId.HasValue);
+        Query.Where(i => userIds.Contains(i.UserId), userIds.Count > 0);
+        Query.Where(i => i.PickupDate >= pickupDate, pickupDate.HasValue);
+        Query.Where(i => i.ReturnDate <= returnDate, returnDate.HasValue);
+        Query.Where(i => i.Status == status, status.HasValue);
+        
+
+        if (!string.IsNullOrEmpty(orderBy))
         {
-            if (!string.IsNullOrEmpty(orderBy))
+            switch (orderBy.ToLower())
             {
-                var ordering = "";
-                switch (orderBy.ToLower())
-                {
-                    case "pickupdate":
-                        ordering = "PickupDate";
-                        break;
-                    case "returndate":
-                        ordering = "ReturnDate";
-                        break;
-                    case "status":
-                        ordering = "Status";
-                        break;
-                    default:
-                        ordering = "Id";
-                        break;
-                }
-
-                var orderLinq = "asc";
-                if (string.IsNullOrEmpty(order) || order.ToLower() == "desc")
-                {
-                    orderLinq = "desc";
-                }
-
-                ApplyOrderBy(ordering + " " + orderLinq);
+                case "pickupdate":
+                    if (string.IsNullOrEmpty(order) || order.ToLower() == "desc")
+                    {
+                        Query.OrderBy(x => x.PickupDate);
+                    }
+                    else
+                    {
+                        Query.OrderByDescending(x => x.PickupDate);
+                    }
+                    break;
+                case "returndate":
+                    if (string.IsNullOrEmpty(order) || order.ToLower() == "desc")
+                    {
+                        Query.OrderBy(x => x.ReturnDate);
+                    }
+                    else
+                    {
+                        Query.OrderByDescending(x => x.ReturnDate);
+                    }
+                    break;
+                case "status":
+                    if (string.IsNullOrEmpty(order) || order.ToLower() == "desc")
+                    {
+                        Query.OrderBy(x => x.Status);
+                    }
+                    else
+                    {
+                        Query.OrderByDescending(x => x.Status);
+                    }
+                    break;
+                default:
+                    if (string.IsNullOrEmpty(order) || order.ToLower() == "desc")
+                    {
+                        Query.OrderBy(x => x.Id);
+                    }
+                    else
+                    {
+                        Query.OrderByDescending(x => x.Id);
+                    }
+                    break;
             }
+        }
 
-            if (pageNumber.HasValue && pageSize.HasValue)
-            {
-                ApplyPaging((pageNumber.Value - 1) * pageSize.Value, pageSize.Value);
-            }
+        if (pageNumber.HasValue && pageSize.HasValue)
+        {
+            Query
+                .Skip((pageNumber.Value - 1) * pageSize.Value)
+                .Take(pageSize.Value);
         }
     }
 }

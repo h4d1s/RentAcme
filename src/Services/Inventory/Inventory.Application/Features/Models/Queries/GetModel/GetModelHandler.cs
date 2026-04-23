@@ -12,17 +12,17 @@ namespace Inventory.Application.Features.Models.Queries.GetModel;
 
 public class GetModelHandler : IRequestHandler<GetModelQuery, Model>
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IModelRepository _modelRepository;
 
     public GetModelHandler(
-        IUnitOfWork unitOfWork)
+        IModelRepository modelRepository)
     {
-        _unitOfWork = unitOfWork;
+        _modelRepository = modelRepository;
     }
 
     public async Task<Model> Handle(GetModelQuery request, CancellationToken cancellationToken)
     {
-        var model = await _unitOfWork.ModelRepository.GetByIdAsync(request.Id);
+        var model = await _modelRepository.GetByIdAsync(request.Id);
 
         if (model is null)
         {

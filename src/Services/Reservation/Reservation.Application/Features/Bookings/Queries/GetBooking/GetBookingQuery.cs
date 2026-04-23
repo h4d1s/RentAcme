@@ -1,10 +1,4 @@
-﻿using MediatR;
-using Reservation.Domain.AggregatesModel.BookingAggregate;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Reservation.Domain.AggregatesModel.BookingAggregate;
 
 namespace Reservation.Application.Features.Bookings.Queries.GetBooking;
 

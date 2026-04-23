@@ -1,18 +1,16 @@
-﻿using MediatR;
-using Asp.Versioning;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Inventory.Application.Features.Vehicles.Queries.GetVehicle;
-using Inventory.Application.Models;
-using Inventory.Application.Features.Vehicles.Commands.DeleteVehicle;
+﻿using Asp.Versioning;
+using Common.Models;
+using Identity.Models;
 using Inventory.Application.Features.Vehicles.Commands.CreateVehicle;
+using Inventory.Application.Features.Vehicles.Commands.DeleteVehicle;
 using Inventory.Application.Features.Vehicles.Commands.UpdateVehicle;
+using Inventory.Application.Features.Vehicles.Queries.GetVehicle;
 using Inventory.Application.Features.Vehicles.Queries.GetVehicleList;
 using Inventory.Application.Features.Vehicles.Queries.SearchVehicles;
+using Inventory.Application.Models;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using AspNet.Security.OAuth.Validation;
-using OpenIddict.Validation.AspNetCore;
-using Common.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Inventory.API.Controllers;
 
@@ -31,7 +29,7 @@ public class VehicleController : ControllerBase
 
     // POST api/vehicles
     [HttpPost]
-    [Authorize]
+    [Authorize(Roles = UserRoles.Admin)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post([FromBody] CreateVehicleCommand command)
@@ -63,20 +61,25 @@ public class VehicleController : ControllerBase
     }
 
     // PUT api/vehicles
-    [HttpPut]
-    [Authorize]
+    [HttpPut("{id}")]
+    [Authorize(Roles = UserRoles.Admin)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Put(UpdateVehicleCommand command)
+    public async Task<IActionResult> Put(Guid id, [FromBody] UpdateVehicleCommand command)
     {
+        if(id != command.Id)
+        {
+            return BadRequest("ID in URL does not match ID in body.");
+        }
+
         await _mediator.Send(command);
         return NoContent();
     }
 
     // DELETE api/vehicles/{id}
     [HttpDelete("{id}")]
-    [Authorize]
+    [Authorize(Roles = UserRoles.Admin)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id)

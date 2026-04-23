@@ -7,11 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using User.Domain.AggregatesModel.ApplicationUser.Events;
+using User.Domain.AggregatesModel.ApplicationUserAggregate.Events;
 
 namespace User.Application.DomainEventHandlers;
 
-public class UserCreatedDomainEventHandler : INotificationHandler<UserCreatedDomainEvent>
+public class UserCreatedDomainEventHandler : INotificationHandler<ApplicationUserCreatedDomainEvent>
 {
     private readonly ILogger<UserCreatedDomainEventHandler> _logger;
     private readonly IIntegrationEventService _integrationService;
@@ -24,13 +24,14 @@ public class UserCreatedDomainEventHandler : INotificationHandler<UserCreatedDom
         _integrationService = integrationService;
     }
 
-    public async Task Handle(UserCreatedDomainEvent notification, CancellationToken cancellationToken)
+    public async Task Handle(ApplicationUserCreatedDomainEvent notification, CancellationToken cancellationToken)
     {
         _logger.LogInformation("User with Id: {UserId} has been successfully created.", notification.User.Id);
 
         var userCreatedEvent = new UserCreatedIntegrationEvent
         {
-            Id = Guid.Parse(notification.User.Id),
+            Id = notification.User.Id,
+            ExternalId = notification.User.ExternalId,
             Email = notification.User.Email ?? string.Empty,
             FirstName = notification.User.FirstName,
             LastName = notification.User.LastName,

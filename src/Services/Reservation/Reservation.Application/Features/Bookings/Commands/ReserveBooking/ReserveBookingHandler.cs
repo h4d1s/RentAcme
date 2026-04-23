@@ -1,36 +1,31 @@
-﻿using AutoMapper;
-using FluentValidation;
-using MediatR;
-using Microsoft.Extensions.Logging;
+﻿using GrpcIntegrationHelpers.ClientServices;
+using Identity.Models;
+using Identity.Services;
 using Reservation.Application.Exceptions;
 using Reservation.Domain.AggregatesModel.BookingAggregate;
-using Reservation.Domain.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GrpcIntegrationHelpers.ClientServices;
 
 namespace Reservation.Application.Features.Bookings.Commands.ReserveBooking;
 
 public class ReserveBookingHandler : IRequestHandler<ReserveBookingCommand, Guid>
 {
-    private IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
+    private readonly IBookingRepository _bookingRepository;
     private readonly IValidator<ReserveBookingCommand> _validator;
-    private readonly IInventoryGrpcClientService _inventoryService;
+    private readonly IUserGrpcClientService _userGrpcClientService;
+    private readonly IInventoryGrpcClientService _inventoryGrpcClientService;
+    private readonly IIdentityService _identityService;
 
     public ReserveBookingHandler(
-        IUnitOfWork unitOfWork,
-        IMapper mapper,
+        IBookingRepository bookingRepository,
         IValidator<ReserveBookingCommand> validator,
-        IInventoryGrpcClientService inventoryService)
+        IUserGrpcClientService userGrpcClientService,
+        IInventoryGrpcClientService inventoryGrpcClientService,
+        IIdentityService identityService)
     {
-        _unitOfWork = unitOfWork;
-        _mapper = mapper;
-        _validator = validator;
-        _inventoryService = inventoryService;
+        _bookingRepository = bookingRepository ?? throw new ArgumentNullException(nameof(bookingRepository));
+        _validator = validator ?? throw new ArgumentNullException(nameof(validator));
+        _inventoryGrpcClientService = inventoryGrpcClientService ?? throw new ArgumentNullException(nameof(inventoryGrpcClientService));
+        _identityService = identityService ?? throw new ArgumentNullException(nameof(identityService));
+        _userGrpcClientService = userGrpcClientService ?? throw new ArgumentNullException(nameof(userGrpcClientService));
     }
 
     public async Task<Guid> Handle(ReserveBookingCommand request, CancellationToken cancellationToken)
@@ -42,13 +37,26 @@ public class ReserveBookingHandler : IRequestHandler<ReserveBookingCommand, Guid
             throw new BadRequestException("Invalid reserve booking request", validationResult);
         }
 
-        var booking = _mapper.Map<Booking>(request);
+        var currentUserId = _identityService.GetUserId() ?? throw new BadRequestException("User not authenticated.");
+        var currentRoles = _identityService.GetUserRoles() ?? throw new BadRequestException("User role not found.");
 
-        var vehicle = await _inventoryService.GetVehicleAsync(booking.VehicleId);
+        var user = await _userGrpcClientService.GetUserByExternalIdAsync(currentUserId) ??
+            throw new BadRequestException("User not found.");
+
+        var isOwner = request.UserId == user.Id;
+        var isAdmin = currentRoles.Contains(UserRoles.Admin);
+
+        if (!isOwner && !isAdmin)
+        {
+            throw new AuthenticationException("You are not authorized to reserve this booking.");
+        }
+
+        var booking = new Booking(request.VehicleId, request.UserId, request.PickupDate, request.ReturnDate);
+        var vehicle = await _inventoryGrpcClientService.GetVehicleAsync(booking.VehicleId);
         booking.SetPrice(vehicle.RentalPricePerDay);
 
-        var id = await _unitOfWork.BookingRepository.AddAsync(booking);
-        await _unitOfWork.SaveEntitiesAsync(cancellationToken);
+        var id = await _bookingRepository.AddAsync(booking);
+        await _bookingRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
         return id;
     }

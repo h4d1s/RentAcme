@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Inventory.Application.Exceptions;
+using Inventory.Domain.AggregatesModel.ModelAggregate;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
 using Inventory.Domain.Common;
 using MediatR;
@@ -14,17 +15,14 @@ namespace Inventory.Application.Features.Models.Commands.UpdateModel;
 
 public class UpdateModelHandler : IRequestHandler<UpdateModelCommand, Unit>
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
+    private readonly IModelRepository _modelRepository;
     private readonly IValidator<UpdateModelCommand> _validator;
 
     public UpdateModelHandler(
-        IUnitOfWork unitOfWork,
-        IMapper mapper,
+        IModelRepository modelRepository,
         IValidator<UpdateModelCommand> validator)
     {
-        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        _modelRepository = modelRepository ?? throw new ArgumentNullException(nameof(modelRepository));
         _validator = validator ?? throw new ArgumentNullException(nameof(validator));
     }
 
@@ -37,17 +35,21 @@ public class UpdateModelHandler : IRequestHandler<UpdateModelCommand, Unit>
             throw new BadRequestException("Invalid Model", validationResult);
         }
 
-        var model = await _unitOfWork.ModelRepository.GetByIdAsync(request.Id);
+        var model = await _modelRepository.GetByIdAsync(request.Id);
 
         if (model is null)
         {
             throw new NotFoundException($"Model with {request.Id} not found.");
         }
 
-        _mapper.Map(request, model);
+        model.UpdateName(request.Name);
+        model.UpdateYearOfProduction(request.YearOfProduction);
+        model.UpdateNumberOfSeats(request.NumberOfSeats);
+        model.UpdateCategory(request.Category);
+        model.UpdateBrandId(request.BrandId);
 
-        _unitOfWork.ModelRepository.Update(model);
-        await _unitOfWork.SaveEntitiesAsync(cancellationToken);
+        _modelRepository.Update(model);
+        await _modelRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
     }
