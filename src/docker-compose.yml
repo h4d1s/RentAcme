@@ -30,7 +30,7 @@ services:
       - rentacme_network
 
   tempo:
-    image: grafana/tempo:latest
+    image: grafana/tempo:2.10.4
     networks:
       - rentacme_network
 
