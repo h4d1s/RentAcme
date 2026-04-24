@@ -3,13 +3,11 @@ using Inventory.Domain.AggregatesModel.BrandAggregate;
 using Inventory.Domain.AggregatesModel.ModelAggregate;
 using Inventory.Domain.AggregatesModel.VariantAggreate;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
-using Inventory.Domain.Common;
 using Inventory.Infrastructure.Persistence.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Persistence;
-using System.Drawing;
 using System.Text.Json;
 
 namespace Inventory.Application.Infrastructure.Persistence;

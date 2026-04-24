@@ -1,9 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using User.Domain.AggregatesModel.ApplicationUserAggregate;
-using User.Domain.Common;
 using User.Infrastructure.Persistence.Data;
 
 namespace User.Infrastructure.Persistence.Repositories;

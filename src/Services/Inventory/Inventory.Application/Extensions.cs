@@ -7,17 +7,11 @@ using Inventory.Application.Features.Variants.Commands.CreateVariant;
 using Inventory.Application.Features.Variants.Commands.UpdateVariant;
 using Inventory.Application.Features.Vehicles.Commands.CreateVehicle;
 using Inventory.Application.Features.Vehicles.Commands.UpdateVehicle;
-using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Inventory.Application;
 

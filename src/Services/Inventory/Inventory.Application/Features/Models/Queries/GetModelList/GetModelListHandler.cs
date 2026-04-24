@@ -1,15 +1,8 @@
 ﻿using AutoMapper;
 using Common.Models;
-using Inventory.Application.Models;
 using Inventory.Application.Specifications.Models;
 using Inventory.Domain.AggregatesModel.ModelAggregate;
-using Inventory.Domain.Common;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Inventory.Application.Features.Models.Queries.GetModelList;
 
@@ -30,7 +23,7 @@ public class GetModelListHandler : IRequestHandler<GetModelListQuery, PagedRespo
     {
         var specification = new ModelListPaginatedSpecification(
             request.Page,
-            request.PageSize, 
+            request.PageSize,
             request.Order,
             request.OrderBy);
         var modelList = await _modelRepository.ListAsync(specification);

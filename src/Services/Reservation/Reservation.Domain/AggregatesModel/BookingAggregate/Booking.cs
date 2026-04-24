@@ -98,7 +98,7 @@ public class Booking
 
     private void ValidateBookingDate(DateTime date)
     {
-        if (date < DateTime.Now)
+        if (date < DateTime.UtcNow.AddMinutes(-1))
         {
             throw new ArgumentException("Booking date cannot be in the past.");
         }

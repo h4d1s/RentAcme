@@ -1,9 +1,4 @@
-﻿using Identity.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Identity.Services;
+﻿namespace Identity.Services;
 
 public interface IIdentityService
 {

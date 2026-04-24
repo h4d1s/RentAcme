@@ -6,7 +6,6 @@ using Inventory.Domain.AggregatesModel.VehicleAggregate;
 using Inventory.Domain.Common;
 using Inventory.Infrastructure.Persistence.EntityConfigurations;
 using Inventory.Infrastructure.Persistence.MediatR;
-using Inventory.Infrastructure.Persistence.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;

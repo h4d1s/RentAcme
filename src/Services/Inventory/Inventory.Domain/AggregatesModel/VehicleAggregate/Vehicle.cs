@@ -1,11 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
-using Inventory.Domain.AggregatesModel.BookingAggregate;
+﻿using Inventory.Domain.AggregatesModel.BookingAggregate;
 using Inventory.Domain.AggregatesModel.VariantAggreate;
 using Inventory.Domain.AggregatesModel.VehicleAggregate.Events;
 using Inventory.Domain.Common;
 using Inventory.Domain.Exceptions;
+using System.Text.Json.Serialization;
 
 namespace Inventory.Domain.AggregatesModel.VehicleAggregate;
 

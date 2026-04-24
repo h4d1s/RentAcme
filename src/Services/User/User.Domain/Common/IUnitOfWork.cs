@@ -1,6 +1,4 @@
-﻿using User.Domain.AggregatesModel.ApplicationUserAggregate;
-
-namespace User.Domain.Common;
+﻿namespace User.Domain.Common;
 
 public interface IUnitOfWork : IDisposable
 {

@@ -19,7 +19,7 @@ namespace Reservation.API.Controllers;
 public class BookingController : ControllerBase
 {
     private readonly IMediator _mediator;
-    
+
     public BookingController(
         IMediator mediator)
     {

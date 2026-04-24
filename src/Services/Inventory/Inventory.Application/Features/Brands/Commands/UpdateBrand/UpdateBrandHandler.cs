@@ -1,15 +1,7 @@
-﻿using AutoMapper;
-using FluentValidation;
+﻿using FluentValidation;
 using Inventory.Application.Exceptions;
 using Inventory.Domain.AggregatesModel.BrandAggregate;
-using Inventory.Domain.AggregatesModel.VehicleAggregate;
-using Inventory.Domain.Common;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Inventory.Application.Features.Brands.Commands.UpdateBrand;
 

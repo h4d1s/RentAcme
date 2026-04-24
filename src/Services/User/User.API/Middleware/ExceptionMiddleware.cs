@@ -1,9 +1,6 @@
 ﻿using Reservation.API.Models;
-using System;
-using System.Globalization;
-using System.Net;
-using User.Application.Exceptions;
 using System.Text.Json;
+using User.Application.Exceptions;
 
 namespace User.API.Middleware;
 
@@ -29,7 +26,7 @@ public class ExceptionMiddleware
         catch (Exception ex)
         {
             await HandleExceptionAsync(context, ex);
-        }            
+        }
     }
 
     private async Task HandleExceptionAsync(HttpContext httpContext, Exception ex)

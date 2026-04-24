@@ -1,8 +1,4 @@
-﻿using Ardalis.Specification;
-using Inventory.Domain.Common;
-using System.Linq.Expressions;
-
-namespace Inventory.Domain.Common;
+﻿namespace Inventory.Domain.Common;
 
 public interface IRepository<T> where T : IAggregateRoot
 {

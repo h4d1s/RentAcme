@@ -60,7 +60,7 @@ public class ModelController : ControllerBase
     }
 
     // PUT api/models/{id}
-    [HttpPut("{id}")]   
+    [HttpPut("{id}")]
     [Authorize(Roles = UserRoles.Admin)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

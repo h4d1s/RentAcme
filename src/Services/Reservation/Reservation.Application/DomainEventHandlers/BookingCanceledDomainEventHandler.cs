@@ -1,14 +1,7 @@
 ﻿using EventBus.Events;
 using EventBus.Services;
-using MediatR;
 using Microsoft.Extensions.Logging;
 using Reservation.Domain.AggregatesModel.BookingAggregate.Events;
-using Reservation.Domain.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reservation.Application.DomainEventHandlers;
 

@@ -111,7 +111,8 @@ public class UserGrpcClientService : IUserGrpcClientService, IDisposable
         {
             ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
         };
-        _channel = GrpcChannel.ForAddress("https://" + address, new GrpcChannelOptions { 
+        _channel = GrpcChannel.ForAddress("https://" + address, new GrpcChannelOptions
+        {
             HttpHandler = httpHandler,
             Credentials = ChannelCredentials.Create(new SslCredentials(), callCredentials)
         });

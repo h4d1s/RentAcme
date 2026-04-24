@@ -1,9 +1,6 @@
-﻿using Reservation.Domain.Common;
+﻿using Catalog.Domain.Common;
+using Reservation.Domain.Common;
 using Reservation.Infrastructure.Persistence.Data;
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
-using Catalog.Domain.Common;
-using Reservation.Application.Specifications;
 
 namespace Reservation.Infrastructure.Persistence.Repositories;
 
@@ -11,7 +8,7 @@ public class Repository<T> : IRepository<T> where T : Entity, IAggregateRoot
 {
     protected readonly ReservationDbContext _context;
     public IUnitOfWork UnitOfWork => _context;
-    protected readonly DbSet<T> _dbSet;    
+    protected readonly DbSet<T> _dbSet;
 
     public Repository(ReservationDbContext context)
     {

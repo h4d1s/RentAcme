@@ -23,7 +23,8 @@ public static class Extensions
             options.ApiVersionReader = ApiVersionReader.Combine(
                 new UrlSegmentApiVersionReader(),
                 new HeaderApiVersionReader("X-Api-Version"));
-        }).AddApiExplorer(options => {
+        }).AddApiExplorer(options =>
+        {
             options.GroupNameFormat = "'v'V";
             options.SubstituteApiVersionInUrl = true;
         });

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using FluentValidation;
+﻿using FluentValidation;
 using Identity.Models;
 using Identity.Services;
 using MediatR;
@@ -10,18 +9,15 @@ namespace User.Application.Features.Users.Commands.DeleteUser;
 
 public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, Unit>
 {
-    private readonly IMapper _mapper;
     private readonly IValidator<DeleteUserCommand> _validator;
     private readonly IApplicationUserRepository _appliationUserRepository;
     private readonly IIdentityService _identityService;
 
     public DeleteUserHandler(
-        IMapper mapper,
         IValidator<DeleteUserCommand> validator,
         IApplicationUserRepository appliationUserRepository,
         IIdentityService identityService)
     {
-        _mapper = mapper;
         _validator = validator;
         _appliationUserRepository = appliationUserRepository;
         _identityService = identityService;

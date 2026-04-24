@@ -1,8 +1,6 @@
-﻿using AutoMapper;
-using FluentValidation;
+﻿using FluentValidation;
 using Inventory.Application.Exceptions;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
-using Inventory.Domain.Common;
 using MediatR;
 
 namespace Inventory.Application.Features.Vehicles.Commands.UpdateVehicle;

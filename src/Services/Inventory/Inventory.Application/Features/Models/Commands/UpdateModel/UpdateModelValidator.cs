@@ -1,12 +1,5 @@
 ﻿using FluentValidation;
 using Inventory.Domain.AggregatesModel.ModelAggregate;
-using Inventory.Domain.AggregatesModel.VehicleAggregate;
-using Inventory.Domain.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Inventory.Application.Features.Models.Commands.UpdateModel;
 

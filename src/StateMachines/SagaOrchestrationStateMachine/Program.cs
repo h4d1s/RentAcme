@@ -1,4 +1,3 @@
-using EventBus.Constants;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -22,7 +21,8 @@ builder.Services.AddMassTransit(cfg =>
         busFactoryConfigurator.Host(
             configuration["RabbitMQ:Hostname"],
             "/",
-            hostConfigurator => {
+            hostConfigurator =>
+            {
                 hostConfigurator.Username(configuration["RabbitMQ:Username"] ?? throw new ArgumentNullException("RabbitMQ:Username is not configured"));
                 hostConfigurator.Password(configuration["RabbitMQ:Password"] ?? throw new ArgumentNullException("RabbitMQ:Password is not configured"));
             });
@@ -32,7 +32,8 @@ builder.Services.AddMassTransit(cfg =>
     cfg.AddInMemoryInboxOutbox();
 });
 
-builder.Services.AddDbContext<SagaMachineContext>(options => {
+builder.Services.AddDbContext<SagaMachineContext>(options =>
+{
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("SagaMachineContext") ??
             throw new InvalidOperationException("Connection string 'SagaMachineContext' not found.")

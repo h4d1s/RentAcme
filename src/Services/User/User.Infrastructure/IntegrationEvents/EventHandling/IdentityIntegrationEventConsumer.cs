@@ -21,7 +21,7 @@ public class IdentityIntegrationEventConsumer : IConsumer<KeycloakEventIntegrati
         _userRepository = userRepository;
         _identityManagementService = identityManagementService;
         _logger = logger;
-    }   
+    }
 
     public async Task Consume(ConsumeContext<KeycloakEventIntegrationEvent> context)
     {
