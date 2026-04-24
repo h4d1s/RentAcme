@@ -10,18 +10,18 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/StateMachines/SagaOrchestrationStateMachine/SagaOrchestrationStateMachine.csproj", "src/StateMachines/SagaOrchestrationStateMachine/"]
-COPY ["src/BuildingBlocks/EventBus/EventBus.csproj", "src/BuildingBlocks/EventBus/"]
-COPY ["src/BuildingBlocks/Persistence/Persistence.csproj", "src/BuildingBlocks/Persistence/"]
-RUN dotnet restore "./src/StateMachines/SagaOrchestrationStateMachine/SagaOrchestrationStateMachine.csproj"
+COPY ["StateMachines/SagaOrchestrationStateMachine/SagaOrchestrationStateMachine.csproj", "StateMachines/SagaOrchestrationStateMachine/"]
+COPY ["BuildingBlocks/EventBus/EventBus.csproj", "BuildingBlocks/EventBus/"]
+COPY ["BuildingBlocks/Persistence/Persistence.csproj", "BuildingBlocks/Persistence/"]
+RUN dotnet restore "StateMachines/SagaOrchestrationStateMachine/SagaOrchestrationStateMachine.csproj"
 COPY . .
-WORKDIR "/src/src/StateMachines/SagaOrchestrationStateMachine"
-RUN dotnet build "./SagaOrchestrationStateMachine.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/StateMachines/SagaOrchestrationStateMachine"
+RUN dotnet build "SagaOrchestrationStateMachine.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./SagaOrchestrationStateMachine.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "SagaOrchestrationStateMachine.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final

@@ -12,22 +12,22 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/Services/Notification/Notification.API/Notification.API.csproj", "src/Services/Notification/Notification.API/"]
-COPY ["src/Services/Notification/Notification.Appication/Notification.Appication.csproj", "src/Services/Notification/Notification.Appication/"]
-COPY ["src/Services/Notification/Notification.Infrastructure/Notification.Infrastructure.csproj", "src/Services/Notification/Notification.Infrastructure/"]
-COPY ["src/BuildingBlocks/EventBus/EventBus.csproj", "src/BuildingBlocks/EventBus/"]
-COPY ["src/BuildingBlocks/GrpcIntegrationHelpers/GrpcIntegrationHelpers.csproj", "src/BuildingBlocks/GrpcIntegrationHelpers/"]
-COPY ["src/BuildingBlocks/ConsulIntegrationHelpers/ConsulIntegrationHelpers.csproj", "src/BuildingBlocks/ConsulIntegrationHelpers/"]
-COPY ["src/BuildingBlocks/Identity/Identity.csproj", "src/BuildingBlocks/Identity/"]
-RUN dotnet restore "./src/Services/Notification/Notification.API/Notification.API.csproj"
+COPY ["Services/Notification/Notification.API/Notification.API.csproj", "Services/Notification/Notification.API/"]
+COPY ["Services/Notification/Notification.Appication/Notification.Appication.csproj", "Services/Notification/Notification.Appication/"]
+COPY ["Services/Notification/Notification.Infrastructure/Notification.Infrastructure.csproj", "Services/Notification/Notification.Infrastructure/"]
+COPY ["BuildingBlocks/EventBus/EventBus.csproj", "BuildingBlocks/EventBus/"]
+COPY ["BuildingBlocks/GrpcIntegrationHelpers/GrpcIntegrationHelpers.csproj", "BuildingBlocks/GrpcIntegrationHelpers/"]
+COPY ["BuildingBlocks/ConsulIntegrationHelpers/ConsulIntegrationHelpers.csproj", "BuildingBlocks/ConsulIntegrationHelpers/"]
+COPY ["BuildingBlocks/Identity/Identity.csproj", "BuildingBlocks/Identity/"]
+RUN dotnet restore "Services/Notification/Notification.API/Notification.API.csproj"
 COPY . .
-WORKDIR "/src/src/Services/Notification/Notification.API"
-RUN dotnet build "./Notification.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/Services/Notification/Notification.API"
+RUN dotnet build "Notification.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Notification.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Notification.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final

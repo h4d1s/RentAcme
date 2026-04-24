@@ -12,17 +12,17 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/Gateways/APIGateway/APIGateway.csproj", "src/Gateways/APIGateway/"]
-COPY ["src/BuildingBlocks/ConsulIntegrationHelpers/ConsulIntegrationHelpers.csproj", "src/BuildingBlocks/ConsulIntegrationHelpers/"]
-RUN dotnet restore "./src/Gateways/APIGateway/APIGateway.csproj"
+COPY ["Gateways/APIGateway/APIGateway.csproj", "Gateways/APIGateway/"]
+COPY ["BuildingBlocks/ConsulIntegrationHelpers/ConsulIntegrationHelpers.csproj", "BuildingBlocks/ConsulIntegrationHelpers/"]
+RUN dotnet restore "Gateways/APIGateway/APIGateway.csproj"
 COPY . .
-WORKDIR "/src/src/Gateways/APIGateway"
-RUN dotnet build "./APIGateway.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/Gateways/APIGateway"
+RUN dotnet build "APIGateway.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./APIGateway.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "APIGateway.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
