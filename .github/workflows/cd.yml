@@ -39,7 +39,7 @@ jobs:
     - name: Build and Push with Compose
       working-directory: ./src
       env:
-        DOCKER_REGISTRY: ${{ secrets.DOCKER_HUB_USERNAME }}
+        DOCKER_REGISTRY: ${{ secrets.DOCKER_USERNAME }}
       run: |
         docker compose build
         docker compose push
