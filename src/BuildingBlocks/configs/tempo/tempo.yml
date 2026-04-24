@@ -12,18 +12,22 @@ distributor:
         http:
 
 query_frontend:
-  search:
-    duration_slo: 5s
-    throughput_bytes_slo: 1073741824
-  trace_by_id:
-    duration_slo: 5s
+  mcp_server:
+    enabled: true
+
+storage:
+  trace:
+    backend: local
+    local:
+      path: /var/tempo/traces
+    wal:
+      path: /var/tempo/wal
 
 metrics_generator:
   registry:
     external_labels:
       source: tempo
       cluster: docker-compose
-
   storage:
     path: /var/tempo/generator/wal
     remote_write:
@@ -33,16 +37,8 @@ metrics_generator:
 overrides:
   defaults:
     metrics_generator:
-      processors:
-        - service-graphs
-        - span-metrics
-        - local-blocks
-      collection_interval: 15s
+      processors: ["span-metrics", "service-graphs"]
+      generate_native_histograms: both
 
-storage:
-  trace:
-    backend: local
-    wal:
-      path: /var/tempo/wal
-    local:
-      path: /var/tempo/blocks
+usage_report:
+  reporting_enabled: false
