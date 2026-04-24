@@ -2,12 +2,6 @@
 using Inventory.Application.Models;
 using Inventory.Domain.AggregatesModel.VariantAggreate;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Inventory.Application.Features.Vehicles.Queries.GetVehicleList;
 

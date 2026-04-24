@@ -3,7 +3,6 @@ using Identity.Models;
 using Identity.Services;
 using Reservation.Application.Exceptions;
 using Reservation.Domain.AggregatesModel.BookingAggregate;
-using Reservation.Domain.Common;
 
 namespace Reservation.Application.Features.Bookings.Queries.GetBooking;
 

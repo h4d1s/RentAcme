@@ -1,18 +1,8 @@
 ﻿using Ardalis.Specification;
 using Inventory.Domain.AggregatesModel.BookingAggregate;
-using Inventory.Domain.AggregatesModel.BrandAggregate;
 using Inventory.Domain.AggregatesModel.ModelAggregate;
 using Inventory.Domain.AggregatesModel.VariantAggreate;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
-using MassTransit.SqlTransport.Topology;
-using MassTransit.Transports;
-using MediatR;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Inventory.Application.Specifications.Vehicles;
 

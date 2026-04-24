@@ -1,13 +1,7 @@
 ﻿using EventBus.Events;
 using Inventory.Domain.AggregatesModel.BookingAggregate;
-using Inventory.Domain.Common;
 using MassTransit;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Inventory.Infrastructure.IntegrationEvents.EventHandling;
 

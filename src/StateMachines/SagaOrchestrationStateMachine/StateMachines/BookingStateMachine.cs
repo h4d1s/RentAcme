@@ -5,7 +5,7 @@ using SagaOrchestrationStateMachine.States;
 
 namespace SagaOrchestrationStateMachine.StateMachines;
 
-public class BookingStateMachine 
+public class BookingStateMachine
     : MassTransitStateMachine<BookingState>
 {
     private readonly ILogger _logger;

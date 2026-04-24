@@ -1,14 +1,8 @@
 ﻿using EventBus.Events;
-using EventBus.Events.Interfaces;
 using GrpcIntegrationHelpers.ClientServices;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using Notification.Appication.Infrastructure.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Notification.Infrastructure.IntegrationEvents.EventHandling;
 

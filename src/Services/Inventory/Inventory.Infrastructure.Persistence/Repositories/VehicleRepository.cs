@@ -1,13 +1,8 @@
 ﻿using Ardalis.Specification;
 using Ardalis.Specification.EntityFrameworkCore;
-using Inventory.Application.Models;
-using Inventory.Domain.AggregatesModel.BrandAggregate;
-using Inventory.Domain.AggregatesModel.ModelAggregate;
-using Inventory.Domain.AggregatesModel.VariantAggreate;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
 using Inventory.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace Inventory.Infrastructure.Persistence.Repositories;
 

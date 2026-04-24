@@ -1,8 +1,4 @@
-﻿using MassTransit.DependencyInjection;
-using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MediatR;
 using User.Domain.AggregatesModel.ApplicationUserAggregate;
 
 namespace User.Application.Features.Users.Queries.GetUser;

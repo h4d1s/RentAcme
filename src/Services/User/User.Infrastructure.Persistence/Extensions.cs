@@ -1,15 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Persistence;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using User.Application.Infrastructure.Persistence;
 using User.Domain.AggregatesModel.ApplicationUserAggregate;
 using User.Domain.Common;
@@ -25,7 +19,8 @@ public static class Extensions
         IConfiguration configuration)
     {
         // Entity Framework
-        services.AddDbContext<ApplicationUserDbContext>(options => {
+        services.AddDbContext<ApplicationUserDbContext>(options =>
+        {
             options.UseSqlServer(
                 configuration.GetConnectionString("UserDbContext") ??
                     throw new InvalidOperationException("Connection string 'UserDbContext' not found.")

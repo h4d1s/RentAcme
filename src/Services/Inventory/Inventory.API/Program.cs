@@ -1,14 +1,7 @@
-using Asp.Versioning;
-using HealthChecks.UI.Client;
 using Inventory.API;
-using Inventory.API.Middleware;
 using Inventory.Application;
 using Inventory.Infrastructure;
 using Inventory.Infrastructure.Persistence;
-using MassTransit.Futures;
-using Microsoft.Extensions.Options;
-using Microsoft.OpenApi;
-using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,5 +1,4 @@
-﻿using Ardalis.Specification;
-using Catalog.Domain.Common;
+﻿using Catalog.Domain.Common;
 
 namespace Reservation.Domain.Common;
 

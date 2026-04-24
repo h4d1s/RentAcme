@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
 using Common.Models;
-using Inventory.Application.Exceptions;
 using Inventory.Application.Models;
 using Inventory.Application.Specifications.Vehicles;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
-using Inventory.Domain.Common;
 using MediatR;
 
 namespace Inventory.Application.Features.Vehicles.Queries.GetVehicleList;

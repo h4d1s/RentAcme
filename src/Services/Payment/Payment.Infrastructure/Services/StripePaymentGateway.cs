@@ -1,16 +1,7 @@
-﻿using EventBus.Events;
-using EventBus.Services;
-using GrpcIntegrationHelpers.Models;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Payment.Application.Infrastructure.Services;
 using Payment.Application.Models;
 using Stripe;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Payment.Infrastructure.Services;
 
@@ -78,7 +69,7 @@ public class StripePaymentGateway : IPaymentGateway
         {
             throw;
         }
-        
+
         return customerModel;
     }
 
@@ -100,8 +91,8 @@ public class StripePaymentGateway : IPaymentGateway
         }
         catch (Exception ex)
         {
-           _logger.LogInformation($"An error occurred during customer creation, {ex}");
-           return false;
+            _logger.LogInformation($"An error occurred during customer creation, {ex}");
+            return false;
         }
     }
 }

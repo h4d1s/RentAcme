@@ -1,16 +1,9 @@
 ﻿using EventBus.Commands;
 using EventBus.Events;
+using GrpcIntegrationHelpers.ClientServices;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using Payment.Application.Infrastructure.Services;
-using Payment.Infrastructure.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GrpcIntegrationHelpers.ClientServices;
-using EventBus.Events.Interfaces;
 
 namespace Payment.Infrastructure.IntegrationEvents.EventHandling;
 

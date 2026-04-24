@@ -1,8 +1,6 @@
 ﻿using Inventory.Application.Exceptions;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
-using Inventory.Domain.Common;
 using MediatR;
-using System.ComponentModel.DataAnnotations;
 
 namespace Inventory.Application.Features.Vehicles.Commands.DeleteVehicle;
 

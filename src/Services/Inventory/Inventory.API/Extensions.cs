@@ -1,17 +1,6 @@
 ﻿using Asp.Versioning;
-using Diagnostics;
-using HealthChecks.UI.Client;
 using Inventory.API.Middleware;
-using Inventory.Application.Infrastructure.Persistence;
-using Logging;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using Serilog;
-using System.Security.Claims;
 
 namespace Inventory.API;
 
@@ -49,7 +38,7 @@ public static class Extensions
                 {
                     AuthorizationCode = new OpenApiOAuthFlow
                     {
-                        AuthorizationUrl = new Uri(configuration["Keycloak:AuthorizationUrl"] ),
+                        AuthorizationUrl = new Uri(configuration["Keycloak:AuthorizationUrl"]),
                         TokenUrl = new Uri(configuration["Keycloak:TokenUrl"]),
                         Scopes = new Dictionary<string, string>
                         {

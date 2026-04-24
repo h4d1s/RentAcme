@@ -1,8 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Net.NetworkInformation;
-using System.Text.Json.Serialization;
-using User.Domain.AggregatesModel.ApplicationUserAggregate;
 using User.Domain.AggregatesModel.ApplicationUserAggregate.Events;
 using User.Domain.Common;
 using User.Domain.Exceptions;
@@ -77,7 +73,7 @@ public class ApplicationUser
     public void UpdatePhoneNumber(string phoneNumber)
     {
         ValidatePhoneNumber(phoneNumber);
-        
+
         this.PhoneNumber = phoneNumber;
     }
 
