@@ -12,28 +12,28 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/Services/Inventory/Inventory.API/Inventory.API.csproj", "src/Services/Inventory/Inventory.API/"]
-COPY ["src/Services/Inventory/Inventory.Application/Inventory.Application.csproj", "src/Services/Inventory/Inventory.Application/"]
-COPY ["src/BuildingBlocks/Common/Common.csproj", "src/BuildingBlocks/Common/"]
-COPY ["src/BuildingBlocks/EventBus/EventBus.csproj", "src/BuildingBlocks/EventBus/"]
-COPY ["src/Services/Inventory/Inventory.Domain/Inventory.Domain.csproj", "src/Services/Inventory/Inventory.Domain/"]
-COPY ["src/Services/Inventory/Inventory.Infrastructure.Persistence/Inventory.Infrastructure.Persistence.csproj", "src/Services/Inventory/Inventory.Infrastructure.Persistence/"]
-COPY ["src/BuildingBlocks/Persistence/Persistence.csproj", "src/BuildingBlocks/Persistence/"]
-COPY ["src/Services/Inventory/Inventory.Infrastructure/Inventory.Infrastructure.csproj", "src/Services/Inventory/Inventory.Infrastructure/"]
-COPY ["src/BuildingBlocks/ConsulIntegrationHelpers/ConsulIntegrationHelpers.csproj", "src/BuildingBlocks/ConsulIntegrationHelpers/"]
-COPY ["src/BuildingBlocks/Diagnostics/Diagnostics.csproj", "src/BuildingBlocks/Diagnostics/"]
-COPY ["src/BuildingBlocks/GrpcIntegrationHelpers/GrpcIntegrationHelpers.csproj", "src/BuildingBlocks/GrpcIntegrationHelpers/"]
-COPY ["src/BuildingBlocks/Identity/Identity.csproj", "src/BuildingBlocks/Identity/"]
-COPY ["src/BuildingBlocks/Logging/Logging.csproj", "src/BuildingBlocks/Logging/"]
-RUN dotnet restore "./src/Services/Inventory/Inventory.API/Inventory.API.csproj"
+COPY ["Services/Inventory/Inventory.API/Inventory.API.csproj", "Services/Inventory/Inventory.API/"]
+COPY ["Services/Inventory/Inventory.Application/Inventory.Application.csproj", "Services/Inventory/Inventory.Application/"]
+COPY ["BuildingBlocks/Common/Common.csproj", "BuildingBlocks/Common/"]
+COPY ["BuildingBlocks/EventBus/EventBus.csproj", "BuildingBlocks/EventBus/"]
+COPY ["Services/Inventory/Inventory.Domain/Inventory.Domain.csproj", "Services/Inventory/Inventory.Domain/"]
+COPY ["Services/Inventory/Inventory.Infrastructure.Persistence/Inventory.Infrastructure.Persistence.csproj", "Services/Inventory/Inventory.Infrastructure.Persistence/"]
+COPY ["BuildingBlocks/Persistence/Persistence.csproj", "BuildingBlocks/Persistence/"]
+COPY ["Services/Inventory/Inventory.Infrastructure/Inventory.Infrastructure.csproj", "Services/Inventory/Inventory.Infrastructure/"]
+COPY ["BuildingBlocks/ConsulIntegrationHelpers/ConsulIntegrationHelpers.csproj", "BuildingBlocks/ConsulIntegrationHelpers/"]
+COPY ["BuildingBlocks/Diagnostics/Diagnostics.csproj", "BuildingBlocks/Diagnostics/"]
+COPY ["BuildingBlocks/GrpcIntegrationHelpers/GrpcIntegrationHelpers.csproj", "BuildingBlocks/GrpcIntegrationHelpers/"]
+COPY ["BuildingBlocks/Identity/Identity.csproj", "BuildingBlocks/Identity/"]
+COPY ["BuildingBlocks/Logging/Logging.csproj", "BuildingBlocks/Logging/"]
+RUN dotnet restore "Services/Inventory/Inventory.API/Inventory.API.csproj"
 COPY . .
-WORKDIR "/src/src/Services/Inventory/Inventory.API"
-RUN dotnet build "./Inventory.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/Services/Inventory/Inventory.API"
+RUN dotnet build "Inventory.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Inventory.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Inventory.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final

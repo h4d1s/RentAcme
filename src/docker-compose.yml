@@ -97,8 +97,8 @@ services:
   payment.api:
     image: ${DOCKER_REGISTRY-}paymentapi
     build:
-      context: ..
-      dockerfile: src/Services/Payment/Payment.API/Dockerfile
+      context: .
+      dockerfile: Services/Payment/Payment.API/Dockerfile
     networks:
       - rentacme_network
 
