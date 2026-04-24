@@ -2,9 +2,7 @@
 using Ardalis.Specification.EntityFrameworkCore;
 using Inventory.Domain.Common;
 using Inventory.Infrastructure.Persistence.Data;
-using MassTransit;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace Inventory.Infrastructure.Persistence.Repositories;
 

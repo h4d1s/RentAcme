@@ -60,7 +60,8 @@ public static class Extensions
                 busFactoryConfigurator.Host(
                     configuration["RabbitMQ:Hostname"],
                     "/",
-                    hostConfigurator => {
+                    hostConfigurator =>
+                    {
                         hostConfigurator.Username(configuration["RabbitMQ:Username"] ?? throw new ArgumentNullException("RabbitMQ username is not configured"));
                         hostConfigurator.Password(configuration["RabbitMQ:Password"] ?? throw new ArgumentNullException("RabbitMQ password is not configured"));
                     });

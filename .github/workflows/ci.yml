@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ "dev", "master" ]
+  push:
+    branches:
+      - "feature/**"
+      - "dev"
+      - "master"
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
+        cache: true
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build -c Release --no-restore
+
+    - name: Test
+      run: dotnet test -c Release --no-build

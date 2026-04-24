@@ -68,7 +68,7 @@ public class VehicleController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Put(Guid id, [FromBody] UpdateVehicleCommand command)
     {
-        if(id != command.Id)
+        if (id != command.Id)
         {
             return BadRequest("ID in URL does not match ID in body.");
         }

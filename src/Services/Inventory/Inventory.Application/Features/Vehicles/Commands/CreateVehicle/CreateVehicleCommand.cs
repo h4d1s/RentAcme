@@ -1,5 +1,4 @@
-﻿using Inventory.Domain.AggregatesModel.VehicleAggregate;
-using MediatR;
+﻿using MediatR;
 
 namespace Inventory.Application.Features.Vehicles.Commands.CreateVehicle;
 

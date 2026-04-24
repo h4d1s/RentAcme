@@ -1,6 +1,4 @@
-﻿using Ardalis.Specification;
-
-namespace User.Domain.Common;
+﻿namespace User.Domain.Common;
 
 public interface IRepository<T> where T : IAggregateRoot
 {

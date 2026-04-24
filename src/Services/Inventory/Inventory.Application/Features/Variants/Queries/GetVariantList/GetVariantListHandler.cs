@@ -1,15 +1,8 @@
 ﻿using AutoMapper;
 using Common.Models;
-using Inventory.Application.Models;
 using Inventory.Application.Specifications.Models;
 using Inventory.Domain.AggregatesModel.VariantAggreate;
-using Inventory.Domain.Common;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Inventory.Application.Features.Variants.Queries.GetVariantList;
 

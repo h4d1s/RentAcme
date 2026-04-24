@@ -1,6 +1,4 @@
-﻿using Reservation.Domain.AggregatesModel.BookingAggregate;
-
-namespace Reservation.Domain.Common;
+﻿namespace Reservation.Domain.Common;
 
 public interface IUnitOfWork : IDisposable
 {

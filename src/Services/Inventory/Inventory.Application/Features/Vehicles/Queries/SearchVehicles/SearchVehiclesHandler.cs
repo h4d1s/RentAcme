@@ -1,16 +1,9 @@
-﻿using Inventory.Application.Models;
-using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Inventory.Domain.AggregatesModel.VehicleAggregate;
-using Inventory.Domain.Common;
-using AutoMapper;
-using Inventory.Domain.AggregatesModel.BookingAggregate;
-using Inventory.Application.Specifications.Vehicles;
+﻿using AutoMapper;
 using Common.Models;
+using Inventory.Application.Models;
+using Inventory.Application.Specifications.Vehicles;
+using Inventory.Domain.AggregatesModel.VehicleAggregate;
+using MediatR;
 
 namespace Inventory.Application.Features.Vehicles.Queries.SearchVehicles;
 

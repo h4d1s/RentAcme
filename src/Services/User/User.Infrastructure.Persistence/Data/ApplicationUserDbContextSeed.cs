@@ -2,8 +2,6 @@
 using Microsoft.Extensions.Logging;
 using Persistence;
 using User.Domain.AggregatesModel.ApplicationUserAggregate;
-using User.Domain.Common;
-using User.Infrastructure.Persistence;
 using User.Infrastructure.Persistence.Data;
 
 namespace User.Application.Infrastructure.Persistence;

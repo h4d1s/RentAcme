@@ -20,7 +20,7 @@ public class BookingListPaginatedSpecification : Specification<Booking>
         Query.Where(i => i.PickupDate >= pickupDate, pickupDate.HasValue);
         Query.Where(i => i.ReturnDate <= returnDate, returnDate.HasValue);
         Query.Where(i => i.Status == status, status.HasValue);
-        
+
 
         if (!string.IsNullOrEmpty(orderBy))
         {

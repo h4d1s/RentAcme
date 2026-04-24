@@ -1,5 +1,4 @@
 ﻿using Reservation.Domain.AggregatesModel.BookingAggregate;
-using Reservation.Domain.Common;
 
 namespace Reservation.Application.Features.Bookings.Commands.CancelBooking;
 

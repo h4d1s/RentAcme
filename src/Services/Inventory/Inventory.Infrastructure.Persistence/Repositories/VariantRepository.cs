@@ -1,6 +1,5 @@
 ﻿using Ardalis.Specification;
 using Ardalis.Specification.EntityFrameworkCore;
-using Inventory.Domain.AggregatesModel.BrandAggregate;
 using Inventory.Domain.AggregatesModel.VariantAggreate;
 using Inventory.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;

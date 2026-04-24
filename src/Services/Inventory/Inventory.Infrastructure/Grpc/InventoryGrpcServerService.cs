@@ -1,8 +1,7 @@
 ﻿using Grpc.Core;
-using Inventory.Domain.Common;
-using Microsoft.Extensions.Logging;
-using Inventoryproto;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
+using Inventoryproto;
+using Microsoft.Extensions.Logging;
 
 namespace Inventory.Infrastructure.Grpc;
 

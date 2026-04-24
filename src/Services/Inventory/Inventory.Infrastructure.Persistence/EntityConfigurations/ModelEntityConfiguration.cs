@@ -1,12 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Inventory.Domain.AggregatesModel.ModelAggregate;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection.Metadata;
-using Inventory.Domain.AggregatesModel.ModelAggregate;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Inventory.Infrastructure.Persistence.EntityConfigurations;
 

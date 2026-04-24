@@ -1,12 +1,5 @@
 ﻿using Ardalis.Specification;
-using Inventory.Domain.AggregatesModel.BrandAggregate;
-using Inventory.Domain.AggregatesModel.VariantAggreate;
 using Inventory.Domain.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Inventory.Domain.AggregatesModel.BookingAggregate;
 

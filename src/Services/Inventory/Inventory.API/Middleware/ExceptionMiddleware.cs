@@ -1,8 +1,5 @@
 ﻿using Inventory.Application.Exceptions;
 using Reservation.API.Models;
-using System;
-using System.Globalization;
-using System.Net;
 using System.Text.Json;
 
 namespace Inventory.API.Middleware;
@@ -29,7 +26,7 @@ public class ExceptionMiddleware
         catch (Exception ex)
         {
             await HandleExceptionAsync(context, ex);
-        }            
+        }
     }
 
     private async Task HandleExceptionAsync(HttpContext httpContext, Exception ex)

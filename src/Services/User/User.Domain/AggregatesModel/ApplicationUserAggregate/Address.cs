@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection.Emit;
-using User.Domain.Common;
+﻿using User.Domain.Common;
 
 namespace User.Domain.AggregatesModel.ApplicationUserAggregate;
 

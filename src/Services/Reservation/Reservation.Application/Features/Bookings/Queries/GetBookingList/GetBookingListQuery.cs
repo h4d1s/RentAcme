@@ -1,5 +1,5 @@
-﻿using Reservation.Domain.AggregatesModel.BookingAggregate;
-using Common.Models;
+﻿using Common.Models;
+using Reservation.Domain.AggregatesModel.BookingAggregate;
 
 namespace Reservation.Application.Features.Bookings.Queries.GetBookingList;
 

@@ -1,5 +1,4 @@
-﻿using Inventory.Domain.AggregatesModel.BookingAggregate;
-using Inventory.Domain.AggregatesModel.ModelAggregate;
+﻿using Inventory.Domain.AggregatesModel.ModelAggregate;
 using Inventory.Domain.Common;
 using Inventory.Domain.Exceptions;
 using System.Text.Json.Serialization;

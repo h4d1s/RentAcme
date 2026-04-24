@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace User.Domain.Exceptions;
+﻿namespace User.Domain.Exceptions;
 
 public class ApplicationUserDomainException : Exception
 {

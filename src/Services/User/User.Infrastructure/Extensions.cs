@@ -64,7 +64,8 @@ public static class Extensions
                 busFactoryConfigurator.Host(
                     configuration["RabbitMQ:Hostname"],
                     "/",
-                    hostConfigurator => {
+                    hostConfigurator =>
+                    {
                         hostConfigurator.Username(
                             configuration["RabbitMQ:Username"] ??
                             throw new ArgumentNullException("RabbitMQ Username is not configured"));
@@ -88,7 +89,8 @@ public static class Extensions
 
         // Grpc
         services.AddGrpc(cfg => cfg.EnableDetailedErrors = true);
-        services.AddLogging(logging => {
+        services.AddLogging(logging =>
+        {
             logging.AddFilter("Grpc", Microsoft.Extensions.Logging.LogLevel.Debug);
         });
 
