@@ -12,28 +12,28 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/Services/Reservation/Reservation.API/Reservation.API.csproj", "src/Services/Reservation/Reservation.API/"]
-COPY ["src/Services/Reservation/Reservation.Application/Reservation.Application.csproj", "src/Services/Reservation/Reservation.Application/"]
-COPY ["src/BuildingBlocks/Common/Common.csproj", "src/BuildingBlocks/Common/"]
-COPY ["src/BuildingBlocks/EventBus/EventBus.csproj", "src/BuildingBlocks/EventBus/"]
-COPY ["src/BuildingBlocks/GrpcIntegrationHelpers/GrpcIntegrationHelpers.csproj", "src/BuildingBlocks/GrpcIntegrationHelpers/"]
-COPY ["src/BuildingBlocks/ConsulIntegrationHelpers/ConsulIntegrationHelpers.csproj", "src/BuildingBlocks/ConsulIntegrationHelpers/"]
-COPY ["src/BuildingBlocks/Identity/Identity.csproj", "src/BuildingBlocks/Identity/"]
-COPY ["src/Services/Reservation/Reservation.Domain/Reservation.Domain.csproj", "src/Services/Reservation/Reservation.Domain/"]
-COPY ["src/Services/Reservation/Reservation.Infrastructure.Persistence/Reservation.Infrastructure.Persistence.csproj", "src/Services/Reservation/Reservation.Infrastructure.Persistence/"]
-COPY ["src/BuildingBlocks/Persistence/Persistence.csproj", "src/BuildingBlocks/Persistence/"]
-COPY ["src/Services/Reservation/Reservation.Infrastructure/Reservation.Infrastructure.csproj", "src/Services/Reservation/Reservation.Infrastructure/"]
-COPY ["src/BuildingBlocks/Diagnostics/Diagnostics.csproj", "src/BuildingBlocks/Diagnostics/"]
-COPY ["src/BuildingBlocks/Logging/Logging.csproj", "src/BuildingBlocks/Logging/"]
-RUN dotnet restore "./src/Services/Reservation/Reservation.API/Reservation.API.csproj"
+COPY ["Services/Reservation/Reservation.API/Reservation.API.csproj", "Services/Reservation/Reservation.API/"]
+COPY ["Services/Reservation/Reservation.Application/Reservation.Application.csproj", "Services/Reservation/Reservation.Application/"]
+COPY ["BuildingBlocks/Common/Common.csproj", "BuildingBlocks/Common/"]
+COPY ["BuildingBlocks/EventBus/EventBus.csproj", "BuildingBlocks/EventBus/"]
+COPY ["BuildingBlocks/GrpcIntegrationHelpers/GrpcIntegrationHelpers.csproj", "BuildingBlocks/GrpcIntegrationHelpers/"]
+COPY ["BuildingBlocks/ConsulIntegrationHelpers/ConsulIntegrationHelpers.csproj", "BuildingBlocks/ConsulIntegrationHelpers/"]
+COPY ["BuildingBlocks/Identity/Identity.csproj", "BuildingBlocks/Identity/"]
+COPY ["Services/Reservation/Reservation.Domain/Reservation.Domain.csproj", "Services/Reservation/Reservation.Domain/"]
+COPY ["Services/Reservation/Reservation.Infrastructure.Persistence/Reservation.Infrastructure.Persistence.csproj", "Services/Reservation/Reservation.Infrastructure.Persistence/"]
+COPY ["BuildingBlocks/Persistence/Persistence.csproj", "BuildingBlocks/Persistence/"]
+COPY ["Services/Reservation/Reservation.Infrastructure/Reservation.Infrastructure.csproj", "Services/Reservation/Reservation.Infrastructure/"]
+COPY ["BuildingBlocks/Diagnostics/Diagnostics.csproj", "BuildingBlocks/Diagnostics/"]
+COPY ["BuildingBlocks/Logging/Logging.csproj", "BuildingBlocks/Logging/"]
+RUN dotnet restore "Services/Reservation/Reservation.API/Reservation.API.csproj"
 COPY . .
-WORKDIR "/src/src/Services/Reservation/Reservation.API"
-RUN dotnet build "./Reservation.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/Services/Reservation/Reservation.API"
+RUN dotnet build "Reservation.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Reservation.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Reservation.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
