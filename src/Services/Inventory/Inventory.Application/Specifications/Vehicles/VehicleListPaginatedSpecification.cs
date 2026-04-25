@@ -13,9 +13,7 @@ public class VehicleListPaginatedSpecification : Specification<Vehicle>
         decimal? rentalPricePerDayFrom,
         decimal? rentalPricePerDayTo)
     {
-        var querySpec = Query;
-
-        querySpec
+        Query
             .Where(i => i.RentalPricePerDay >= rentalPricePerDayFrom, rentalPricePerDayFrom.HasValue)
             .Where(i => i.RentalPricePerDay <= rentalPricePerDayTo, rentalPricePerDayTo.HasValue);
 
@@ -26,73 +24,73 @@ public class VehicleListPaginatedSpecification : Specification<Vehicle>
                 case "brand":
                     if (string.IsNullOrEmpty(order) || order.ToLower() != "desc")
                     {
-                        querySpec.OrderBy(x => x.Variant.Model.Brand.Name);
+                        Query.OrderBy(x => x.Variant.Model.Brand.Name);
                     }
                     else
                     {
-                        querySpec.OrderByDescending(x => x.Variant.Model.Brand.Name);
+                        Query.OrderByDescending(x => x.Variant.Model.Brand.Name);
                     }
                     break;
                 case "model":
                     if (string.IsNullOrEmpty(order) || order.ToLower() != "desc")
                     {
-                        querySpec.OrderBy(x => x.Variant.Model.Name);
+                        Query.OrderBy(x => x.Variant.Model.Name);
                     }
                     else
                     {
-                        querySpec.OrderByDescending(x => x.Variant.Model.Name);
+                        Query.OrderByDescending(x => x.Variant.Model.Name);
                     }
                     break;
                 case "variant":
                     if (string.IsNullOrEmpty(order) || order.ToLower() != "desc")
                     {
-                        querySpec.OrderBy(x => x.Variant.Name);
+                        Query.OrderBy(x => x.Variant.Name);
                     }
                     else
                     {
-                        querySpec.OrderByDescending(x => x.Variant.Name);
+                        Query.OrderByDescending(x => x.Variant.Name);
                     }
                     break;
                 case "price":
                     if (string.IsNullOrEmpty(order) || order.ToLower() != "desc")
                     {
-                        querySpec.OrderBy(x => x.RentalPricePerDay);
+                        Query.OrderBy(x => x.RentalPricePerDay);
                     }
                     else
                     {
-                        querySpec.OrderByDescending(x => x.RentalPricePerDay);
+                        Query.OrderByDescending(x => x.RentalPricePerDay);
                     }
                     break;
                 case "power":
                     if (string.IsNullOrEmpty(order) || order.ToLower() != "desc")
                     {
-                        querySpec.OrderBy(x => x.Variant.Power);
+                        Query.OrderBy(x => x.Variant.Power);
                     }
                     else
                     {
-                        querySpec.OrderByDescending(x => x.RentalPricePerDay);
+                        Query.OrderByDescending(x => x.RentalPricePerDay);
                     }
                     break;
                 default:
                     if (string.IsNullOrEmpty(order) || order.ToLower() != "desc")
                     {
-                        querySpec.OrderBy(x => x.Id);
+                        Query.OrderBy(x => x.Id);
                     }
                     else
                     {
-                        querySpec.OrderByDescending(x => x.Id);
+                        Query.OrderByDescending(x => x.Id);
                     }
                     break;
             }
         }
 
-        querySpec
+        Query
             .Include(o => o.Variant)
             .Include(o => o.Variant.Model.Brand);
 
         if (pageNumber.HasValue && pageSize.HasValue)
         {
-            querySpec
+            Query
                 .Skip((pageNumber.Value - 1) * pageSize.Value)
                 .Take(pageSize.Value);
         }

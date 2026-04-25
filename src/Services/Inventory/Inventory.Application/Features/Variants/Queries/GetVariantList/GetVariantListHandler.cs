@@ -9,14 +9,11 @@ namespace Inventory.Application.Features.Variants.Queries.GetVariantList;
 public class GetVariantListHandler : IRequestHandler<GetVariantListQuery, PagedResponse<Variant>>
 {
     private readonly IVariantRepository _variantRepository;
-    private readonly IMapper _mapper;
 
     public GetVariantListHandler(
-        IVariantRepository variantRepository,
-        IMapper mapper)
+        IVariantRepository variantRepository)
     {
         _variantRepository = variantRepository ?? throw new ArgumentNullException(nameof(variantRepository));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
     public async Task<PagedResponse<Variant>> Handle(GetVariantListQuery request, CancellationToken cancellationToken)

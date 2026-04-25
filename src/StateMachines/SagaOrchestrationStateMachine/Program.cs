@@ -34,7 +34,7 @@ builder.Services.AddMassTransit(cfg =>
 
 builder.Services.AddDbContext<SagaMachineContext>(options =>
 {
-    options.UseSqlServer(
+    options.UseNpgsql(
         builder.Configuration.GetConnectionString("SagaMachineContext") ??
             throw new InvalidOperationException("Connection string 'SagaMachineContext' not found.")
         );

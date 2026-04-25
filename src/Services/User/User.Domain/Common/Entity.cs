@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System.Text.Json.Serialization;
 
 namespace User.Domain.Common;
 
@@ -19,6 +20,7 @@ public abstract class Entity
     }
 
     private List<INotification> _domainEvents;
+    [JsonIgnore]
     public IReadOnlyCollection<INotification> DomainEvents => _domainEvents?.AsReadOnly();
 
     public void AddDomainEvent(INotification eventItem)

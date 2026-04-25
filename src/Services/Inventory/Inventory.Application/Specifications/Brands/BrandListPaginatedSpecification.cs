@@ -11,8 +11,6 @@ public class BrandListPaginatedSpecification : Specification<Brand>
         string? order,
         string? orderBy)
     {
-        var querySpec = Query;
-
         if (!string.IsNullOrEmpty(orderBy))
         {
             switch (orderBy.ToLower())
@@ -20,21 +18,21 @@ public class BrandListPaginatedSpecification : Specification<Brand>
                 case "name":
                     if (string.IsNullOrEmpty(order) || order.ToLower() == "desc")
                     {
-                        querySpec.OrderBy(x => x.Name);
+                        Query.OrderBy(x => x.Name);
                     }
                     else
                     {
-                        querySpec.OrderByDescending(x => x.Name);
+                        Query.OrderByDescending(x => x.Name);
                     }
                     break;
                 default:
                     if (string.IsNullOrEmpty(order) || order.ToLower() == "desc")
                     {
-                        querySpec.OrderBy(x => x.Id);
+                        Query.OrderBy(x => x.Id);
                     }
                     else
                     {
-                        querySpec.OrderByDescending(x => x.Id);
+                        Query.OrderByDescending(x => x.Id);
                     }
                     break;
             }
@@ -42,7 +40,7 @@ public class BrandListPaginatedSpecification : Specification<Brand>
 
         if (pageNumber.HasValue && pageSize.HasValue)
         {
-            querySpec
+            Query
                 .Skip((pageNumber.Value - 1) * pageSize.Value)
                 .Take(pageSize.Value);
         }
