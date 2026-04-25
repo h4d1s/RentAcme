@@ -19,7 +19,7 @@ grant_type=password&client_id=client&username=rent-acme-admin&password=Passw0rd!
 
 ### Get a User
 # @no-ssl-verify
-GET {{baseUrl}}/users/3fa85f64-5717-4562-b3fc-2c963f66afa6
+GET {{baseUrl}}/users/019dc31d-6b92-7e67-a57b-b381eddbb495
 Authorization: Bearer {{authToken}}
 Accept: {{contentType}}
 

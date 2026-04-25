@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -14,8 +15,8 @@ namespace Inventory.Infrastructure.Persistence.Migrations
                 name: "Brands",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -26,12 +27,12 @@ namespace Inventory.Infrastructure.Persistence.Migrations
                 name: "Models",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    YearOfProduction = table.Column<int>(type: "int", nullable: false),
-                    NumberOfSeats = table.Column<int>(type: "int", nullable: false),
-                    Category = table.Column<int>(type: "int", nullable: false),
-                    BrandId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    YearOfProduction = table.Column<int>(type: "integer", nullable: false),
+                    NumberOfSeats = table.Column<int>(type: "integer", nullable: false),
+                    Category = table.Column<int>(type: "integer", nullable: false),
+                    BrandId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -48,13 +49,13 @@ namespace Inventory.Infrastructure.Persistence.Migrations
                 name: "Variants",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Gearbox = table.Column<int>(type: "int", nullable: false),
-                    FuelType = table.Column<int>(type: "int", nullable: false),
-                    Power = table.Column<int>(type: "int", nullable: false),
-                    EngineSize = table.Column<int>(type: "int", nullable: false),
-                    ModelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Gearbox = table.Column<int>(type: "integer", nullable: false),
+                    FuelType = table.Column<int>(type: "integer", nullable: false),
+                    Power = table.Column<int>(type: "integer", nullable: false),
+                    EngineSize = table.Column<int>(type: "integer", nullable: false),
+                    ModelId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -71,10 +72,10 @@ namespace Inventory.Infrastructure.Persistence.Migrations
                 name: "Vehicles",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RentalPricePerDay = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
-                    RegistrationPlates = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    VariantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    RentalPricePerDay = table.Column<decimal>(type: "numeric(10,2)", precision: 10, scale: 2, nullable: false),
+                    RegistrationPlates = table.Column<string>(type: "text", nullable: false),
+                    VariantId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -91,11 +92,11 @@ namespace Inventory.Infrastructure.Persistence.Migrations
                 name: "Bookings",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    PickupDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ReturnDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    VehicleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    PickupDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ReturnDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    VehicleId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {

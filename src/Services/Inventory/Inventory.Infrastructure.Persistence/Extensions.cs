@@ -23,7 +23,7 @@ public static class Extensions
         IConfiguration configuration)
     {
         // Entity Framework
-        services.AddDbContext<InventoryDbContext>(options => options.UseSqlServer(
+        services.AddDbContext<InventoryDbContext>(options => options.UseNpgsql(
             configuration.GetConnectionString("InventoryDbContext") ??
                 throw new InvalidOperationException("Connection string 'InventoryDbContext' not found.")
             )

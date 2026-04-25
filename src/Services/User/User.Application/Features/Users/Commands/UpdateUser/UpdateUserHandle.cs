@@ -34,11 +34,11 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Unit>
         }
 
         var isAdmin = _identityService.GetUserRoles().Contains(UserRoles.Admin);
-        var currentUserId = _identityService.GetUserId();
+        var isOwner = request.Id.ToString() == _identityService.GetUserId();
 
-        if ((request.Id.ToString() != currentUserId) || !isAdmin)
+        if (!isOwner && !isAdmin)
         {
-            throw new UnauthorizedAccessException("You are not authorized to update this user.");
+            throw new UnauthorizedAccessException("You are not authorized to delete this user.");
         }
 
         user.UpdateEmail(request.Email);
