@@ -34,7 +34,7 @@ services:
     networks:
       - rentacme_network
 
-  keycloak_db:
+  keycloak-db:
     image: postgres:latest
     networks: 
       - rentacme_network
@@ -49,61 +49,76 @@ services:
     networks: 
       - rentacme_network
 
-  sql_server:
-    image: mcr.microsoft.com/mssql/server
-    networks: 
-      - rentacme_network
-
-  apigateway:
-    image: ${DOCKER_REGISTRY-}apigateway
+  api-gateway:
+    image: ${DOCKER_REGISTRY-}api-gateway
     build:
       context: .
       dockerfile: Gateways/APIGateway/Dockerfile
     networks:
       - rentacme_network
 
-  user.api:
-    image: ${DOCKER_REGISTRY-}userapi
+  user-api-db:
+    image: postgres:latest
+    networks: 
+      - rentacme_network
+
+  user-api:
+    image: ${DOCKER_REGISTRY-}user-api
     build:
       context: .
       dockerfile: Services/User/User.API/Dockerfile
     networks: 
       - rentacme_network
 
-  inventory.api:
-    image: ${DOCKER_REGISTRY-}inventoryapi
+  inventory-api-db:
+    image: postgres:latest
+    networks: 
+      - rentacme_network
+
+  inventory-api:
+    image: ${DOCKER_REGISTRY-}inventory-api
     build:
       context: .
       dockerfile: Services/Inventory/Inventory.API/Dockerfile
     networks: 
       - rentacme_network
 
-  reservation.api:
-    image: ${DOCKER_REGISTRY-}reservationapi
+  reservation-api-db:
+    image: postgres:latest
+    networks: 
+      - rentacme_network
+
+  reservation-api:
+    image: ${DOCKER_REGISTRY-}reservation-api
     build:
       context: .
       dockerfile: Services/Reservation/Reservation.API/Dockerfile
     networks: 
       - rentacme_network
 
-  notification.api:
-    image: ${DOCKER_REGISTRY-}notificationapi
+  notification-api:
+    image: ${DOCKER_REGISTRY-}notification-api
     build:
       context: .
       dockerfile: Services/Notification/Notification.API/Dockerfile
     networks: 
       - rentacme_network
 
-  payment.api:
-    image: ${DOCKER_REGISTRY-}paymentapi
+  payment-api:
+    image: ${DOCKER_REGISTRY-}payment-api
     build:
       context: .
       dockerfile: Services/Payment/Payment.API/Dockerfile
     networks:
       - rentacme_network
 
-  saga_orchestration_statemachine:
-    image: ${DOCKER_REGISTRY-}sagaorchestrationstatemachine
+  saga-orchestration-statemachine-db:
+    image: postgres:latest
+    networks: 
+      - rentacme_network
+
+  saga-orchestration-statemachine:
+    image: ${DOCKER_REGISTRY-}saga-orchestration-statemachine
     build:
       context: .
       dockerfile: StateMachines/SagaOrchestrationStateMachine/Dockerfile
@@ -112,11 +127,3 @@ services:
 
 networks:
   rentacme_network:
-
-
-
-
-
-
-
-

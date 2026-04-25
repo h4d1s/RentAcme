@@ -21,21 +21,21 @@ services:
     ports:
       - 8500:8500
 
-  keycloak_db:
-    container_name: keycloak_db
+  keycloak-db:
+    container_name: keycloak-db
     environment:
-      POSTGRES_DB: keycloak
-      POSTGRES_USER: keycloak
+      POSTGRES_DB: keycloak_db
+      POSTGRES_USER: rent-acme
       POSTGRES_PASSWORD: Passw0rd!
     ports:
-      - 5432:5432 
+      - 5410:5432 
 
   keycloak:
     container_name: keycloak
     environment:
     - KC_DB=postgres
-    - KC_DB_URL=jdbc:postgresql://keycloak_db:5432/keycloak
-    - KC_DB_USERNAME=keycloak
+    - KC_DB_URL=jdbc:postgresql://keycloak-db:5432/keycloak_db
+    - KC_DB_USERNAME=rent-acme
     - KC_DB_PASSWORD=Passw0rd!
     - KC_BOOTSTRAP_ADMIN_USERNAME=admin
     - KC_BOOTSTRAP_ADMIN_PASSWORD=Passw0rd!
@@ -58,7 +58,7 @@ services:
       - ./BuildingBlocks/configs/keycloak/realm-rent-acme.json:/opt/keycloak/data/import/realm-rent-acme.json
       - ./BuildingBlocks/configs/keycloak/keycloak-to-rabbit-3.0.5.jar:/opt/keycloak/providers/keycloak-to-rabbit-3.0.5.jar
     depends_on:
-      - keycloak_db
+      - keycloak-db
       - otel-collector
       - mailhog
 
@@ -92,7 +92,8 @@ services:
     container_name: loki
     ports:
       - 3100:3100
-    command: -config.file=/etc/loki/local-config.yaml
+    command:
+      - -config.file=/etc/loki/local-config.yaml
     volumes:
       - ./BuildingBlocks/configs/loki/loki.yml:/etc/loki/local-config.yaml
     depends_on:
@@ -114,7 +115,8 @@ services:
 
   otel-collector:
     container_name: otel-collector
-    command: [ "--config=/etc/otel-collector.yml" ]
+    command: 
+      - --config=/etc/otel-collector.yml
     volumes:
       - ./BuildingBlocks/configs/otel-collector/otel-collector.yml:/etc/otel-collector.yml
     ports:
@@ -131,16 +133,8 @@ services:
       - loki
       - tempo
 
-  sql_server:
-    container_name: sql_server
-    environment:
-      ACCEPT_EULA: Y
-      MSSQL_SA_PASSWORD: Passw0rd!
-    ports:
-      - 1401:1433
-
-  apigateway:
-    container_name: apigateway
+  api-gateway:
+    container_name: api-gateway
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
@@ -152,12 +146,21 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     depends_on:
-      - user.api
-      - inventory.api
-      - reservation.api
+      - user-api
+      - inventory-api
+      - reservation-api
 
-  user.api:
-    container_name: user.api
+  user-api-db:
+    container_name: user-api-db
+    environment:
+      POSTGRES_DB: user_db
+      POSTGRES_USER: rent-acme
+      POSTGRES_PASSWORD: Passw0rd!
+    ports:
+      - 5420:5432
+
+  user-api:
+    container_name: user-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
@@ -172,12 +175,21 @@ services:
       - 5212:8081
     depends_on:
       - consul
-      - sql_server
+      - user-api-db
       - rabbitmq
       - keycloak 
 
-  inventory.api:
-    container_name: inventory.api
+  inventory-api-db:
+    container_name: inventory-api-db
+    environment:
+      POSTGRES_DB: inventory_db
+      POSTGRES_USER: rent-acme
+      POSTGRES_PASSWORD: Passw0rd!
+    ports:
+      - 5430:5432
+
+  inventory-api:
+    container_name: inventory-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
@@ -190,11 +202,20 @@ services:
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     depends_on:
       - consul
-      - sql_server
+      - inventory-api-db
       - rabbitmq
 
-  reservation.api:
-    container_name: reservation.api
+  reservation-api-db:
+    container_name: reservation-api-db
+    environment:
+      POSTGRES_DB: reservation_db
+      POSTGRES_USER: rent-acme
+      POSTGRES_PASSWORD: Passw0rd!
+    ports:
+      - 5440:5432
+
+  reservation-api:
+    container_name: reservation-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
@@ -207,11 +228,11 @@ services:
       - 5232:8081
     depends_on:
       - consul
-      - sql_server
+      - reservation-api-db
       - rabbitmq
 
-  notification.api:
-    container_name: notification.api
+  notification-api:
+    container_name: notification-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
@@ -224,11 +245,10 @@ services:
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     depends_on:
       - consul
-      - sql_server
-      - rabbitmq
+      - rabbitmq 
 
-  payment.api:
-    container_name: payment.api
+  payment-api:
+    container_name: payment-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
@@ -241,14 +261,22 @@ services:
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     depends_on:
       - consul
-      - sql_server
       - rabbitmq
 
-  saga_orchestration_statemachine:
-    container_name: saga_orchestration_statemachine
+  saga-orchestration-statemachine-db:
+    container_name: saga-orchestration-statemachine-db
+    environment:
+      POSTGRES_DB: saga_machine_db
+      POSTGRES_USER: rent-acme
+      POSTGRES_PASSWORD: Passw0rd!
+    ports:
+      - 5450:5432
+
+  saga-orchestration-statemachine:
+    container_name: saga-orchestration-statemachine
     environment:
       - DOTNET_ENVIRONMENT=Development
     depends_on:
       - consul
-      - sql_server
+      - saga-orchestration-statemachine-db
       - rabbitmq

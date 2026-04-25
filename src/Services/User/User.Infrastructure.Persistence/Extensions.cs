@@ -21,7 +21,7 @@ public static class Extensions
         // Entity Framework
         services.AddDbContext<ApplicationUserDbContext>(options =>
         {
-            options.UseSqlServer(
+            options.UseNpgsql(
                 configuration.GetConnectionString("UserDbContext") ??
                     throw new InvalidOperationException("Connection string 'UserDbContext' not found.")
                 );

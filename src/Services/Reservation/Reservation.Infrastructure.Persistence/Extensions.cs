@@ -18,7 +18,7 @@ public static class Extensions
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Extensions).Assembly));
 
         // Entity Framework
-        services.AddDbContext<ReservationDbContext>(options => options.UseSqlServer(
+        services.AddDbContext<ReservationDbContext>(options => options.UseNpgsql(
             configuration.GetConnectionString("ReservationDbContext") ??
                 throw new InvalidOperationException("Connection string 'ReservationDbContext' not found.")
             )

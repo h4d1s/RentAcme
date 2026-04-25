@@ -9,14 +9,11 @@ namespace Inventory.Application.Features.Models.Queries.GetModelList;
 public class GetModelListHandler : IRequestHandler<GetModelListQuery, PagedResponse<Model>>
 {
     private readonly IModelRepository _modelRepository;
-    private readonly IMapper _mapper;
 
     public GetModelListHandler(
-        IModelRepository modelRepository,
-        IMapper mapper)
+        IModelRepository modelRepository)
     {
         _modelRepository = modelRepository;
-        _mapper = mapper;
     }
 
     public async Task<PagedResponse<Model>> Handle(GetModelListQuery request, CancellationToken cancellationToken)

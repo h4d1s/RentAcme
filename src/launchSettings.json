@@ -4,13 +4,13 @@
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
       "serviceActions": {
-        "apigateway": "StartDebugging",
-        "inventory.api": "StartDebugging",
-        "reservation.api": "StartDebugging",
-        "user.api": "StartDebugging",
-        "notification.api": "StartDebugging",
-        "saga_orchestration_statemachine": "StartDebugging",
-        "payment.api": "StartDebugging"
+        "api-gateway": "StartDebugging",
+        "inventory-api": "StartDebugging",
+        "reservation-api": "StartDebugging",
+        "user-api": "StartDebugging",
+        "notification-api": "StartDebugging",
+        "saga-orchestration-statemachine": "StartDebugging",
+        "payment-api": "StartDebugging"
       }
     }
   }
