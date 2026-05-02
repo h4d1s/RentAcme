@@ -28,7 +28,7 @@ public class VariantController : ControllerBase
 
     // POST api/variants
     [HttpPost]
-    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Policy = Permissions.Variants.Create)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post([FromBody] CreateVariantCommand command)
@@ -61,7 +61,7 @@ public class VariantController : ControllerBase
 
     // PUT api/variants
     [HttpPut("{id}")]
-    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Policy = $"{Permissions.Variants.UpdateOwn},{Permissions.Variants.UpdateAny}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -78,7 +78,7 @@ public class VariantController : ControllerBase
 
     // DELETE api/variants/{id}
     [HttpDelete("{id}")]
-    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Policy = $"{Permissions.Variants.DeleteOwn},{Permissions.Variants.DeleteAny}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id)

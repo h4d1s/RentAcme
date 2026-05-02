@@ -36,9 +36,9 @@ public class GetBookingListHandler : IRequestHandler<GetBookingListQuery, PagedR
             throw new BadRequestException("User not found.");
         }
 
-        var isAdmin = currentRoles.Contains(UserRoles.Admin);
+        var permissions = _identityService.GetUserPermissions();
 
-        if (!isAdmin)
+        if (!permissions.Contains(Permissions.Bookings.ViewAny))
         {
             filterUserIds = new List<Guid> { user.Id };
         }

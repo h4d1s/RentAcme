@@ -40,12 +40,13 @@ public class GetBookingHandler : IRequestHandler<GetBookingQuery, Booking>
             throw new BadRequestException("User not found.");
         }
 
+        var permissions = _identityService.GetUserPermissions();
         var isOwner = booking.UserId == user.Id;
-        var isAdmin = currentRoles.Contains(UserRoles.Admin);
+        var canView = isOwner || permissions.Contains(Permissions.Bookings.ViewAny);
 
-        if (!isOwner && !isAdmin)
+        if (!canView)
         {
-            throw new AuthenticationException("You are not authorized to reserve this booking.");
+            throw new AuthenticationException("You are not authorized to view this booking.");
         }
 
         return booking;

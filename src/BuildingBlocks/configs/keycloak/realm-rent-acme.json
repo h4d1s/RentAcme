@@ -7,6 +7,8 @@
   "duplicateEmailsAllowed": false,
 
   "eventsEnabled": true,
+  "adminEventsEnabled": true,
+  "adminEventsDetailsEnabled": true,
   "eventsListeners": [
     "jboss-logging",
     "keycloak-to-rabbitmq"
@@ -19,8 +21,6 @@
     "DELETE_USER",
     "UPDATE_PROFILE"
   ],
-  "adminEventsEnabled": true,
-  "adminEventsDetailsEnabled": true,
 
   "smtpServer": {
     "host": "mailhog",
@@ -32,18 +32,236 @@
     "starttls": "false"
   },
 
+  "defaultRoles": [ "Customer" ],
+
   "roles": {
     "realm": [
       {
-        "name": "Admin",
-        "description": "Full access to all resources"
+        "name": "Customer",
+        "description": "Customer",
+        "composites": {
+          "client": {
+            "rent-acme-api": [
+              "booking.reserve",
+              "booking.cancel",
+              "booking.view.own"
+            ]
+          }
+        }
       },
       {
-        "name": "Customer",
-        "description": "Customer"
+        "name": "Admin",
+        "description": "Full access to all resources",
+        "composites": {
+          "client": {
+            "rent-acme-api": [
+              "booking.reserve",
+              "booking.cancel",
+              "booking.complete",
+              "booking.view.own",
+              "booking.view.any",
+
+              "brand.create",
+              "brand.update.own",
+              "brand.update.any",
+              "brand.delete.own",
+              "brand.delete.any",
+              "model.create",
+              "model.update.own",
+              "model.update.any",
+              "model.delete.own",
+              "model.delete.any",
+              "variant.create",
+              "variant.update.own",
+              "variant.update.any",
+              "variant.delete.own",
+              "variant.delete.any",
+              "vehicle.create",
+              "vehicle.update.own",
+              "vehicle.update.any",
+              "vehicle.delete.own",
+              "vehicle.delete.any",
+
+              "user.view.own",
+              "user.view.any",
+              "user.update.own",
+              "user.update.any",
+              "user.delete.own",
+              "user.delete.any"
+            ]
+          }
+        }
       }
-    ]
+    ],
+    "client": {
+      "rent-acme-api": [
+        { "name": "booking.reserve" },
+        { "name": "booking.cancel" },
+        { "name": "booking.complete" },
+        { "name": "booking.view.own" },
+        { "name": "booking.view.any" },
+
+        { "name": "brand.create" },
+        { "name": "brand.update.own" },
+        { "name": "brand.update.any" },
+        { "name": "brand.delete.own" },
+        { "name": "brand.delete.any" },
+        { "name": "model.create" },
+        { "name": "model.update.own" },
+        { "name": "model.update.any" },
+        { "name": "model.delete.own" },
+        { "name": "model.delete.any" },
+        { "name": "variant.create" },
+        { "name": "variant.update.own" },
+        { "name": "variant.update.any" },
+        { "name": "variant.delete.own" },
+        { "name": "variant.delete.any" },
+        { "name": "vehicle.create" },
+        { "name": "vehicle.update.own" },
+        { "name": "vehicle.update.any" },
+        { "name": "vehicle.delete.own" },
+        { "name": "vehicle.delete.any" },
+
+        { "name": "user.view.own" },
+        { "name": "user.view.any" },
+        { "name": "user.update.own" },
+        { "name": "user.update.any" },
+        { "name": "user.delete.own" },
+        { "name": "user.delete.any" }
+      ]
+    }
   },
+  "clientScopes": [
+    {
+      "name": "openid",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true"
+      },
+      "protocolMappers": [
+        {
+          "name": "sub",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "config": {
+            "user.attribute": "id",
+            "claim.name": "sub",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "email",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true"
+      },
+      "protocolMappers": [
+        {
+          "name": "email",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "config": {
+            "user.attribute": "email",
+            "claim.name": "email",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "profile",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true"
+      },
+      "protocolMappers": [
+        {
+          "name": "full name",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-full-name-mapper",
+          "config": {
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "username",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "config": {
+            "user.attribute": "username",
+            "claim.name": "preferred_username",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "roles",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true"
+      },
+      "protocolMappers": [
+        {
+          "name": "roles-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "config": {
+            "claim.name": "roles",
+            "access.token.claim": "true",
+            "multivalued": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "rent-acme-web-scope",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.scope": "true"
+      },
+      "protocolMappers": [
+        {
+          "name": "permissions-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-client-role-mapper",
+          "config": {
+            "claim.name": "permissions",
+            "access.token.claim": "true",
+            "multivalued": "true",
+            "usermodel.clientRoleMapping.clientId": "rent-acme-api"
+          }
+        },
+        {
+          "name": "audience-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "rent-acme-aud",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+
   "users": [
     {
       "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
@@ -76,116 +294,45 @@
         }
       ],
       "realmRoles": [ "Customer" ]
-    },
-
-    {
-      "username": "microservice-cli",
-      "enabled": true,
-      "totp": false,
-      "emailVerified": false,
-      "serviceAccountClientId": "microservice-client",
-      "realmRoles": [ "Admin" ],
-      "clientRoles": {
-        "realm-management": [
-          "manage-users",
-          "query-users",
-          "view-users"
-        ]
-      },
-      "notBefore": 0,
-      "access": {
-        "view": true,
-        "configure": true,
-        "manage": true
-      }
     }
   ],
 
   "clients": [
     {
-      "clientId": "client",
-      "name": "App",
+      "clientId": "rent-acme-web",
+      "name": "Rent Acme Web Frontend",
       "enabled": true,
       "publicClient": true,
-      "serviceAccountsEnabled": true,
       "protocol": "openid-connect",
-      "standardFlowEnabled": true,
-      "implicitFlowEnabled": false,
-      "directAccessGrantsEnabled": true,
-      "fullScopeAllowed": true,
       "redirectUris": [
-        "http://localhost:5211/swagger/oauth2-redirect.html",
-        "https://localhost:5212/swagger/oauth2-redirect.html",
-        "http://localhost:5221/swagger/oauth2-redirect.html",
-        "https://localhost:5222/swagger/oauth2-redirect.html",
-        "http://localhost:5231/swagger/oauth2-redirect.html",
-        "https://localhost:5232/swagger/oauth2-redirect.html"
+        "https://oauth.pstmn.io/v1/callback"
       ],
       "webOrigins": [
         "+"
       ],
-      "protocolMappers": [
-        {
-          "name": "audience-mapper",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-audience-mapper",
-          "config": {
-            "included.client.audience": "account",
-            "id.token.claim": "false",
-            "access.token.claim": "true"
-          }
-        },
-        {
-          "name": "flattened-roles",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-usermodel-realm-role-mapper",
-          "consentRequired": false,
-          "config": {
-            "multivalued": "true",
-            "userinfo.token.claim": "true",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "claim.name": "role",
-            "jsonType.label": "String"
-          }
-        }
+      "defaultClientScopes": [
+        "openid",
+        "profile",
+        "email",
+        "roles",
+        "rent-acme-web-scope"
       ]
     },
     {
-      "clientId": "microservice-client",
+      "clientId": "rent-acme-api",
+      "name": "Rent Acme Backend Service",
       "enabled": true,
+      "publicClient": false,
+      "serviceAccountsEnabled": true,
+      "protocol": "openid-connect",
       "clientAuthenticatorType": "client-secret",
       "secret": "e4a7066a-7724-42b1-912b-3134608a0022",
-      "serviceAccountsEnabled": true,
-      "publicClient": false,
-      "protocol": "openid-connect",
-      "directAccessGrantsEnabled": true,
-      "fullScopeAllowed": true,
-      "protocolMappers": [
-        {
-          "name": "audience-mapper",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-audience-mapper",
-          "config": {
-            "included.client.audience": "account",
-            "id.token.claim": "false",
-            "access.token.claim": "true"
-          }
-        },
-        {
-          "name": "flattened-roles",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-usermodel-realm-role-mapper",
-          "consentRequired": false,
-          "config": {
-            "multivalued": "true",
-            "userinfo.token.claim": "true",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "claim.name": "role",
-            "jsonType.label": "String"
-          }
-        }
+      "defaultClientScopes": [
+        "openid",
+        "profile",
+        "email",
+        "roles",
+        "rent-acme-web-scope"
       ]
     }
   ]

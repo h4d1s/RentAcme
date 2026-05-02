@@ -16,6 +16,7 @@ public class Variant
     public int EngineSize { get; private set; }
 
     public Guid ModelId { get; private set; }
+    [JsonIgnore]
     public Model Model { get; private set; } = null!;
 
     [JsonIgnore]

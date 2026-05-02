@@ -29,7 +29,7 @@ public class VehicleController : ControllerBase
 
     // POST api/vehicles
     [HttpPost]
-    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Policy = Permissions.Vehicles.Create)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post([FromBody] CreateVehicleCommand command)
@@ -62,7 +62,7 @@ public class VehicleController : ControllerBase
 
     // PUT api/vehicles
     [HttpPut("{id}")]
-    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Policy = $"{Permissions.Vehicles.UpdateOwn},{Permissions.Vehicles.UpdateAny}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -79,7 +79,7 @@ public class VehicleController : ControllerBase
 
     // DELETE api/vehicles/{id}
     [HttpDelete("{id}")]
-    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Policy = $"{Permissions.Vehicles.DeleteOwn},{Permissions.Vehicles.DeleteAny}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id)

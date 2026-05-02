@@ -38,15 +38,13 @@ public class ReserveBookingHandler : IRequestHandler<ReserveBookingCommand, Guid
         }
 
         var currentUserId = _identityService.GetUserId() ?? throw new BadRequestException("User not authenticated.");
-        var currentRoles = _identityService.GetUserRoles() ?? throw new BadRequestException("User role not found.");
 
         var user = await _userGrpcClientService.GetUserByExternalIdAsync(currentUserId) ??
             throw new BadRequestException("User not found.");
 
         var isOwner = request.UserId == user.Id;
-        var isAdmin = currentRoles.Contains(UserRoles.Admin);
 
-        if (!isOwner && !isAdmin)
+        if (!isOwner)
         {
             throw new AuthenticationException("You are not authorized to reserve this booking.");
         }
