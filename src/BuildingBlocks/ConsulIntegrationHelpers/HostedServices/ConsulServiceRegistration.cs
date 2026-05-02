@@ -45,8 +45,8 @@ public class ConsulServiceRegistration : IHostedService
                 Interval = TimeSpan.FromSeconds(10),
                 Timeout = TimeSpan.FromSeconds(5),
                 DeregisterCriticalServiceAfter = TimeSpan.FromMinutes(1),
-                TLSSkipVerify = true,
-            }
+                TLSSkipVerify = true
+            },
         };
 
         _logger.LogInformation($"Registering {_serviceName} with Consul.");

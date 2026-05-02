@@ -32,7 +32,7 @@ public class IdentityService : IIdentityService
         var user = _httpContextAccessor.HttpContext?.User;
         if (user == null)
         {
-            return new List<string>();
+            return [];
         }
 
         return user
@@ -41,12 +41,23 @@ public class IdentityService : IIdentityService
             .ToList();
     }
 
-    public string? GetToken()
+    public List<string> GetUserPermissions()
     {
-        return _httpContextAccessor
-            .HttpContext?
-            .Request
-            .Headers["Authorization"]
-            .ToString()["Bearer ".Length..].Trim();
+        var user = _httpContextAccessor.HttpContext?.User;
+        if (user == null)
+        {
+            return [];
+        }
+
+        var permissionsClaim = user.FindAll("permissions");
+
+        if (permissionsClaim is null)
+        {
+            return [];
+        }
+
+        return permissionsClaim
+            .Select(c => c.Value)
+            .ToList();
     }
 }

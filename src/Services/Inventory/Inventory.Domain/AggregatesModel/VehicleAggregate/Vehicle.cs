@@ -14,6 +14,7 @@ public class Vehicle
     public string RegistrationPlates { get; private set; } = string.Empty;
 
     public Guid VariantId { get; private set; }
+    [JsonIgnore]
     public Variant Variant { get; } = null!;
 
     private readonly List<Booking> _bookings;

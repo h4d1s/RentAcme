@@ -8,6 +8,7 @@ using HealthChecks.UI.Client;
 using Identity;
 using Logging;
 using MassTransit;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Configuration;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Reservation.Infrastructure.Security;
 
 namespace Reservation.Infrastructure;
 
@@ -27,10 +29,14 @@ public static class Extensions
     {
         // DI
 
+        // Security
+        services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+        services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
+
         // Health
         services.AddHealthChecks()
             .AddCheck("self", () => HealthCheckResult.Healthy())
-            .AddSqlServer(
+            .AddNpgSql(
                 configuration["ConnectionStrings:ReservationDbContext"] ?? throw new ArgumentNullException("ReservationDbContext is not configured"),
                 name: "ReservationDB-check",
                 tags: new string[] { "reservationdb" });

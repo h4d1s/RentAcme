@@ -16,6 +16,7 @@ namespace User.API.Controllers;
 [ApiVersion(1)]
 [Route("api/v{v:apiVersion}/users")]
 [ApiController]
+[Authorize]
 public class UserController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -32,7 +33,7 @@ public class UserController : ControllerBase
     /// <response code="200">Returns the user details.</response>
     /// <response code="404">User not found.</response>
     [HttpGet("{id}")]
-    [Authorize]
+    [Authorize(Policy = $"{Permissions.Users.ViewOwn},{Permissions.Users.ViewAny}")]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get(Guid id)
@@ -51,7 +52,7 @@ public class UserController : ControllerBase
     /// <response code="400">Validation error or mismatched ID.</response>
     /// <response code="404">User not found.</response>
     [HttpPut("{id}")]
-    [Authorize]
+    [Authorize(Policy = $"{Permissions.Users.UpdateOwn},{Permissions.Users.UpdateAny}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -70,7 +71,7 @@ public class UserController : ControllerBase
     /// <response code="404">User not found.</response>
     /// <response code="500">Internal server error.</response>
     [HttpDelete("{id}")]
-    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Policy = $"{Permissions.Users.DeleteOwn},{Permissions.Users.DeleteAny}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

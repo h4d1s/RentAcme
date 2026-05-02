@@ -28,7 +28,7 @@ public class BrandController : ControllerBase
 
     // POST api/brands
     [HttpPost]
-    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Policy = Permissions.Brands.Create)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post([FromBody] CreateBrandCommand command)
@@ -61,7 +61,7 @@ public class BrandController : ControllerBase
 
     // PUT api/brands/{id}
     [HttpPut("{id}")]
-    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Policy = $"{Permissions.Brands.UpdateOwn},{Permissions.Brands.UpdateAny}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -78,7 +78,7 @@ public class BrandController : ControllerBase
 
     // DELETE api/brands/{id}
     [HttpDelete("{id}")]
-    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Policy = $"{Permissions.Brands.DeleteOwn},{Permissions.Brands.DeleteAny}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id)

@@ -15,6 +15,7 @@ public class Model
     public Category Category { get; private set; }
 
     public Guid? BrandId { get; private set; }
+    [JsonIgnore]
     public Brand Brand { get; } = null!;
 
     private readonly List<Variant> _variants;

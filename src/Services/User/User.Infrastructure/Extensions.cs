@@ -7,6 +7,7 @@ using HealthChecks.UI.Client;
 using Identity;
 using Logging;
 using MassTransit;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Routing;
@@ -17,6 +18,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using User.Infrastructure.Grpc;
 using User.Infrastructure.IntegrationEvents.EventHandling;
+using User.Infrastructure.Security;
 
 namespace User.Infrastructure;
 
@@ -31,10 +33,14 @@ public static class Extensions
         var hcBuilder = services.AddHealthChecks();
         hcBuilder
             .AddCheck("self", () => HealthCheckResult.Healthy())
-            .AddSqlServer(
+            .AddNpgSql(
                 configuration["ConnectionStrings:UserDbContext"] ?? throw new ArgumentNullException("User Db context is not configured"),
                 name: "UserDB-check",
                 tags: new string[] { "userdb" });
+        
+        // Security
+        services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+        services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
         // Consul
         services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>

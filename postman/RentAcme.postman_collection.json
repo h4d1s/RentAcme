@@ -1,0 +1,1046 @@
+{
+  "info": {
+    "_postman_id": "d564bfa5-cdd7-46b2-90be-19209815f648",
+    "name": "RentAcme",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "31133590"
+  },
+  "item": [
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "Reserve Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "user",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vehicleId\": \"{{vehicleId}}\",\n  \"userId\": \"{{userId}}\",\n  \"pickupDate\": \"2026-06-20T10:00:00Z\",\n  \"returnDate\": \"2026-06-25T10:00:00Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{version}}/reservations/bookings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{version}}",
+                "reservations",
+                "bookings"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Bookings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "user",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{version}}/reservations/bookings?Page=1&PageSize=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{version}}",
+                "reservations",
+                "bookings"
+              ],
+              "query": [
+                {
+                  "key": "Page",
+                  "value": "1"
+                },
+                {
+                  "key": "PageSize",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Booking by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "user",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{version}}/reservations/bookings/{{targetBookingId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{version}}",
+                "reservations",
+                "bookings",
+                "{{targetBookingId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Complete Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "user",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookingId\": \"{{targetBookingId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{version}}/reservations/bookings/complete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{version}}",
+                "reservations",
+                "bookings",
+                "complete"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "user",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookingId\": \"{{targetBookingId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{version}}/reservations/bookings/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{version}}",
+                "reservations",
+                "bookings",
+                "cancel"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "user",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{version}}/accounts/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{version}}",
+                "accounts",
+                "users",
+                "{{userId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "user",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"{{userIdToUpdate}}\",\n  \"email\": \"customer2@rent-acme.com\",\n  \"userName\": \"jdoe\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"phoneNumber\": \"+1234567890\",\n  \"street\": \"123 Main St\",\n  \"city\": \"Washington\",\n  \"postalCode\": \"12345\",\n  \"country\": \"USA\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{version}}/accounts/users/{{userIdToUpdate}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{version}}",
+                "accounts",
+                "users",
+                "{{userIdToUpdate}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "user",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{version}}/accounts/users/{{userIdToUpdate}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{version}}",
+                "accounts",
+                "users",
+                "{{userIdToUpdate}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Inventory",
+      "item": [
+        {
+          "name": "Variants",
+          "item": [
+            {
+              "name": "Get All Variants",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ClientId",
+                    "value": "user",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/{{version}}/inventories/variants?Page=1&PageSize=10",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{version}}",
+                    "inventories",
+                    "variants"
+                  ],
+                  "query": [
+                    {
+                      "key": "Page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Variant",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"M3 xDrive\",\n  \"gearbox\": 1,\n  \"fuelType\": 0,\n  \"power\": 503,\n  \"engineSize\": 3000,\n  \"modelId\": \"{{modelId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/variants",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "variants"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Variant by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/variants/{{variantId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "variants",
+                    "{{variantId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Variant",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": \"{{variantId}}\",\n  \"name\": \"M3 xDrive Competition\",\n  \"gearbox\": 1,\n  \"fuelType\": 0,\n  \"power\": 510,\n  \"engineSize\": 3000,\n  \"modelId\": \"{{modelId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/variants",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "variants"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Variant",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/variants/{{variantId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "variants",
+                    "{{variantId}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Models",
+          "item": [
+            {
+              "name": "Get All Models",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ClientId",
+                    "value": "user",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/{{version}}/inventories/models?Page=1&PageSize=10",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{version}}",
+                    "inventories",
+                    "models"
+                  ],
+                  "query": [
+                    {
+                      "key": "Page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Model",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "ClientId",
+                    "value": "user",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"M3\",\n  \"yearOfProduction\": 2024,\n  \"numberOfSeats\": 5,\n  \"category\": 1,\n  \"brandId\": \"{{brandId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/{{version}}/inventories/models",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{version}}",
+                    "inventories",
+                    "models"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Model by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ClientId",
+                    "value": "user",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/{{version}}/inventories/models/{{modelId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{version}}",
+                    "inventories",
+                    "models",
+                    "{{modelId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Model",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "ClientId",
+                    "value": "user",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": \"{{modelId}}\",\n  \"name\": \"M3 Competition\",\n  \"yearOfProduction\": 2024,\n  \"numberOfSeats\": 4,\n  \"category\": 1,\n  \"brandId\": \"{{brandId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/{{version}}/inventories/models/{{modelId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{version}}",
+                    "inventories",
+                    "models",
+                    "{{modelId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Model",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "ClientId",
+                    "value": "user",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/{{version}}/inventories/models/{{modelId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{version}}",
+                    "inventories",
+                    "models",
+                    "{{modelId}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Brands",
+          "item": [
+            {
+              "name": "Get All Brands",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ClientId",
+                    "value": "user",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/{{version}}/inventories/brands?Page=1&PageSize=10&OrderBy=name&Order=asc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{version}}",
+                    "inventories",
+                    "brands"
+                  ],
+                  "query": [
+                    {
+                      "key": "Page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "10"
+                    },
+                    {
+                      "key": "OrderBy",
+                      "value": "name"
+                    },
+                    {
+                      "key": "Order",
+                      "value": "asc"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Brand",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "ClientId",
+                    "value": "user",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Tesla\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/{{version}}/inventories/brands",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{version}}",
+                    "inventories",
+                    "brands"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Brand by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ClientId",
+                    "value": "user",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/{{version}}/inventories/brands/{{brandId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{version}}",
+                    "inventories",
+                    "brands",
+                    "{{brandId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Brand",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "ClientId",
+                    "value": "user",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": \"{{brandId}}\",\n  \"name\": \"BYD\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/{{version}}/inventories/brands/{{brandId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{version}}",
+                    "inventories",
+                    "brands",
+                    "{{brandId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Brand",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "ClientId",
+                    "value": "user",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/{{version}}/inventories/brands/{{brandId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{version}}",
+                    "inventories",
+                    "brands",
+                    "{{brandId}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Vehicles",
+          "item": [
+            {
+              "name": "Get All Vehicles",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ClientId",
+                    "value": "user",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/{{version}}/inventories/vehicles?Page=1&PageSize=10",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{version}}",
+                    "inventories",
+                    "vehicles"
+                  ],
+                  "query": [
+                    {
+                      "key": "Page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Search Vehicles",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ClientId",
+                    "value": "user",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/{{version}}/inventories/vehicles/search?Gearbox=1&Category=1&Page=1&PageSize=10",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{version}}",
+                    "inventories",
+                    "vehicles",
+                    "search"
+                  ],
+                  "query": [
+                    {
+                      "key": "Gearbox",
+                      "value": "1"
+                    },
+                    {
+                      "key": "Category",
+                      "value": "1"
+                    },
+                    {
+                      "key": "Page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Vehicle",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "ClientId",
+                    "value": "user",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"rentalPricePerDay\": 150.00,\n  \"variantId\": \"{{variantId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/{{version}}/inventories/vehicles",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{version}}",
+                    "inventories",
+                    "vehicles"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Vehicle by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ClientId",
+                    "value": "user",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/{{version}}/inventories/vehicles/{{vehicleId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{version}}",
+                    "inventories",
+                    "vehicles",
+                    "{{vehicleId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Vehicle",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "ClientId",
+                    "value": "user",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": \"{{vehicleId}}\",\n  \"rentalPricePerDay\": 175.50,\n  \"variantId\": \"{{variantId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/{{version}}/inventories/vehicles/{{vehicleId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{version}}",
+                    "inventories",
+                    "vehicles",
+                    "{{vehicleId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Vehicle",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "ClientId",
+                    "value": "user",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/{{version}}/inventories/vehicles/{{vehicleId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{version}}",
+                    "inventories",
+                    "vehicles",
+                    "{{vehicleId}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "client_authentication",
+        "value": "header",
+        "type": "string"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      },
+      {
+        "key": "useBrowser",
+        "value": false,
+        "type": "boolean"
+      },
+      {
+        "key": "scope",
+        "value": "openid profile email roles rent-acme-web-scope",
+        "type": "string"
+      },
+      {
+        "key": "tokenName",
+        "value": "Token",
+        "type": "string"
+      },
+      {
+        "key": "grant_type",
+        "value": "authorization_code",
+        "type": "string"
+      },
+      {
+        "key": "redirect_uri",
+        "value": "https://oauth.pstmn.io/v1/callback",
+        "type": "string"
+      },
+      {
+        "key": "clientId",
+        "value": "{{client_id}}",
+        "type": "string"
+      },
+      {
+        "key": "accessTokenUrl",
+        "value": "http://localhost:8080/realms/rent-acme/protocol/openid-connect/token",
+        "type": "string"
+      },
+      {
+        "key": "authUrl",
+        "value": "http://localhost:8080/realms/rent-acme/protocol/openid-connect/auth",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "version",
+      "value": ""
+    },
+    {
+      "key": "client_id",
+      "value": ""
+    },
+    {
+      "key": "contentType",
+      "value": "application/json"
+    }
+  ]
+}

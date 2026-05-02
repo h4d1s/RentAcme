@@ -4,10 +4,14 @@ using ConsulIntegrationHelpers.Services;
 using Diagnostics;
 using EventBus;
 using HealthChecks.UI.Client;
+using Identity.Models;
+using Inventory.Application.Infrastructure.Security;
 using Inventory.Infrastructure.Grpc;
+using Inventory.Infrastructure.Security;
 using Logging;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Routing;
@@ -46,12 +50,15 @@ public static class Extensions
             });
         services.AddAuthorization();
 
+        services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+        services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
+
         // Health check
         var hcBuilder = services.AddHealthChecks();
 
         hcBuilder
             .AddCheck("self", () => HealthCheckResult.Healthy())
-            .AddSqlServer(
+            .AddNpgSql(
                 configuration["ConnectionStrings:InventoryDbContext"] ?? throw new ArgumentNullException("InventoryDbContext string is not configured"),
                 name: "InventoryDB-check",
                 tags: new string[] { "inventorydb" });
@@ -141,9 +148,6 @@ public static class Extensions
 
         // CORS
         app.UseCors("RentAcmeOrigins");
-
-        app.UseAuthentication();
-        app.UseAuthorization();
 
         // Serilog
         app.UseSerilogRequestLogging();

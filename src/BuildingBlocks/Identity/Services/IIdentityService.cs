@@ -6,5 +6,5 @@ public interface IIdentityService
     public string? GetUserEmail();
     public string? GetUserName();
     public List<string> GetUserRoles();
-    public string? GetToken();
+    public List<string> GetUserPermissions();
 }

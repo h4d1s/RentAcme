@@ -12,7 +12,7 @@
 POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
-grant_type=password&client_id=client&username=rent-acme-admin&password=Passw0rd!
+grant_type=password&client_id=rent-acme-web&username=rent-acme-admin&password=Passw0rd!
 
 ### Capture the token
 @authToken = {{login.response.body.$.access_token}}
