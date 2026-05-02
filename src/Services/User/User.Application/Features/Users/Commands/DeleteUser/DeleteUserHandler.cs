@@ -33,10 +33,11 @@ public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, Unit>
             throw new NotFoundException($"User with {request.Id} not found.");
         }
 
-        var isAdmin = _identityService.GetUserRoles().Contains(UserRoles.Admin);
+        var permissions = _identityService.GetUserPermissions();
         var isOwner = request.Id.ToString() == _identityService.GetUserId();
+        var canDelete = isOwner || permissions.Contains(Permissions.Users.DeleteAny);
 
-        if (!isOwner && !isAdmin)
+        if (!canDelete)
         {
             throw new UnauthorizedAccessException("You are not authorized to delete this user.");
         }

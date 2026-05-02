@@ -165,8 +165,6 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
-      - SERVICE_HTTP_PORTS=5211
-      - SERVICE_HTTPS_PORTS=5212
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
@@ -218,14 +216,14 @@ services:
     container_name: reservation-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTP_PORTS=8080 
       - ASPNETCORE_HTTPS_PORTS=8081
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     ports:
       - 5231:8080
-      - 5232:8081
+      - 5332:8081
     depends_on:
       - consul
       - reservation-api-db

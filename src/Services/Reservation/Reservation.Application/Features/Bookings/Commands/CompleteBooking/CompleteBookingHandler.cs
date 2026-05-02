@@ -42,20 +42,11 @@ public class CompleteBookingHandler : IRequestHandler<CompleteBookingCommand, Un
         }
 
         var currentUserId = _identityService.GetUserId() ?? throw new BadRequestException("User not authenticated.");
-        var currentRoles = _identityService.GetUserRoles() ?? throw new BadRequestException("User role not found.");
 
         var user = await _userGrpcClientService.GetUserByExternalIdAsync(currentUserId);
         if (user == null)
         {
             throw new BadRequestException("User not found.");
-        }
-
-        var isOwner = bookingToUpdate.UserId == user.Id;
-        var isAdmin = currentRoles.Contains(UserRoles.Admin);
-
-        if (!isOwner && !isAdmin)
-        {
-            throw new AuthenticationException("You are not authorized to reserve this booking.");
         }
 
         bookingToUpdate.SetCompleteStatus();

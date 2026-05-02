@@ -33,12 +33,13 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Unit>
             throw new NotFoundException($"{nameof(ApplicationUser)} not found with Id {request.Id}");
         }
 
-        var isAdmin = _identityService.GetUserRoles().Contains(UserRoles.Admin);
+        var permissions = _identityService.GetUserPermissions();
         var isOwner = request.Id.ToString() == _identityService.GetUserId();
+        var canUpdate = isOwner || permissions.Contains(Permissions.Users.UpdateAny);
 
-        if (!isOwner && !isAdmin)
+        if (!canUpdate)
         {
-            throw new UnauthorizedAccessException("You are not authorized to delete this user.");
+            throw new UnauthorizedAccessException("You are not authorized to update this user.");
         }
 
         user.UpdateEmail(request.Email);

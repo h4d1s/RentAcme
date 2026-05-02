@@ -19,11 +19,6 @@ builder.Services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient
     var address = builder.Configuration["Consul:Address"] ?? throw new ArgumentNullException("Consul address is not configured");
     consulConfig.Address = new Uri(address);
 }));
-builder.Services.AddScoped<IConsulServiceDiscovery, ConsulServiceDiscovery>();
-
-// Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 // CORS
 builder.Services.AddCors(options =>
@@ -35,7 +30,6 @@ builder.Services.AddCors(options =>
 );
 
 // Configure Ocelot
-builder.Services.AddMemoryCache();
 builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
 builder.Services
     .AddOcelot(builder.Configuration)
@@ -64,13 +58,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 app.UseHttpsRedirection();
 

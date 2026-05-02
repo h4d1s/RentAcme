@@ -28,7 +28,7 @@ public class BookingController : ControllerBase
 
     // POST api/bookings
     [HttpPost]
-    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Customer}")]
+    [Authorize(Policy = Permissions.Bookings.Reserve)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post([FromBody] ReserveBookingCommand command)
@@ -39,7 +39,7 @@ public class BookingController : ControllerBase
 
     // POST api/bookings/cancel
     [HttpPost("cancel")]
-    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Customer}")]
+    [Authorize(Policy = Permissions.Bookings.Cancel)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post([FromBody] CancelBookingCommand command)
@@ -50,7 +50,7 @@ public class BookingController : ControllerBase
 
     // POST api/bookings/complete
     [HttpPost("complete")]
-    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Customer}")]
+    [Authorize(Policy = Permissions.Bookings.Complete)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post([FromBody] CompleteBookingCommand command)
@@ -61,7 +61,7 @@ public class BookingController : ControllerBase
 
     // GET api/bookings/{id}
     [HttpGet("{id}")]
-    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Customer}")]
+    [Authorize(Policy = $"{Permissions.Bookings.ViewOwn},{Permissions.Bookings.ViewAny}")]
     [ProducesResponseType(typeof(Booking), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -74,7 +74,7 @@ public class BookingController : ControllerBase
 
     // GET api/bookings
     [HttpGet]
-    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Customer}")]
+    [Authorize(Policy = Permissions.Bookings.ViewAny)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<PagedResponse<Booking>>> Get([FromQuery] GetBookingListQuery query)

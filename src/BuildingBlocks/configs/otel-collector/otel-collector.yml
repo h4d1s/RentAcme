@@ -9,16 +9,16 @@ processors:
 exporters:
   debug:
     verbosity: detailed
-  otlphttp/tempo:
+  otlp_http/tempo:
     endpoint: "http://tempo:4318"
     tls:
       insecure: true
-  otlphttp/loki:
+  otlp_http/loki:
     endpoint: "http://loki:3100/otlp"
     tls:
       insecure: true
   prometheus:
-    endpoint: "otel-collector:8889"
+    endpoint: "0.0.0.0:8889"
 
 extensions:
   health_check:
@@ -31,11 +31,11 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug, otlphttp/tempo]
+      exporters: [debug, otlp_http/tempo]
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug, otlphttp/loki]
+      exporters: [debug, otlp_http/loki]
     metrics:
       receivers: [otlp]
       processors: [batch]

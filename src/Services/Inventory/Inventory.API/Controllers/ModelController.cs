@@ -28,7 +28,7 @@ public class ModelController : ControllerBase
 
     // POST api/models
     [HttpPost]
-    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Policy = Permissions.Models.Create)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post([FromBody] CreateModelCommand command)
@@ -61,7 +61,7 @@ public class ModelController : ControllerBase
 
     // PUT api/models/{id}
     [HttpPut("{id}")]
-    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Policy = $"{Permissions.Models.UpdateOwn},{Permissions.Models.UpdateAny}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -78,7 +78,7 @@ public class ModelController : ControllerBase
 
     // DELETE api/models/{id}
     [HttpDelete("{id}")]
-    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Policy = $"{Permissions.Models.DeleteOwn},{Permissions.Models.DeleteAny}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id)

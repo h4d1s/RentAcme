@@ -1,53 +1,68 @@
 {
   "Routes": [
     {
-      "UseServiceDiscovery": true,
-      "ServiceName": "user",
+      "UseServiceDiscovery": false,
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "user-api",
+          "Port": 8081
+        }
+      ],
+      "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamPathTemplate": "/api/{version}/{everything}",
-      "UpstreamPathTemplate": "/api/{version}/user/{everything}",
+      "UpstreamPathTemplate": "/api/{version}/accounts/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
       "DownstreamScheme": "https",
-      "DangerousAcceptAnyServerCertificateValidator": true,
       "RateLimitOptions": {
         "EnableRateLimiting": true,
-        "Period": "1s",
-        "Limit": 10,
-        "PeriodTimespan": 1
+        "Period": "5s",
+        "Limit": 100,
+        "PeriodTimespan": 2
       }
     },
     {
-      "UseServiceDiscovery": true,
-      "ServiceName": "inventory",
+      "UseServiceDiscovery": false,
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "inventory-api",
+          "Port": 8081
+        }
+      ],
+      "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamPathTemplate": "/api/{version}/{everything}",
-      "UpstreamPathTemplate": "/api/{version}/inventory/{everything}",
+      "UpstreamPathTemplate": "/api/{version}/inventories/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
       "DownstreamScheme": "https",
-      "DangerousAcceptAnyServerCertificateValidator": true,
       "RateLimitOptions": {
         "EnableRateLimiting": true,
-        "Period": "1s",
-        "Limit": 10,
-        "PeriodTimespan": 1
+        "Period": "5s",
+        "Limit": 100,
+        "PeriodTimespan": 2
       }
     },
     {
-      "UseServiceDiscovery": true,
-      "ServiceName": "reservation",
+      "UseServiceDiscovery": false,
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "reservation-api",
+          "Port": 8081
+        }
+      ],
+      "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamPathTemplate": "/api/{version}/{everything}",
-      "UpstreamPathTemplate": "/api/{version}/reservation/{everything}",
+      "UpstreamPathTemplate": "/api/{version}/reservations/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
       "DownstreamScheme": "https",
-      "DangerousAcceptAnyServerCertificateValidator": true,
       "RateLimitOptions": {
         "EnableRateLimiting": true,
-        "Period": "1s",
-        "Limit": 10,
-        "PeriodTimespan": 1
+        "Period": "5s",
+        "Limit": 100,
+        "PeriodTimespan": 2
       }
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "http://apigateway:5000",
+    "BaseUrl": "http://apigateway:8080",
     "ServiceDiscoveryProvider": {
       "Host": "consul",
       "Port": 8500,
