@@ -43,8 +43,10 @@ public class ReserveBookingHandler : IRequestHandler<ReserveBookingCommand, Guid
             throw new BadRequestException("User not found.");
 
         var isOwner = request.UserId == user.Id;
+        var permissions = _identityService.GetUserPermissions();
+        var canView = isOwner || permissions.Contains(Permissions.Bookings.ViewAny);
 
-        if (!isOwner)
+        if (!canView)
         {
             throw new AuthenticationException("You are not authorized to reserve this booking.");
         }

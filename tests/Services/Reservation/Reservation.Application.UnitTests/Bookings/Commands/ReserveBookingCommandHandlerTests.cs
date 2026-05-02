@@ -55,7 +55,7 @@ public class ReserveBookingCommandHandlerTests
             .Setup(x => x.GetUserId())
             .Returns(currentUserId);
         _mockIdentityService
-            .Setup(x => x.GetUserRoles())
+            .Setup(x => x.GetUserPermissions())
             .Returns(new List<string>());
 
         _mockUserClientGrpcService
@@ -105,8 +105,8 @@ public class ReserveBookingCommandHandlerTests
             .Setup(x => x.GetUserId())
             .Returns(currentUserId);
         _mockIdentityService
-            .Setup(x => x.GetUserRoles())
-            .Returns(new List<string> { UserRoles.Customer });
+            .Setup(x => x.GetUserPermissions())
+            .Returns(new List<string> { Permissions.Bookings.Reserve });
 
         _mockUserClientGrpcService
             .Setup(s => s.GetUserByExternalIdAsync(currentUserId))
@@ -158,8 +158,8 @@ public class ReserveBookingCommandHandlerTests
             .Setup(x => x.GetUserId())
             .Returns(currentUserId);
         _mockIdentityService
-            .Setup(x => x.GetUserRoles())
-            .Returns(new List<string> { UserRoles.Customer });
+            .Setup(x => x.GetUserPermissions())
+            .Returns(new List<string> { Permissions.Bookings.Reserve });
 
         _mockUserClientGrpcService
             .Setup(s => s.GetUserByExternalIdAsync(currentUserId))
@@ -208,8 +208,8 @@ public class ReserveBookingCommandHandlerTests
             .Setup(x => x.GetUserId())
             .Returns(currentUserId);
         _mockIdentityService
-            .Setup(x => x.GetUserRoles())
-            .Returns(new List<string> { UserRoles.Admin });
+            .Setup(x => x.GetUserPermissions())
+            .Returns(new List<string> { Permissions.Bookings.Reserve, Permissions.Bookings.ViewAny });
 
         _mockUserClientGrpcService
             .Setup(s => s.GetUserByExternalIdAsync(currentUserId))
@@ -261,8 +261,8 @@ public class ReserveBookingCommandHandlerTests
             .Setup(x => x.GetUserId())
             .Returns(currentUserId);
         _mockIdentityService
-            .Setup(x => x.GetUserRoles())
-            .Returns(new List<string> { UserRoles.Admin });
+            .Setup(x => x.GetUserPermissions())
+            .Returns(new List<string> { Permissions.Bookings.Reserve, Permissions.Bookings.ViewAny });
 
         _mockUserClientGrpcService
             .Setup(s => s.GetUserByExternalIdAsync(currentUserId))
