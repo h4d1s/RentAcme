@@ -14,11 +14,5 @@ public class VehicleEntityConfiguration : IEntityTypeConfiguration<Vehicle>
         builder
             .Property(v => v.RentalPricePerDay)
             .HasPrecision(10, 2);
-
-        builder
-            .HasMany(e => e.Bookings)
-            .WithOne(e => e.Vehicle)
-            .HasForeignKey(e => e.VehicleId)
-            .IsRequired();
     }
 }

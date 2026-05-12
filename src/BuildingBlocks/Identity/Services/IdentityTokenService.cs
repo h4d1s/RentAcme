@@ -31,7 +31,7 @@ public class IdentityTokenService : IIdentityTokenService
         {
             { "grant_type", "client_credentials" },
             { "client_id", _configuration["Keycloak:ClientId"] ?? throw new ArgumentNullException("Keycloak:ClientId") },
-            { "client_secret", _configuration["Keycloak:ClientSecret"] ?? throw new ArgumentNullException("Keycloak:ClientSecret") }
+            { "client_secret", _configuration["KEYCLOAK_BACKEND_SECRET"] ?? throw new ArgumentNullException("KEYCLOAK_BACKEND_SECRET") }
         };
 
         var request = new HttpRequestMessage(HttpMethod.Post, "/realms/rent-acme/protocol/openid-connect/token")

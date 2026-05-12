@@ -12,7 +12,7 @@ using SagaOrchestrationStateMachine.Data;
 namespace SagaOrchestrationStateMachine.Migrations
 {
     [DbContext(typeof(SagaMachineContext))]
-    [Migration("20260424133850_InitialMigration")]
+    [Migration("20260505135313_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace SagaOrchestrationStateMachine.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.5")
+                .HasAnnotation("ProductVersion", "10.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -33,11 +33,20 @@ namespace SagaOrchestrationStateMachine.Migrations
                     b.Property<DateTime?>("BookingDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("BookingId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("CurrentState")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
-                    b.Property<int>("CurrentState")
-                        .HasColumnType("integer");
+                    b.Property<string>("ErrorMessage")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PaymentMethodId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("PaymentTimeoutTokenId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("PickupDate")
                         .HasColumnType("timestamp with time zone");
@@ -53,6 +62,12 @@ namespace SagaOrchestrationStateMachine.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("VehicleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("VehicleLockTimeoutTokenId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("VehicleReleaseTimeoutTokenId")
                         .HasColumnType("uuid");
 
                     b.HasKey("CorrelationId");

@@ -14,7 +14,7 @@ public class IdentityService : IIdentityService
 
     public string? GetUserId()
     {
-        return _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier).Value;
+        return _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
     }
 
     public string? GetUserEmail()

@@ -7,11 +7,11 @@ namespace Payment.Infrastructure.IntegrationEvents.EventHandling;
 
 public class UserCreatedIntegrationEventConsumer : IConsumer<UserCreatedIntegrationEvent>
 {
-    private readonly ILogger<CompletePaymentCommandIntegrationEventConsumer> _logger;
+    private readonly ILogger<CreatePaymentIntentCommandIntegrationEventConsumer> _logger;
     private readonly IPaymentGateway _paymentGateway;
 
     public UserCreatedIntegrationEventConsumer(
-        ILogger<CompletePaymentCommandIntegrationEventConsumer> logger,
+        ILogger<CreatePaymentIntentCommandIntegrationEventConsumer> logger,
         IPaymentGateway paymentGateway)
     {
         _logger = logger;

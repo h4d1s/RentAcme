@@ -49,6 +49,7 @@ services:
     - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
     - OTEL_LOGS_EXPORTER=otlp
     - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+    - KEYCLOAK_BACKEND_SECRET=${KEYCLOAK_BACKEND_SECRET}
     ports:
       - 8080:8080
     command:
@@ -165,6 +166,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
+      - KEYCLOAK_BACKEND_SECRET=${KEYCLOAK_BACKEND_SECRET}
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
@@ -175,7 +177,7 @@ services:
       - consul
       - user-api-db
       - rabbitmq
-      - keycloak 
+      - keycloak
 
   inventory-api-db:
     container_name: inventory-api-db
@@ -192,6 +194,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
+      - KEYCLOAK_BACKEND_SECRET=${KEYCLOAK_BACKEND_SECRET}
     ports:
       - 5221:8080
       - 5222:8081
@@ -218,6 +221,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080 
       - ASPNETCORE_HTTPS_PORTS=8081
+      - KEYCLOAK_BACKEND_SECRET=${KEYCLOAK_BACKEND_SECRET}
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
@@ -235,6 +239,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
+      - KEYCLOAK_BACKEND_SECRET=${KEYCLOAK_BACKEND_SECRET}
     ports:
       - 5241:8080
       - 5242:8081
@@ -251,6 +256,10 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - KEYCLOAK_BACKEND_SECRET=${KEYCLOAK_BACKEND_SECRET}
     ports:
       - 5251:8080
       - 5252:8081

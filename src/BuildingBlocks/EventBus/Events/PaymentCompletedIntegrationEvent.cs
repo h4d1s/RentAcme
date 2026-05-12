@@ -1,9 +1,7 @@
-﻿using EventBus.Events.Interfaces;
+﻿namespace EventBus.Events;
 
-namespace EventBus.Events;
-
-public class PaymentCompletedIntegrationEvent : IPaymentCompletedIntegrationEvent
+public class PaymentCompletedIntegrationEvent
 {
-    public Guid CorrelationId { get; set; }
+    public Guid BookingId { get; set; }
     public string CustomerId { get; set; } = string.Empty;
 }

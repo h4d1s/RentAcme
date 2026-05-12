@@ -1,6 +1,9 @@
+using EventBus.Commands;
+using EventBus.Constants;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using Quartz;
 using SagaOrchestrationStateMachine.Data;
 using SagaOrchestrationStateMachine.StateMachines;
 using SagaOrchestrationStateMachine.States;
@@ -13,11 +16,19 @@ builder.Services.AddMassTransit(cfg =>
         .EntityFrameworkRepository(c =>
         {
             c.ExistingDbContext<SagaMachineContext>();
+            c.UsePostgres();
         });
+    cfg.AddInMemoryInboxOutbox();
+    cfg.AddQuartzConsumers();
 
     var configuration = builder.Configuration;
     cfg.UsingRabbitMq((context, busFactoryConfigurator) =>
     {
+        EndpointConvention.Map<LockVehicleCommand>(new Uri($"queue:{QueuesConsts.VehicleLockCommandQueueName}"));
+        EndpointConvention.Map<UnlockVehicleCommand>(new Uri($"queue:{QueuesConsts.UnlockVehicleCommandQueueName}"));
+        EndpointConvention.Map<CreatePaymentIntentCommand>(new Uri($"queue:{QueuesConsts.CreatePaymentIntentCommandQueueName}"));
+
+        busFactoryConfigurator.UseMessageScheduler(new Uri("queue:quartz"));
         busFactoryConfigurator.Host(
             configuration["RabbitMQ:Hostname"],
             "/",
@@ -28,9 +39,9 @@ builder.Services.AddMassTransit(cfg =>
             });
         busFactoryConfigurator.ConfigureEndpoints(context);
     });
-
-    cfg.AddInMemoryInboxOutbox();
 });
+builder.Services.AddQuartz();
+builder.Services.AddQuartzHostedService();
 
 builder.Services.AddDbContext<SagaMachineContext>(options =>
 {

@@ -1,5 +1,4 @@
-﻿using Inventory.Domain.AggregatesModel.BookingAggregate;
-using Inventory.Domain.AggregatesModel.BrandAggregate;
+﻿using Inventory.Domain.AggregatesModel.BrandAggregate;
 using Inventory.Domain.AggregatesModel.ModelAggregate;
 using Inventory.Domain.AggregatesModel.VariantAggreate;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
@@ -43,7 +42,7 @@ public class InventoryDbContextSeed : IDbSeeder<InventoryDbContext>
             var contentRootPath = _env.ContentRootPath;
             var sourcePath = Path.Combine(contentRootPath, "Setup", "brands.json");
             var sourceJson = File.ReadAllText(sourcePath);
-            var sourceBrands = JsonSerializer.Deserialize<BrandSourceEntry[]>(sourceJson);
+            var sourceBrands = JsonSerializer.Deserialize<BrandSourceEntry[]>(sourceJson) ?? Enumerable.Empty<BrandSourceEntry>();
             var random = new Random();
 
             var variants = new List<Variant>();
@@ -55,11 +54,11 @@ public class InventoryDbContextSeed : IDbSeeder<InventoryDbContext>
 
                 foreach (var modelSource in brandSource.Models)
                 {
-                    var randomYearOfProduction = random.Next(DateTime.Now.Year - 5, DateTime.Now.Year + 1);
+                    var randomYearOfProduction = random.Next(DateTime.UtcNow.Year - 5, DateTime.UtcNow.Year + 1);
                     var randomNumberOfSeats = random.Next(2, 7);
 
-                    var categories = Enum.GetValues(typeof(Category));
-                    var randomCategory = (Category)categories?.GetValue(random.Next(categories.Length));
+                    var categories = Enum.GetValues<Category>() ?? [];
+                    var randomCategory = categories[random.Next(categories.Length)];
 
                     var model = new Model(
                         modelSource.Name,
@@ -72,11 +71,11 @@ public class InventoryDbContextSeed : IDbSeeder<InventoryDbContext>
 
                     foreach (var variantSource in modelSource.Variants)
                     {
-                        var gearboxes = Enum.GetValues(typeof(Gearbox));
-                        var randomGearbox = (Gearbox)gearboxes?.GetValue(random.Next(gearboxes.Length));
+                        var gearboxes = Enum.GetValues<Gearbox>();
+                        var randomGearbox = gearboxes[random.Next(gearboxes.Length)];
 
-                        var fuelTypes = Enum.GetValues(typeof(FuelType));
-                        var randomFuelType = (FuelType)fuelTypes?.GetValue(random.Next(fuelTypes.Length));
+                        var fuelTypes = Enum.GetValues<FuelType>();
+                        var randomFuelType = fuelTypes[random.Next(fuelTypes.Length)];
 
                         var randomPower = random.Next(44, 300);
                         var randomEngineSize = random.Next(1000, 4000);
@@ -99,7 +98,6 @@ public class InventoryDbContextSeed : IDbSeeder<InventoryDbContext>
                 var returnDate = DateTime.UtcNow.AddDays(-random.Next(1, 5));
                 var plates = GenerateRandomRegistrationPlates();
                 var vehicle = new Vehicle((decimal)randomRentalPricePerDay, plates, v.Id);
-                vehicle.AddBooking(BookingStatus.Reserved, pickupDate, returnDate);
                 vehicles.Add(vehicle);
             });
 

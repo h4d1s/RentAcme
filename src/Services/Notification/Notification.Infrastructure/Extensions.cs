@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Notification.Appication.Infrastructure.Services;
 using Notification.Infrastructure.Grpc;
+using Notification.Infrastructure.Hubs;
 using Notification.Infrastructure.Services;
 using System.Reflection;
 
@@ -54,7 +55,6 @@ public static class Extensions
         services.AddMassTransit(x =>
         {
             x.AddConsumers(Assembly.GetExecutingAssembly());
-
             x.UsingRabbitMq((context, busFactoryConfigurator) =>
             {
                 busFactoryConfigurator.Host(
@@ -82,11 +82,14 @@ public static class Extensions
         // Identity
         services.AddIdentityServices(builder, configuration);
 
+        // SignalR
+        services.AddSignalR();
+
         return services;
     }
 
     public static IApplicationBuilder ConfigureInfrastructureServices(
-        this IApplicationBuilder app,
+        this WebApplication app,
         IHostEnvironment environment,
         IServiceProvider serviceProvider)
     {
@@ -96,6 +99,9 @@ public static class Extensions
             Predicate = _ => true,
             ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
         });
+
+        // SignalR
+        app.MapHub<ReservationHub>("/reservationHub");
 
         return app;
     }

@@ -3,7 +3,9 @@
 public class QueuesConsts
 {
     // Commands
-    public const string CompletePaymentCommandQueueName = "complete-payment-command-queue";
+    public const string VehicleLockCommandQueueName = "vehicle-lock-command-queue";
+    public const string UnlockVehicleCommandQueueName = "unlock-vehicle-command-queue";
+    public const string CreatePaymentIntentCommandQueueName = "create-payment-intent-command-queue";
 
     // Events
     public const string BookingReservedEventQueueName = "booking-reserved-queue";

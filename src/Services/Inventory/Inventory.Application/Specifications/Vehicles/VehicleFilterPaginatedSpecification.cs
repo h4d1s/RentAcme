@@ -1,5 +1,4 @@
 ﻿using Ardalis.Specification;
-using Inventory.Domain.AggregatesModel.BookingAggregate;
 using Inventory.Domain.AggregatesModel.ModelAggregate;
 using Inventory.Domain.AggregatesModel.VariantAggreate;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
@@ -24,15 +23,8 @@ public class VehicleFilterPaginatedSpecification : Specification<Vehicle>
             .Where(i => i.Variant.Gearbox == gearbox, gearbox.HasValue)
             .Where(i => i.Variant.Model.Category == category, category.HasValue)
             .Where(i => i.RentalPricePerDay >= rentalPricePerDayFrom, rentalPricePerDayFrom.HasValue)
-            .Where(i => i.RentalPricePerDay <= rentalPricePerDayTo, rentalPricePerDayTo.HasValue);
-
-        if (pickupDate.HasValue && returnDate.HasValue)
-        {
-            Query.Where(i => !i.Bookings.Any(x =>
-                x.Status == BookingStatus.Reserved &&
-                x.PickupDate <= returnDate &&
-                x.ReturnDate >= pickupDate));
-        }
+            .Where(i => i.RentalPricePerDay <= rentalPricePerDayTo, rentalPricePerDayTo.HasValue)
+            .Where(i => !i.IsLocked);
 
         if (!string.IsNullOrEmpty(orderBy))
         {
@@ -62,7 +54,6 @@ public class VehicleFilterPaginatedSpecification : Specification<Vehicle>
         }
 
         Query
-            .Include(o => o.Bookings)
             .Include(o => o.Variant)
             .Include($"{nameof(Vehicle.Variant)}.{nameof(Variant.Model)}.{nameof(Model.Brand)}");
 

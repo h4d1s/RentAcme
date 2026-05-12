@@ -21,7 +21,7 @@ public class InventoryGrpcServerService : InventoryProtoService.InventoryProtoSe
     public override async Task<GetVehicleReponse> GetVehicle(GetVehicleRequest request, ServerCallContext context)
     {
         _logger.LogInformation("Checking vehicle {Id}", request.VehicleId);
-        Vehicle vehicle = null;
+        Vehicle? vehicle = null;
 
         try
         {
@@ -50,7 +50,7 @@ public class InventoryGrpcServerService : InventoryProtoService.InventoryProtoSe
         {
             var id = Guid.Parse(request.VehicleId);
             var vehicle = await _vehicleRepository.GetByIdAsync(id);
-            isExists = vehicle != null;
+            isExists = vehicle is not null;
         }
         catch (Exception ex)
         {

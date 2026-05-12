@@ -15,7 +15,7 @@ public class StripePaymentGateway : IPaymentGateway
         _logger = logger;
     }
 
-    public async Task ChargeAsync(string customerId, decimal amount)
+    public async Task<string> CreateIntentAsync(Guid bookingId, string customerId, decimal amount)
     {
         var service = new PaymentIntentService();
         var options = new PaymentIntentCreateOptions
@@ -23,17 +23,20 @@ public class StripePaymentGateway : IPaymentGateway
             Amount = (long)amount,
             Currency = "usd",
             Customer = customerId,
-            PaymentMethod = "pm_card_visa",
+            Metadata = new Dictionary<string, string>
+            {
+                { "bookingId", bookingId.ToString() }
+            },
             AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
             {
                 Enabled = true,
-            },
-            Confirm = true,
-            OffSession = true,
+            }
         };
+
         try
         {
-            await service.CreateAsync(options);
+            var paymentIntent = await service.CreateAsync(options);
+            return paymentIntent.ClientSecret;
         }
         catch (Exception)
         {

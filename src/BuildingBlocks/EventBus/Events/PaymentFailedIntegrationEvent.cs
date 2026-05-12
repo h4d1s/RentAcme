@@ -1,10 +1,8 @@
-﻿using EventBus.Events.Interfaces;
+﻿namespace EventBus.Events;
 
-namespace EventBus.Events;
-
-public class PaymentFailedIntegrationEvent : IPaymentFailedIntegrationEvent
+public class PaymentFailedIntegrationEvent
 {
-    public Guid CorrelationId { get; set; }
-    public string ErrorMessage { get; set; } = string.Empty;
+    public Guid BookingId { get; set; }
     public Guid UserId { get; set; }
+    public string ErrorMessage { get; set; } = string.Empty;
 }
