@@ -15,5 +15,7 @@ public class StateMachineMap : SagaClassMap<BookingState>
             .Property(b => b.Price)
             .HasColumnType("decimal(10, 2)")
             .HasPrecision(10, 2);
+        entity.Property(x => x.CurrentState)
+            .HasMaxLength(128);
     }
 }

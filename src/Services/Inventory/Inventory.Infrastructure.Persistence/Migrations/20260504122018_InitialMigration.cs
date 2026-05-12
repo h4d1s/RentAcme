@@ -75,6 +75,7 @@ namespace Inventory.Infrastructure.Persistence.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     RentalPricePerDay = table.Column<decimal>(type: "numeric(10,2)", precision: 10, scale: 2, nullable: false),
                     RegistrationPlates = table.Column<string>(type: "text", nullable: false),
+                    IsLocked = table.Column<bool>(type: "boolean", nullable: false),
                     VariantId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
@@ -87,32 +88,6 @@ namespace Inventory.Infrastructure.Persistence.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateTable(
-                name: "Bookings",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
-                    PickupDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    ReturnDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    VehicleId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Bookings", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Bookings_Vehicles_VehicleId",
-                        column: x => x.VehicleId,
-                        principalTable: "Vehicles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Bookings_VehicleId",
-                table: "Bookings",
-                column: "VehicleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Brands_Name",
@@ -140,9 +115,6 @@ namespace Inventory.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Bookings");
-
             migrationBuilder.DropTable(
                 name: "Vehicles");
 

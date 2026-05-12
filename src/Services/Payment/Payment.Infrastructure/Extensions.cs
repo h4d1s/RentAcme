@@ -2,6 +2,7 @@
 using ConsulIntegrationHelpers.HostedServices;
 using ConsulIntegrationHelpers.Services;
 using EventBus;
+using EventBus.Constants;
 using GrpcIntegrationHelpers;
 using HealthChecks.UI.Client;
 using MassTransit;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Payment.Application.Infrastructure.Services;
+using Payment.Infrastructure.IntegrationEvents.EventHandling;
 using Payment.Infrastructure.Services;
 using Stripe;
 using System.Reflection;
@@ -50,12 +52,15 @@ public static class Extensions
             ));
 
         // Stripe
-        StripeConfiguration.ApiKey = configuration["Stripe:SecretKey"];
+        StripeConfiguration.ApiKey = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
 
         // Mass Transit
         services.AddMassTransit(x =>
         {
             x.AddConsumers(Assembly.GetExecutingAssembly());
+            x.AddConsumer<CreatePaymentIntentCommandIntegrationEventConsumer>()
+                .Endpoint(e => e.Name = QueuesConsts.CreatePaymentIntentCommandQueueName);
+
             x.UsingRabbitMq((context, busFactoryConfigurator) =>
             {
                 busFactoryConfigurator.Host(

@@ -1,5 +1,4 @@
-﻿using Inventory.Domain.AggregatesModel.BookingAggregate;
-using Inventory.Domain.AggregatesModel.BrandAggregate;
+﻿using Inventory.Domain.AggregatesModel.BrandAggregate;
 using Inventory.Domain.AggregatesModel.ModelAggregate;
 using Inventory.Domain.AggregatesModel.VariantAggreate;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
@@ -18,12 +17,11 @@ public class InventoryDbContext : DbContext, IUnitOfWork
     public DbSet<Brand> Brands { get; set; }
     public DbSet<Model> Models { get; set; }
     public DbSet<Variant> Variants { get; set; }
-    public DbSet<Booking> Bookings { get; set; }
 
     private readonly IMediator _mediator;
 
-    private IDbContextTransaction _currentTransaction;
-    public IDbContextTransaction GetCurrentTransaction() => _currentTransaction;
+    private IDbContextTransaction? _currentTransaction;
+    public IDbContextTransaction? GetCurrentTransaction() => _currentTransaction;
     public bool HasActiveTransaction => _currentTransaction != null;
 
     public InventoryDbContext(
@@ -42,7 +40,7 @@ public class InventoryDbContext : DbContext, IUnitOfWork
         modelBuilder.ApplyConfiguration(new VariantEntityConfiguration());
     }
 
-    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         await _mediator.DispatchDomainEventsAsync(this);
 
@@ -58,7 +56,7 @@ public class InventoryDbContext : DbContext, IUnitOfWork
         return true;
     }
 
-    public async Task<IDbContextTransaction> BeginTransactionAsync()
+    public async Task<IDbContextTransaction?> BeginTransactionAsync()
     {
         if (_currentTransaction != null) return null;
 

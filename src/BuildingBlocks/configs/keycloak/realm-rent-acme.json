@@ -326,7 +326,7 @@
       "serviceAccountsEnabled": true,
       "protocol": "openid-connect",
       "clientAuthenticatorType": "client-secret",
-      "secret": "e4a7066a-7724-42b1-912b-3134608a0022",
+      "secret": "${KEYCLOAK_BACKEND_SECRET:none}",
       "defaultClientScopes": [
         "openid",
         "profile",

@@ -33,4 +33,4 @@ public class BookingReservedDomainEventHandler : INotificationHandler<BookingRes
         };
         await _integrationEventService.PublishAsync(bookingReservedEvent);
     }
-}
+} 

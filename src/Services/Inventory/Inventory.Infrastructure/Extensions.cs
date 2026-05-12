@@ -3,10 +3,10 @@ using ConsulIntegrationHelpers.HostedServices;
 using ConsulIntegrationHelpers.Services;
 using Diagnostics;
 using EventBus;
+using EventBus.Constants;
 using HealthChecks.UI.Client;
-using Identity.Models;
-using Inventory.Application.Infrastructure.Security;
 using Inventory.Infrastructure.Grpc;
+using Inventory.Infrastructure.IntegrationEvents.EventHandling;
 using Inventory.Infrastructure.Security;
 using Logging;
 using MassTransit;
@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -67,6 +68,10 @@ public static class Extensions
         services.AddMassTransit(x =>
         {
             x.AddConsumers(Assembly.GetExecutingAssembly());
+            x.AddConsumer<LockVehicleCommandIntegrationEventConsumer>()
+                .Endpoint(e => e.Name = QueuesConsts.VehicleLockCommandQueueName);
+            x.AddConsumer<UnlockVehicleCommandIntegrationEventConsumer>()
+                .Endpoint(e => e.Name = QueuesConsts.UnlockVehicleCommandQueueName);
 
             x.UsingRabbitMq((context, busFactoryConfigurator) =>
             {

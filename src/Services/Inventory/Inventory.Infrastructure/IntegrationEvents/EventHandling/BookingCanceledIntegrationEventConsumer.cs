@@ -1,5 +1,5 @@
 ﻿using EventBus.Events;
-using Inventory.Domain.AggregatesModel.BookingAggregate;
+using Inventory.Domain.AggregatesModel.VehicleAggregate;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
@@ -8,26 +8,26 @@ namespace Inventory.Infrastructure.IntegrationEvents.EventHandling;
 public class BookingCanceledIntegrationEventConsumer : IConsumer<BookingCanceledIntegrationEvent>
 {
     private readonly ILogger<BookingCompletedIntegrationEventConsumer> _logger;
-    private readonly IBookingRepository _bookingRepository;
+    private readonly IVehicleRepository _vehicleRepository;
 
     public BookingCanceledIntegrationEventConsumer(
         ILogger<BookingCompletedIntegrationEventConsumer> logger,
-        IBookingRepository bookingRepository)
+        IVehicleRepository vehicleRepository)
     {
         _logger = logger;
-        _bookingRepository = bookingRepository;
+        _vehicleRepository = vehicleRepository;
     }
 
     public async Task Consume(ConsumeContext<BookingCanceledIntegrationEvent> context)
     {
         try
         {
-            var booking = await _bookingRepository.GetByIdAsync(context.Message.BookingId);
-            if (booking is not null)
+            var vehicle = await _vehicleRepository.GetByIdAsync(context.Message.VehicleId);
+            if (vehicle is not null)
             {
-                booking.SetAvaliableStatus();
-                _bookingRepository.Update(booking);
-                await _bookingRepository.UnitOfWork.SaveEntitiesAsync(CancellationToken.None);
+                vehicle.UpdateIsLocked(false);
+                _vehicleRepository.Update(vehicle);
+                await _vehicleRepository.UnitOfWork.SaveChangesAsync();
             }
         }
         catch (Exception ex)
