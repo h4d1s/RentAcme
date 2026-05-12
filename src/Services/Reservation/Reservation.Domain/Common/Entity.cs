@@ -18,9 +18,9 @@ public abstract class Entity
             _Id = value;
         }
     }
-    private List<INotification> _domainEvents;
+    private List<INotification>? _domainEvents;
     [JsonIgnore]
-    public IReadOnlyCollection<INotification> DomainEvents => _domainEvents?.AsReadOnly();
+    public IReadOnlyCollection<INotification>? DomainEvents => _domainEvents?.AsReadOnly();
 
     public void AddDomainEvent(INotification eventItem)
     {
@@ -43,7 +43,7 @@ public abstract class Entity
         return this.Id == default;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj == null || !(obj is Entity))
             return false;

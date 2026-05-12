@@ -1,5 +1,5 @@
 ﻿using Inventory.Application.Exceptions;
-using Reservation.API.Models;
+using Payment.API.Models;
 using System.Text.Json;
 
 namespace Inventory.API.Middleware;

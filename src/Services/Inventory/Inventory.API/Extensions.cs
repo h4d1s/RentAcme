@@ -38,8 +38,8 @@ public static class Extensions
                 {
                     AuthorizationCode = new OpenApiOAuthFlow
                     {
-                        AuthorizationUrl = new Uri(configuration["Keycloak:AuthorizationUrl"]),
-                        TokenUrl = new Uri(configuration["Keycloak:TokenUrl"]),
+                        AuthorizationUrl = new Uri(configuration["Keycloak:AuthorizationUrl"] ?? throw new ArgumentNullException("Keycloak:AuthorizationUrl")),
+                        TokenUrl = new Uri(configuration["Keycloak:TokenUrl"] ?? throw new ArgumentNullException("Keycloak:TokenUrl")),
                         Scopes = new Dictionary<string, string>
                         {
                             { "openid", "OpenID" },

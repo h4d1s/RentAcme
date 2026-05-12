@@ -15,7 +15,8 @@ public class VehicleListPaginatedSpecification : Specification<Vehicle>
     {
         Query
             .Where(i => i.RentalPricePerDay >= rentalPricePerDayFrom, rentalPricePerDayFrom.HasValue)
-            .Where(i => i.RentalPricePerDay <= rentalPricePerDayTo, rentalPricePerDayTo.HasValue);
+            .Where(i => i.RentalPricePerDay <= rentalPricePerDayTo, rentalPricePerDayTo.HasValue)
+            .Where(i => !i.IsLocked);
 
         if (!string.IsNullOrEmpty(orderBy))
         {

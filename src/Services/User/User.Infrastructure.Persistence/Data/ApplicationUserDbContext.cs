@@ -15,8 +15,8 @@ public class ApplicationUserDbContext : DbContext, IUnitOfWork
 
     private readonly IMediator _mediator;
 
-    private IDbContextTransaction _currentTransaction;
-    public IDbContextTransaction GetCurrentTransaction() => _currentTransaction;
+    private IDbContextTransaction? _currentTransaction;
+    public IDbContextTransaction? GetCurrentTransaction() => _currentTransaction;
     public bool HasActiveTransaction => _currentTransaction != null;
 
     public ApplicationUserDbContext(
@@ -34,7 +34,7 @@ public class ApplicationUserDbContext : DbContext, IUnitOfWork
         modelBuilder.ApplyConfiguration(new ApplicationUserEntityConfiguration());
     }
 
-    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         await _mediator.DispatchDomainEventsAsync(this);
 
@@ -50,7 +50,7 @@ public class ApplicationUserDbContext : DbContext, IUnitOfWork
         return true;
     }
 
-    public async Task<IDbContextTransaction> BeginTransactionAsync()
+    public async Task<IDbContextTransaction?> BeginTransactionAsync()
     {
         if (_currentTransaction != null) return null;
 

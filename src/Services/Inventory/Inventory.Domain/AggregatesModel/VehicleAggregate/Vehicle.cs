@@ -1,5 +1,4 @@
-﻿using Inventory.Domain.AggregatesModel.BookingAggregate;
-using Inventory.Domain.AggregatesModel.VariantAggreate;
+﻿using Inventory.Domain.AggregatesModel.VariantAggreate;
 using Inventory.Domain.AggregatesModel.VehicleAggregate.Events;
 using Inventory.Domain.Common;
 using Inventory.Domain.Exceptions;
@@ -12,24 +11,21 @@ public class Vehicle
 {
     public decimal RentalPricePerDay { get; private set; }
     public string RegistrationPlates { get; private set; } = string.Empty;
+    public bool IsLocked { get; private set; }
 
     public Guid VariantId { get; private set; }
     [JsonIgnore]
     public Variant Variant { get; } = null!;
 
-    private readonly List<Booking> _bookings;
-    [JsonIgnore]
-    public IReadOnlyCollection<Booking> Bookings => _bookings.AsReadOnly();
-
     protected Vehicle()
     {
-        _bookings = new List<Booking>();
     }
 
     public Vehicle(
         decimal rentalPricePerDay,
         string registrationPlates,
-        Guid variantId) : this()
+        Guid variantId,
+        bool isLocked = false) : this()
     {
         ValidateRentalPrice(rentalPricePerDay);
         ValidateRegistrationPlates(registrationPlates);
@@ -38,6 +34,7 @@ public class Vehicle
         RentalPricePerDay = rentalPricePerDay;
         RegistrationPlates = registrationPlates;
         VariantId = variantId;
+        IsLocked = isLocked;
 
         AddDomainEvent(new VehicleCreatedDomainEvent(this));
     }
@@ -60,24 +57,9 @@ public class Vehicle
         VariantId = variantId;
     }
 
-    public void AddBooking(BookingStatus status, DateTime? PickupDate, DateTime? ReturnDate)
-    {
-        var booking = new Booking(status, Id);
-        booking.SetPickupDate(PickupDate);
-        booking.SetReturnDate(ReturnDate);
-        _bookings.Add(booking);
-    }
-
-    public void RemoveReservation(Guid id)
-    {
-        var booking = _bookings.SingleOrDefault(r => r.Id == id);
-
-        if (booking is null)
-        {
-            throw new InventoryDomainException("Booking not found.");
-        }
-
-        _bookings.Remove(booking);
+    public void UpdateIsLocked(bool isLocked)
+    { 
+        IsLocked = isLocked;
     }
 
     private void ValidateRentalPrice(decimal price)

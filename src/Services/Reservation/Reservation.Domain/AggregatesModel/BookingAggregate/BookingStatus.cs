@@ -6,6 +6,6 @@ namespace Reservation.Domain.AggregatesModel.BookingAggregate;
 public enum BookingStatus
 {
     Reserved = 0,
-    Canceled = 1,
-    Completed = 2
+    Canceled = 2,
+    Completed = 3
 }

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Inventory.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    [Migration("20260502132207_InitialMigration")]
+    [Migration("20260504122018_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -24,31 +24,6 @@ namespace Inventory.Infrastructure.Persistence.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("Inventory.Domain.AggregatesModel.BookingAggregate.Booking", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("PickupDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("ReturnDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("VehicleId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VehicleId");
-
-                    b.ToTable("Bookings");
-                });
 
             modelBuilder.Entity("Inventory.Domain.AggregatesModel.BrandAggregate.Brand", b =>
                 {
@@ -135,6 +110,9 @@ namespace Inventory.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("IsLocked")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("RegistrationPlates")
                         .IsRequired()
                         .HasColumnType("text");
@@ -152,17 +130,6 @@ namespace Inventory.Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Vehicles");
-                });
-
-            modelBuilder.Entity("Inventory.Domain.AggregatesModel.BookingAggregate.Booking", b =>
-                {
-                    b.HasOne("Inventory.Domain.AggregatesModel.VehicleAggregate.Vehicle", "Vehicle")
-                        .WithMany("Bookings")
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("Inventory.Domain.AggregatesModel.ModelAggregate.Model", b =>
@@ -211,11 +178,6 @@ namespace Inventory.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Inventory.Domain.AggregatesModel.VariantAggreate.Variant", b =>
                 {
                     b.Navigation("Vehicle");
-                });
-
-            modelBuilder.Entity("Inventory.Domain.AggregatesModel.VehicleAggregate.Vehicle", b =>
-                {
-                    b.Navigation("Bookings");
                 });
 #pragma warning restore 612, 618
         }

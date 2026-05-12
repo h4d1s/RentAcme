@@ -90,7 +90,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/{{version}}/reservations/bookings/{{targetBookingId}}",
+              "raw": "{{baseUrl}}/{{version}}/reservations/bookings/:targetBookingId",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -98,7 +98,13 @@
                 "{{version}}",
                 "reservations",
                 "bookings",
-                "{{targetBookingId}}"
+                ":targetBookingId"
+              ],
+              "variable": [
+                {
+                  "key": "targetBookingId",
+                  "value": ""
+                }
               ]
             }
           },
@@ -191,7 +197,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/{{version}}/accounts/users/{{userId}}",
+              "raw": "{{baseUrl}}/{{version}}/accounts/users/:userId",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -199,7 +205,13 @@
                 "{{version}}",
                 "accounts",
                 "users",
-                "{{userId}}"
+                ":userId"
+              ],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": ""
+                }
               ]
             }
           },
@@ -226,7 +238,7 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/{{version}}/accounts/users/{{userIdToUpdate}}",
+              "raw": "{{baseUrl}}/{{version}}/accounts/users/:userIdToUpdate",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -234,7 +246,13 @@
                 "{{version}}",
                 "accounts",
                 "users",
-                "{{userIdToUpdate}}"
+                ":userIdToUpdate"
+              ],
+              "variable": [
+                {
+                  "key": "userIdToUpdate",
+                  "value": ""
+                }
               ]
             }
           },
@@ -261,7 +279,7 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/{{version}}/accounts/users/{{userIdToUpdate}}",
+              "raw": "{{baseUrl}}/{{version}}/accounts/users/:userIdToUpdate",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -269,7 +287,13 @@
                 "{{version}}",
                 "accounts",
                 "users",
-                "{{userIdToUpdate}}"
+                ":userIdToUpdate"
+              ],
+              "variable": [
+                {
+                  "key": "userIdToUpdate",
+                  "value": ""
+                }
               ]
             }
           },
@@ -350,13 +374,19 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/variants/{{variantId}}",
+                  "raw": "{{baseUrl}}/variants/:variantId",
                   "host": [
                     "{{baseUrl}}"
                   ],
                   "path": [
                     "variants",
-                    "{{variantId}}"
+                    ":variantId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "variantId",
+                      "value": ""
+                    }
                   ]
                 }
               },
@@ -394,13 +424,19 @@
                 "method": "DELETE",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/variants/{{variantId}}",
+                  "raw": "{{baseUrl}}/variants/:variantId",
                   "host": [
                     "{{baseUrl}}"
                   ],
                   "path": [
                     "variants",
-                    "{{variantId}}"
+                    ":variantId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "variantId",
+                      "value": ""
+                    }
                   ]
                 }
               },
@@ -492,7 +528,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/{{version}}/inventories/models/{{modelId}}",
+                  "raw": "{{baseUrl}}/{{version}}/inventories/models/:modelId",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -500,7 +536,13 @@
                     "{{version}}",
                     "inventories",
                     "models",
-                    "{{modelId}}"
+                    ":modelId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "modelId",
+                      "value": ""
+                    }
                   ]
                 }
               },
@@ -527,7 +569,7 @@
                   }
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/{{version}}/inventories/models/{{modelId}}",
+                  "raw": "{{baseUrl}}/{{version}}/inventories/models/:modelId",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -535,7 +577,13 @@
                     "{{version}}",
                     "inventories",
                     "models",
-                    "{{modelId}}"
+                    ":modelId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "modelId",
+                      "value": ""
+                    }
                   ]
                 }
               },
@@ -553,7 +601,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/{{version}}/inventories/models/{{modelId}}",
+                  "raw": "{{baseUrl}}/{{version}}/inventories/models/:modelId",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -561,7 +609,13 @@
                     "{{version}}",
                     "inventories",
                     "models",
-                    "{{modelId}}"
+                    ":modelId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "modelId",
+                      "value": ""
+                    }
                   ]
                 }
               },
@@ -661,7 +715,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/{{version}}/inventories/brands/{{brandId}}",
+                  "raw": "{{baseUrl}}/{{version}}/inventories/brands/:brandId",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -669,7 +723,13 @@
                     "{{version}}",
                     "inventories",
                     "brands",
-                    "{{brandId}}"
+                    ":brandId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "brandId",
+                      "value": ""
+                    }
                   ]
                 }
               },
@@ -696,7 +756,7 @@
                   }
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/{{version}}/inventories/brands/{{brandId}}",
+                  "raw": "{{baseUrl}}/{{version}}/inventories/brands/:brandId",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -704,7 +764,13 @@
                     "{{version}}",
                     "inventories",
                     "brands",
-                    "{{brandId}}"
+                    ":brandId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "brandId",
+                      "value": ""
+                    }
                   ]
                 }
               },
@@ -722,7 +788,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/{{version}}/inventories/brands/{{brandId}}",
+                  "raw": "{{baseUrl}}/{{version}}/inventories/brands/:brandId",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -730,7 +796,13 @@
                     "{{version}}",
                     "inventories",
                     "brands",
-                    "{{brandId}}"
+                    ":brandId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "brandId",
+                      "value": ""
+                    }
                   ]
                 }
               },
@@ -866,7 +938,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/{{version}}/inventories/vehicles/{{vehicleId}}",
+                  "raw": "{{baseUrl}}/{{version}}/inventories/vehicles/:vehicleId",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -874,7 +946,13 @@
                     "{{version}}",
                     "inventories",
                     "vehicles",
-                    "{{vehicleId}}"
+                    ":vehicleId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "vehicleId",
+                      "value": ""
+                    }
                   ]
                 }
               },
@@ -901,7 +979,7 @@
                   }
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/{{version}}/inventories/vehicles/{{vehicleId}}",
+                  "raw": "{{baseUrl}}/{{version}}/inventories/vehicles/:vehicleId",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -909,7 +987,13 @@
                     "{{version}}",
                     "inventories",
                     "vehicles",
-                    "{{vehicleId}}"
+                    ":vehicleId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "vehicleId",
+                      "value": ""
+                    }
                   ]
                 }
               },
@@ -927,7 +1011,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/{{version}}/inventories/vehicles/{{vehicleId}}",
+                  "raw": "{{baseUrl}}/{{version}}/inventories/vehicles/:vehicleId",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -935,7 +1019,13 @@
                     "{{version}}",
                     "inventories",
                     "vehicles",
-                    "{{vehicleId}}"
+                    ":vehicleId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "vehicleId",
+                      "value": ""
+                    }
                   ]
                 }
               },
@@ -944,11 +1034,86 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Payment",
+      "item": [
+        {
+          "name": "ConfirmPaymentIntent",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secret_key}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "payment_method",
+                "value": "pm_card_visa",
+                "type": "text"
+              },
+              {
+                "key": "return_url",
+                "value": "https://localhost/success",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "https://api.stripe.com/v1/payment_intents/:payment_intent_id/confirm",
+              "protocol": "https",
+              "host": [
+                "api",
+                "stripe",
+                "com"
+              ],
+              "path": [
+                "v1",
+                "payment_intents",
+                ":payment_intent_id",
+                "confirm"
+              ],
+              "variable": [
+                {
+                  "key": "payment_intent_id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "auth": {
     "type": "oauth2",
     "oauth2": [
+      {
+        "key": "scope",
+        "value": "openid profile email roles rent-acme-web-scope",
+        "type": "string"
+      },
+      {
+        "key": "clientId",
+        "value": "{{client_id}}",
+        "type": "string"
+      },
+      {
+        "key": "accessTokenUrl",
+        "value": "http://localhost:8080/realms/rent-acme/protocol/openid-connect/token",
+        "type": "string"
+      },
+      {
+        "key": "authUrl",
+        "value": "http://localhost:8080/realms/rent-acme/protocol/openid-connect/auth",
+        "type": "string"
+      },
       {
         "key": "client_authentication",
         "value": "header",
@@ -965,11 +1130,6 @@
         "type": "boolean"
       },
       {
-        "key": "scope",
-        "value": "openid profile email roles rent-acme-web-scope",
-        "type": "string"
-      },
-      {
         "key": "tokenName",
         "value": "Token",
         "type": "string"
@@ -982,21 +1142,6 @@
       {
         "key": "redirect_uri",
         "value": "https://oauth.pstmn.io/v1/callback",
-        "type": "string"
-      },
-      {
-        "key": "clientId",
-        "value": "{{client_id}}",
-        "type": "string"
-      },
-      {
-        "key": "accessTokenUrl",
-        "value": "http://localhost:8080/realms/rent-acme/protocol/openid-connect/token",
-        "type": "string"
-      },
-      {
-        "key": "authUrl",
-        "value": "http://localhost:8080/realms/rent-acme/protocol/openid-connect/auth",
         "type": "string"
       }
     ]
@@ -1032,11 +1177,11 @@
     },
     {
       "key": "version",
-      "value": ""
+      "value": "v1"
     },
     {
       "key": "client_id",
-      "value": ""
+      "value": "user"
     },
     {
       "key": "contentType",

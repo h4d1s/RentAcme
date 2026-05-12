@@ -1,5 +1,4 @@
 ﻿using Inventory.Application.Infrastructure.Persistence;
-using Inventory.Domain.AggregatesModel.BookingAggregate;
 using Inventory.Domain.AggregatesModel.BrandAggregate;
 using Inventory.Domain.AggregatesModel.ModelAggregate;
 using Inventory.Domain.AggregatesModel.VariantAggreate;
@@ -40,7 +39,6 @@ public static class Extensions
 
         // DI
         services.AddScoped<IUnitOfWork, InventoryDbContext>();
-        services.AddScoped<IBookingRepository, BookingRepository>();
         services.AddScoped<IBrandRepository, BrandRepository>();
         services.AddScoped<IModelRepository, ModelRepository>();
         services.AddScoped<IVariantRepository, VariantRepository>();
