@@ -5,6 +5,7 @@ using Identity.Services;
 using Reservation.Application.Exceptions;
 using Reservation.Application.Specifications.Bookings;
 using Reservation.Domain.AggregatesModel.BookingAggregate;
+using System.Security.Authentication;
 
 namespace Reservation.Application.Features.Bookings.Queries.GetBookingList;
 
@@ -27,8 +28,7 @@ public class GetBookingListHandler : IRequestHandler<GetBookingListQuery, PagedR
     public async Task<PagedResponse<Booking>> Handle(GetBookingListQuery request, CancellationToken cancellationToken)
     {
         var filterUserIds = new List<Guid>();
-        var currentUserId = _identityService.GetUserId() ?? throw new BadRequestException("User not authenticated.");
-        var currentRoles = _identityService.GetUserRoles() ?? throw new BadRequestException("User role not found.");
+        var currentUserId = _identityService.GetUserId() ?? throw new UnauthorizedException("User not authenticated.");
 
         var user = await _userGrpcClientService.GetUserByExternalIdAsync(currentUserId);
         if (user == null)
@@ -37,7 +37,6 @@ public class GetBookingListHandler : IRequestHandler<GetBookingListQuery, PagedR
         }
 
         var permissions = _identityService.GetUserPermissions();
-
         if (!permissions.Contains(Permissions.Bookings.ViewAny))
         {
             filterUserIds = new List<Guid> { user.Id };

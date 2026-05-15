@@ -16,11 +16,6 @@ services:
       - 1025:1025
       - 8025:8025
 
-  consul:
-    container_name: consul
-    ports:
-      - 8500:8500
-
   keycloak-db:
     container_name: keycloak-db
     environment:
@@ -73,8 +68,6 @@ services:
     restart: unless-stopped
     volumes:
       - ./BuildingBlocks/configs/prometheus:/etc/prometheus
-    depends_on:
-      - consul
 
   grafana:
     container_name: grafana
@@ -174,7 +167,6 @@ services:
       - 5211:8080
       - 5212:8081
     depends_on:
-      - consul
       - user-api-db
       - rabbitmq
       - keycloak
@@ -202,7 +194,6 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     depends_on:
-      - consul
       - inventory-api-db
       - rabbitmq
 
@@ -229,7 +220,6 @@ services:
       - 5231:8080
       - 5332:8081
     depends_on:
-      - consul
       - reservation-api-db
       - rabbitmq
 
@@ -247,7 +237,6 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     depends_on:
-      - consul
       - rabbitmq 
 
   payment-api:
@@ -267,7 +256,6 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     depends_on:
-      - consul
       - rabbitmq
 
   saga-orchestration-statemachine-db:
@@ -284,6 +272,5 @@ services:
     environment:
       - DOTNET_ENVIRONMENT=Development
     depends_on:
-      - consul
       - saga-orchestration-statemachine-db
       - rabbitmq

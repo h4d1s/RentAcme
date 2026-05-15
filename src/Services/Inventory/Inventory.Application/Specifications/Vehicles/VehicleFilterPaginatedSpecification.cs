@@ -28,10 +28,11 @@ public class VehicleFilterPaginatedSpecification : Specification<Vehicle>
 
         if (!string.IsNullOrEmpty(orderBy))
         {
+            var isDesc = string.Equals(order, "desc", StringComparison.OrdinalIgnoreCase);
             switch (orderBy.ToLower())
             {
                 case "price":
-                    if (string.IsNullOrEmpty(order) || order.ToLower() == "desc")
+                    if (!isDesc)
                     {
                         Query.OrderBy(x => x.RentalPricePerDay);
                     }
@@ -41,7 +42,7 @@ public class VehicleFilterPaginatedSpecification : Specification<Vehicle>
                     }
                     break;
                 default:
-                    if (string.IsNullOrEmpty(order) || order.ToLower() == "desc")
+                    if (!isDesc)
                     {
                         Query.OrderBy(x => x.Id);
                     }
@@ -59,8 +60,9 @@ public class VehicleFilterPaginatedSpecification : Specification<Vehicle>
 
         if (pageNumber.HasValue && pageSize.HasValue)
         {
+            var page = Math.Max(pageNumber.Value, 1);
             Query
-                .Skip((pageNumber.Value - 1) * pageSize.Value)
+                .Skip((page - 1) * pageSize.Value)
                 .Take(pageSize.Value);
         }
     }

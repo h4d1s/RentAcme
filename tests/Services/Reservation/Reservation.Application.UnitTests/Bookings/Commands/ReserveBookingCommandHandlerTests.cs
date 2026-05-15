@@ -18,6 +18,7 @@ public class ReserveBookingCommandHandlerTests
     private Mock<IUserGrpcClientService> _mockUserClientGrpcService;
     private Mock<IInventoryGrpcClientService> _mockInventoryGrpcService;
     private Mock<IIdentityService> _mockIdentityService;
+    private ReserveBookingHandler _handler;
 
     public ReserveBookingCommandHandlerTests()
     {
@@ -26,73 +27,113 @@ public class ReserveBookingCommandHandlerTests
         _mockUserClientGrpcService = new Mock<IUserGrpcClientService>();
         _mockInventoryGrpcService = new Mock<IInventoryGrpcClientService>();
         _mockIdentityService = new Mock<IIdentityService>();
+
+        _handler = new ReserveBookingHandler(
+            _mockBookingRepository.Object,
+            _mockValidator.Object,
+            _mockUserClientGrpcService.Object,
+            _mockInventoryGrpcService.Object,
+            _mockIdentityService.Object);
     }
 
     [Fact]
-    public async Task Test_UnauthorizedUserReserving_ThrowsAuthenticationException()
+    public async Task Handle_UnauthorizedUserReserving_ThrowsUnauthorizedException()
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var currentUserId = string.Empty;
+        string? currentUserId = null;
         var vehicleId = Guid.NewGuid();
-        var pickupDate = DateTime.Now.AddDays(1);
-        var returnDate = DateTime.Now.AddDays(3);
-        var fakeCommand = new ReserveBookingCommand { UserId = userId, VehicleId = vehicleId, PickupDate = pickupDate, ReturnDate = returnDate };
+        var pickupDate = DateTime.UtcNow;
+        var returnDate = DateTime.UtcNow.AddDays(3);
+        var fakeCommand = new ReserveBookingCommand {
+            UserId = userId, 
+            VehicleId = vehicleId,
+            PickupDate = pickupDate,
+            ReturnDate = returnDate
+        };
         var fakeBooking = new Booking(vehicleId, userId, pickupDate, returnDate);
 
         _mockValidator
             .Setup(p => p.ValidateAsync(fakeCommand, CancellationToken.None))
             .ReturnsAsync(new ValidationResult());
 
-        _mockBookingRepository
-            .Setup(p => p.AddAsync(It.IsAny<Booking>()))
-            .ReturnsAsync(fakeBooking.Id);
-        _mockBookingRepository
-            .Setup(p => p.UnitOfWork.SaveChangesAsync(default))
-            .ReturnsAsync(1);
-
         _mockIdentityService
             .Setup(x => x.GetUserId())
             .Returns(currentUserId);
-        _mockIdentityService
-            .Setup(x => x.GetUserPermissions())
-            .Returns(new List<string>());
 
-        _mockUserClientGrpcService
-            .Setup(s => s.GetUserByExternalIdAsync(currentUserId))
-            .ReturnsAsync(new UserDto());
+        // Act
+        async Task Act() => await _handler.Handle(fakeCommand, CancellationToken.None);
 
-        _mockInventoryGrpcService
-            .Setup(s => s.GetVehicleAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new VehicleDto { RentalPricePerDay = 100m });
-
-        var handler = new ReserveBookingHandler(
-            _mockBookingRepository.Object,
-            _mockValidator.Object,
-            _mockUserClientGrpcService.Object,
-            _mockInventoryGrpcService.Object,
-            _mockIdentityService.Object);
-
-        // Act & Assert
-        var ex = await Assert.ThrowsAsync<AuthenticationException>(() =>
-            handler.Handle(fakeCommand, CancellationToken.None));
+        // Assert
+        await Assert.ThrowsAsync<UnauthorizedException>(Act);
     }
 
     [Fact]
-    public async Task Test_CustomerReserving_BookingId()
+    public async Task Handle_InvalidCommand_ThrowsBadRequestException()
     {
         // Arrange
         var userId = Guid.NewGuid();
         var currentUserId = Guid.NewGuid().ToString();
         var vehicleId = Guid.NewGuid();
-        var pickupDate = DateTime.Now.AddDays(1);
-        var returnDate = DateTime.Now.AddDays(3);
-        var fakeCommand = new ReserveBookingCommand { UserId = userId, VehicleId = vehicleId, PickupDate = pickupDate, ReturnDate = returnDate };
+        var pickupDate = DateTime.UtcNow;
+        var returnDate = DateTime.UtcNow.AddDays(3);
+        var fakeCommand = new ReserveBookingCommand
+        {
+            UserId = userId,
+            VehicleId = vehicleId,
+            PickupDate = pickupDate
+        };
+        var fakeBooking = new Booking(vehicleId, userId, pickupDate, returnDate);
+
+        _mockValidator
+            .Setup(p => p.ValidateAsync(fakeCommand, CancellationToken.None))
+            .ReturnsAsync(new ValidationResult(new[] {
+                new ValidationFailure("ReturnDate", "Return date does not exist.")
+            }));
+
+        // Act
+        async Task Act() => await _handler.Handle(fakeCommand, CancellationToken.None);
+
+        // Assert
+        await Assert.ThrowsAsync<BadRequestException>(Act);
+    }
+
+    [Fact]
+    public async Task Handle_UserWithPermissionReservingAndOwner_BookingId()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var currentUserId = Guid.NewGuid().ToString();
+        var vehicleId = Guid.NewGuid();
+        var pickupDate = DateTime.UtcNow;
+        var returnDate = DateTime.UtcNow.AddDays(3);
+        var fakeCommand = new ReserveBookingCommand { 
+            UserId = userId,
+            VehicleId = vehicleId,
+            PickupDate = pickupDate,
+            ReturnDate = returnDate
+        };
         var fakeBooking = new Booking(vehicleId, userId, pickupDate, returnDate);
 
         _mockValidator
             .Setup(p => p.ValidateAsync(fakeCommand, CancellationToken.None))
             .ReturnsAsync(new ValidationResult());
+
+        _mockIdentityService
+            .Setup(x => x.GetUserId())
+            .Returns(currentUserId);
+
+        _mockUserClientGrpcService
+            .Setup(s => s.GetUserByExternalIdAsync(currentUserId))
+            .ReturnsAsync(new UserDto { Id = userId, ExternalId = currentUserId });
+
+        _mockIdentityService
+            .Setup(x => x.GetUserPermissions())
+            .Returns(new List<string> { Permissions.Bookings.Reserve });
+
+        _mockInventoryGrpcService
+            .Setup(s => s.GetVehicleAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(new VehicleDto { RentalPricePerDay = 100m });
 
         _mockBookingRepository
             .Setup(p => p.AddAsync(It.IsAny<Booking>()))
@@ -101,54 +142,30 @@ public class ReserveBookingCommandHandlerTests
             .Setup(p => p.UnitOfWork.SaveChangesAsync(default))
             .ReturnsAsync(1);
 
-        _mockIdentityService
-            .Setup(x => x.GetUserId())
-            .Returns(currentUserId);
-        _mockIdentityService
-            .Setup(x => x.GetUserPermissions())
-            .Returns(new List<string> { Permissions.Bookings.Reserve });
-
-        _mockUserClientGrpcService
-            .Setup(s => s.GetUserByExternalIdAsync(currentUserId))
-            .ReturnsAsync(new UserDto { Id = userId, ExternalId = currentUserId });
-
-        _mockInventoryGrpcService
-            .Setup(s => s.GetVehicleAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new VehicleDto { RentalPricePerDay = 100m });
-
-        var handler = new ReserveBookingHandler(
-            _mockBookingRepository.Object,
-            _mockValidator.Object,
-            _mockUserClientGrpcService.Object,
-            _mockInventoryGrpcService.Object,
-            _mockIdentityService.Object);
-
         // Act
-        var result = await handler.Handle(fakeCommand, CancellationToken.None);
+        var result = await _handler.Handle(fakeCommand, CancellationToken.None);
 
         // Assert
         Assert.Equal(fakeBooking.Id, result);
     }
 
     [Fact]
-    public async Task Test_CustomerReservingWithDifferentUserIdInCommand_ThrowsAuthenticationException()
+    public async Task Handle_UserWithPermissionReservingWithDifferentUserIdInCommand_ThrowsAuthenticationException()
     {
         // Arrange
         var userId = Guid.NewGuid();
         var currentUserId = Guid.NewGuid().ToString();
         var vehicleId = Guid.NewGuid();
-        var pickupDate = DateTime.Now.AddDays(1);
-        var returnDate = DateTime.Now.AddDays(3);
+        var pickupDate = DateTime.UtcNow;
+        var returnDate = DateTime.UtcNow.AddDays(3);
         var differentCustomerId = Guid.NewGuid();
-        var fakeCommand = new ReserveBookingCommand { UserId = differentCustomerId, VehicleId = vehicleId, PickupDate = pickupDate, ReturnDate = returnDate };
+        var fakeCommand = new ReserveBookingCommand {
+            UserId = differentCustomerId,
+            VehicleId = vehicleId,
+            PickupDate = pickupDate,
+            ReturnDate = returnDate
+        };
         var fakeBooking = new Booking(vehicleId, userId, pickupDate, returnDate);
-
-        _mockBookingRepository
-            .Setup(p => p.AddAsync(It.IsAny<Booking>()))
-            .ReturnsAsync(fakeBooking.Id);
-        _mockBookingRepository
-            .Setup(p => p.UnitOfWork.SaveChangesAsync(default))
-            .ReturnsAsync(1);
 
         _mockValidator
             .Setup(p => p.ValidateAsync(fakeCommand, CancellationToken.None))
@@ -157,45 +174,18 @@ public class ReserveBookingCommandHandlerTests
         _mockIdentityService
             .Setup(x => x.GetUserId())
             .Returns(currentUserId);
+
+        _mockUserClientGrpcService
+            .Setup(s => s.GetUserByExternalIdAsync(currentUserId))
+            .ReturnsAsync(new UserDto { Id = userId, ExternalId = currentUserId });
+
         _mockIdentityService
             .Setup(x => x.GetUserPermissions())
             .Returns(new List<string> { Permissions.Bookings.Reserve });
 
-        _mockUserClientGrpcService
-            .Setup(s => s.GetUserByExternalIdAsync(currentUserId))
-            .ReturnsAsync(new UserDto { Id = userId, ExternalId = currentUserId });
-
         _mockInventoryGrpcService
             .Setup(s => s.GetVehicleAsync(It.IsAny<Guid>()))
             .ReturnsAsync(new VehicleDto { RentalPricePerDay = 100m });
-
-        var handler = new ReserveBookingHandler(
-            _mockBookingRepository.Object,
-            _mockValidator.Object,
-            _mockUserClientGrpcService.Object,
-            _mockInventoryGrpcService.Object,
-            _mockIdentityService.Object);
-
-        // Act & Assert
-        var ex = await Assert.ThrowsAsync<AuthenticationException>(() =>
-            handler.Handle(fakeCommand, CancellationToken.None));
-    }
-
-    [Fact]
-    public async Task Test_AdminReserving_BookingId()
-    {
-        // Arrange
-        var userId = Guid.NewGuid();
-        var currentUserId = Guid.NewGuid().ToString();
-        var vehicleId = Guid.NewGuid();
-        var pickupDate = DateTime.Now.AddDays(1);
-        var returnDate = DateTime.Now.AddDays(3);
-        var fakeCommand = new ReserveBookingCommand { UserId = userId, VehicleId = vehicleId, PickupDate = pickupDate, ReturnDate = returnDate };
-        var fakeBooking = new Booking(vehicleId, userId, pickupDate, returnDate);
-
-        _mockValidator
-            .Setup(p => p.ValidateAsync(fakeCommand, CancellationToken.None))
-            .ReturnsAsync(new ValidationResult());
 
         _mockBookingRepository
             .Setup(p => p.AddAsync(It.IsAny<Booking>()))
@@ -204,51 +194,107 @@ public class ReserveBookingCommandHandlerTests
             .Setup(p => p.UnitOfWork.SaveChangesAsync(default))
             .ReturnsAsync(1);
 
+        // Act
+        async Task Act() => await _handler.Handle(fakeCommand, CancellationToken.None);
+
+        // Assert
+        await Assert.ThrowsAsync<UnauthorizedException>(Act);
+    }
+
+    [Fact]
+    public async Task Handle_UserWithAllPermissionsReserving_BookingId()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var currentUserId = Guid.NewGuid().ToString();
+        var vehicleId = Guid.NewGuid();
+        var pickupDate = DateTime.UtcNow;
+        var returnDate = DateTime.UtcNow.AddDays(3);
+        var fakeCommand = new ReserveBookingCommand {
+            UserId = userId,
+            VehicleId = vehicleId,
+            PickupDate = pickupDate,
+            ReturnDate = returnDate
+        };
+        var fakeBooking = new Booking(vehicleId, userId, pickupDate, returnDate);
+
+        _mockValidator
+            .Setup(p => p.ValidateAsync(fakeCommand, CancellationToken.None))
+            .ReturnsAsync(new ValidationResult());
+
         _mockIdentityService
             .Setup(x => x.GetUserId())
             .Returns(currentUserId);
-        _mockIdentityService
-            .Setup(x => x.GetUserPermissions())
-            .Returns(new List<string> { Permissions.Bookings.Reserve, Permissions.Bookings.ViewAny });
 
         _mockUserClientGrpcService
             .Setup(s => s.GetUserByExternalIdAsync(currentUserId))
             .ReturnsAsync(new UserDto { Id = userId, ExternalId = currentUserId });
 
+        _mockIdentityService
+            .Setup(x => x.GetUserPermissions())
+            .Returns(new List<string> { 
+                Permissions.Bookings.Reserve,
+                Permissions.Bookings.ViewAny
+            });
+
         _mockInventoryGrpcService
             .Setup(s => s.GetVehicleAsync(It.IsAny<Guid>()))
             .ReturnsAsync(new VehicleDto { RentalPricePerDay = 100m });
 
-        var handler = new ReserveBookingHandler(
-            _mockBookingRepository.Object,
-            _mockValidator.Object,
-            _mockUserClientGrpcService.Object,
-            _mockInventoryGrpcService.Object,
-            _mockIdentityService.Object);
+        _mockBookingRepository
+            .Setup(p => p.AddAsync(It.IsAny<Booking>()))
+            .ReturnsAsync(fakeBooking.Id);
+        _mockBookingRepository
+            .Setup(p => p.UnitOfWork.SaveChangesAsync(default))
+            .ReturnsAsync(1);
 
         // Act
-        var result = await handler.Handle(fakeCommand, CancellationToken.None);
+        var result = await _handler.Handle(fakeCommand, CancellationToken.None);
 
         // Assert
         Assert.Equal(fakeBooking.Id, result);
     }
 
     [Fact]
-    public async Task Test_AdminReservingWithDifferentUserIdInCommand_BookingId()
+    public async Task Test_UserWithAllPermissionReservingWithDifferentUserIdInCommand_BookingId()
     {
         // Arrange
         var userId = Guid.NewGuid();
         var currentUserId = Guid.NewGuid().ToString();
         var vehicleId = Guid.NewGuid();
-        var pickupDate = DateTime.Now.AddDays(1);
-        var returnDate = DateTime.Now.AddDays(3);
+        var pickupDate = DateTime.UtcNow;
+        var returnDate = DateTime.UtcNow.AddDays(3);
         var differentCustomerId = Guid.NewGuid();
-        var fakeCommand = new ReserveBookingCommand { UserId = differentCustomerId, VehicleId = vehicleId, PickupDate = pickupDate, ReturnDate = returnDate };
+        var fakeCommand = new ReserveBookingCommand { 
+            UserId = differentCustomerId,
+            VehicleId = vehicleId,
+            PickupDate = pickupDate,
+            ReturnDate = returnDate
+        };
         var fakeBooking = new Booking(vehicleId, userId, pickupDate, returnDate);
 
         _mockValidator
             .Setup(p => p.ValidateAsync(fakeCommand, CancellationToken.None))
             .ReturnsAsync(new ValidationResult());
+
+        _mockIdentityService
+            .Setup(x => x.GetUserId())
+            .Returns(currentUserId);
+
+        _mockUserClientGrpcService
+            .Setup(s => s.GetUserByExternalIdAsync(currentUserId))
+            .ReturnsAsync(new UserDto { Id = userId, ExternalId = currentUserId });
+
+        _mockIdentityService
+            .Setup(x => x.GetUserPermissions())
+            .Returns(new List<string> {
+                Permissions.Bookings.Reserve,
+                Permissions.Bookings.ViewAny
+            });
+
+        _mockInventoryGrpcService
+            .Setup(s => s.GetVehicleAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(new VehicleDto { RentalPricePerDay = 100m });
 
         _mockBookingRepository
             .Setup(p => p.AddAsync(It.IsAny<Booking>()))
@@ -256,21 +302,6 @@ public class ReserveBookingCommandHandlerTests
         _mockBookingRepository
             .Setup(p => p.UnitOfWork.SaveChangesAsync(default))
             .ReturnsAsync(1);
-
-        _mockIdentityService
-            .Setup(x => x.GetUserId())
-            .Returns(currentUserId);
-        _mockIdentityService
-            .Setup(x => x.GetUserPermissions())
-            .Returns(new List<string> { Permissions.Bookings.Reserve, Permissions.Bookings.ViewAny });
-
-        _mockUserClientGrpcService
-            .Setup(s => s.GetUserByExternalIdAsync(currentUserId))
-            .ReturnsAsync(new UserDto { Id = userId, ExternalId = currentUserId });
-
-        _mockInventoryGrpcService
-            .Setup(s => s.GetVehicleAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new VehicleDto { RentalPricePerDay = 100m });
 
         var handler = new ReserveBookingHandler(
             _mockBookingRepository.Object,

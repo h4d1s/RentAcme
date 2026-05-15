@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\BuildingBlocks\ConsulIntegrationHelpers\ConsulIntegrationHelpers.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\Diagnostics\Diagnostics.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\EventBus\EventBus.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\GrpcIntegrationHelpers\GrpcIntegrationHelpers.csproj" />

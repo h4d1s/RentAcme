@@ -28,8 +28,12 @@ public class Booking
             throw new ReservationDomainException("Return date must be later than the pickup date.");
         }
 
+        ValidateVehicleId(vehicleId);
         VehicleId = vehicleId;
+
+        ValidateUserId(userId);
         UserId = userId;
+
         PickupDate = pickupDate;
         ReturnDate = returnDate;
         Status = BookingStatus.Reserved;
@@ -100,7 +104,23 @@ public class Booking
     {
         if (date < DateTime.UtcNow.AddMinutes(-1))
         {
-            throw new ArgumentException("Booking date cannot be in the past.");
+            throw new ReservationDomainException("Booking date cannot be in the past.");
+        }
+    }
+
+    private void ValidateVehicleId(Guid vehicleId)
+    {
+        if (vehicleId == Guid.Empty)
+        {
+            throw new ReservationDomainException("Vehicle ID cannot be empty.");
+        }
+    }
+
+    private void ValidateUserId(Guid userId)
+    {
+        if (userId == Guid.Empty)
+        {
+            throw new ReservationDomainException("User ID cannot be empty.");
         }
     }
 }

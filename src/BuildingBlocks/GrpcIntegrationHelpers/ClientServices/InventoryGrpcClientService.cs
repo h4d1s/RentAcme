@@ -1,5 +1,4 @@
-﻿using ConsulIntegrationHelpers.Services;
-using Grpc.Core;
+﻿using Grpc.Core;
 using Grpc.Net.Client;
 using GrpcIntegrationHelpers.Models;
 using Inventoryproto;
@@ -8,15 +7,13 @@ namespace GrpcIntegrationHelpers.ClientServices;
 
 public class InventoryGrpcClientService : IInventoryGrpcClientService, IDisposable
 {
-    private readonly IConsulServiceDiscovery _consulServiceDiscovery;
+    private readonly string _address = "https://inventory-api:8081";
     private GrpcChannel _channel = null!;
     private InventoryProtoService.InventoryProtoServiceClient _client = null!;
 
-    public InventoryGrpcClientService(
-        IConsulServiceDiscovery consulServiceDiscovery)
+    public InventoryGrpcClientService()
     {
-        _consulServiceDiscovery = consulServiceDiscovery;
-        _ = CreateConnectionAsync();
+        CreateConnectionAsync();
     }
 
     public async Task<VehicleDto> GetVehicleAsync(Guid id)
@@ -26,7 +23,7 @@ public class InventoryGrpcClientService : IInventoryGrpcClientService, IDisposab
             throw new RpcException(new Status(StatusCode.InvalidArgument, "Id is required."));
         }
 
-        await EnsureConnectionCreated();
+        EnsureConnectionCreated();
 
         var request = new GetVehicleRequest { VehicleId = id.ToString() };
         var reply = await _client.GetVehicleAsync(request);
@@ -48,7 +45,7 @@ public class InventoryGrpcClientService : IInventoryGrpcClientService, IDisposab
             throw new RpcException(new Status(StatusCode.InvalidArgument, "Id is required."));
         }
 
-        await EnsureConnectionCreated();
+        EnsureConnectionCreated();
 
         var request = new CheckVehicleRequest { VehicleId = id.ToString() };
         var reply = await _client.CheckVehicleAsync(request);
@@ -56,11 +53,11 @@ public class InventoryGrpcClientService : IInventoryGrpcClientService, IDisposab
         return reply.IsExists;
     }
 
-    private async Task EnsureConnectionCreated()
+    private void EnsureConnectionCreated()
     {
         if (_client == null)
         {
-            await CreateConnectionAsync();
+            CreateConnectionAsync();
             if (_client == null)
             {
                 throw new Exception($"{nameof(InventoryProtoService.InventoryProtoServiceClient)} initialization failed.");
@@ -68,14 +65,13 @@ public class InventoryGrpcClientService : IInventoryGrpcClientService, IDisposab
         }
     }
 
-    private async Task CreateConnectionAsync()
+    private void CreateConnectionAsync()
     {
-        var address = await _consulServiceDiscovery.GetServiceAddress("inventory");
         var httpHandler = new HttpClientHandler
         {
             ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
         };
-        _channel = GrpcChannel.ForAddress("https://" + address, new GrpcChannelOptions { HttpHandler = httpHandler });
+        _channel = GrpcChannel.ForAddress(_address, new GrpcChannelOptions { HttpHandler = httpHandler });
         _client = new InventoryProtoService.InventoryProtoServiceClient(_channel);
     }
 
