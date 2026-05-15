@@ -1,5 +1,4 @@
-﻿using ConsulIntegrationHelpers.Services;
-using Grpc.Core;
+﻿using Grpc.Core;
 using Grpc.Net.Client;
 using GrpcIntegrationHelpers.Models;
 using Identity.Services;
@@ -9,18 +8,16 @@ namespace GrpcIntegrationHelpers.ClientServices;
 
 public class UserGrpcClientService : IUserGrpcClientService, IDisposable
 {
-    private readonly IConsulServiceDiscovery _consulServiceDiscovery;
+    private readonly string _address = "https://user-api:8081";
     private readonly IIdentityTokenService _identityTokenService;
     private GrpcChannel _channel = null!;
     private UserProtoService.UserProtoServiceClient _client = null!;
 
     public UserGrpcClientService(
-        IConsulServiceDiscovery consulServiceDiscovery,
         IIdentityTokenService identityTokenService)
     {
-        _consulServiceDiscovery = consulServiceDiscovery;
         _identityTokenService = identityTokenService;
-        _ = CreateConnectionAsync();
+        CreateConnectionAsync();
     }
 
     public async Task<bool> CheckIfExistsAsync(Guid id)
@@ -30,7 +27,7 @@ public class UserGrpcClientService : IUserGrpcClientService, IDisposable
             throw new RpcException(new Status(StatusCode.InvalidArgument, "Id is required."));
         }
 
-        await EnsureConnectionCreated();
+        EnsureConnectionCreated();
 
         var request = new CheckUserRequest { UserId = id.ToString() };
         var reply = await _client.CheckUserAsync(request);
@@ -45,7 +42,7 @@ public class UserGrpcClientService : IUserGrpcClientService, IDisposable
             throw new RpcException(new Status(StatusCode.InvalidArgument, "Id is required."));
         }
 
-        await EnsureConnectionCreated();
+        EnsureConnectionCreated();
 
         var request = new GetUserRequest { UserId = id.ToString() };
         var reply = await _client.GetUserAsync(request);
@@ -68,7 +65,7 @@ public class UserGrpcClientService : IUserGrpcClientService, IDisposable
             throw new RpcException(new Status(StatusCode.InvalidArgument, $"{externalId} is required."));
         }
 
-        await EnsureConnectionCreated();
+        EnsureConnectionCreated();
 
         var request = new GetUserByExternalIdRequest { UserExternalId = externalId };
         var reply = await _client.GetUserByExternalIdAsync(request);
@@ -85,11 +82,11 @@ public class UserGrpcClientService : IUserGrpcClientService, IDisposable
         return user;
     }
 
-    private async Task EnsureConnectionCreated()
+    private void EnsureConnectionCreated()
     {
         if (_client == null)
         {
-            await CreateConnectionAsync();
+            CreateConnectionAsync();
             if (_client == null)
             {
                 throw new Exception($"{nameof(UserProtoService.UserProtoServiceClient)} initialization failed.");
@@ -97,10 +94,8 @@ public class UserGrpcClientService : IUserGrpcClientService, IDisposable
         }
     }
 
-    private async Task CreateConnectionAsync()
+    private void CreateConnectionAsync()
     {
-        var address = await _consulServiceDiscovery.GetServiceAddress("user");
-
         var callCredentials = CallCredentials.FromInterceptor(async (context, metadata) =>
         {
             var token = await _identityTokenService.GetValidTokenAsync() ?? throw new ArgumentNullException("Token is not available.");
@@ -111,7 +106,7 @@ public class UserGrpcClientService : IUserGrpcClientService, IDisposable
         {
             ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
         };
-        _channel = GrpcChannel.ForAddress("https://" + address, new GrpcChannelOptions
+        _channel = GrpcChannel.ForAddress(_address, new GrpcChannelOptions
         {
             HttpHandler = httpHandler,
             Credentials = ChannelCredentials.Create(new SslCredentials(), callCredentials)

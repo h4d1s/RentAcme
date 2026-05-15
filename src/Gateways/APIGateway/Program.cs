@@ -1,5 +1,4 @@
 using Consul;
-using ConsulIntegrationHelpers.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;

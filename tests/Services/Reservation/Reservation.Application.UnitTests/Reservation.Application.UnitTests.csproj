@@ -10,6 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Mocks\**" />
+    <EmbeddedResource Remove="Mocks\**" />
+    <None Remove="Mocks\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Castle.Core" Version="5.2.1" />
     <PackageReference Include="coverlet.collector" Version="10.0.0">
       <PrivateAssets>all</PrivateAssets>
@@ -32,11 +38,6 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Bookings\Queries\" />
-    <Folder Include="Mocks\" />
   </ItemGroup>
 
   <ItemGroup>

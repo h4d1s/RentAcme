@@ -34,26 +34,26 @@ public class CancelBookingHandler : IRequestHandler<CancelBookingCommand, Unit>
             throw new BadRequestException("Invalid cancel booking request", validationResult);
         }
 
-        var bookingToUpdate = await _bookingRepository.GetByIdAsync(request.BookingId);
-
-        if (bookingToUpdate is null)
-        {
-            throw new NotFoundException($"Booking with {request.BookingId} not found.");
-        }
-
-        var currentUserId = _identityService.GetUserId() ?? throw new BadRequestException("User not authenticated.");
-
+        var currentUserId = _identityService.GetUserId() ?? throw new UnauthorizedException("User not authenticated.");
         var user = await _userGrpcClientService.GetUserByExternalIdAsync(currentUserId);
         if (user == null)
         {
             throw new BadRequestException("User not found.");
         }
 
-        var isOwner = bookingToUpdate.UserId == user.Id;
-
-        if (!isOwner)
+        var bookingToUpdate = await _bookingRepository.GetByIdAsync(request.BookingId);
+        if (bookingToUpdate is null)
         {
-            throw new AuthenticationException("You are not authorized to reserve this booking.");
+            throw new NotFoundException($"Booking with {request.BookingId} not found.");
+        }
+
+        var isOwner = bookingToUpdate.UserId == user.Id;
+        var permissions = _identityService.GetUserPermissions();
+        var canView = isOwner || permissions.Contains(Permissions.Bookings.ViewAny);
+
+        if (!canView)
+        {
+            throw new UnauthorizedException("You are not authorized to cancel this booking.");
         }
 
         bookingToUpdate.SetCanceledStatus();

@@ -40,7 +40,6 @@ public static class Extensions
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidIssuer = configuration["Keycloak:Issuer"],
-                    RoleClaimType = ClaimTypes.Role
                 };
             });
         services.AddAuthorization();

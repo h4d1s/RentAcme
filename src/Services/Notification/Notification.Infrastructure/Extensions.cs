@@ -1,7 +1,4 @@
-﻿using Consul;
-using ConsulIntegrationHelpers.HostedServices;
-using ConsulIntegrationHelpers.Services;
-using GrpcIntegrationHelpers;
+﻿using GrpcIntegrationHelpers;
 using HealthChecks.UI.Client;
 using Identity;
 using MassTransit;
@@ -35,22 +32,6 @@ public static class Extensions
         services.AddHealthChecks()
             .AddCheck("self", () => HealthCheckResult.Healthy());
 
-        // Consul
-        services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
-        {
-            var address = configuration["Consul:Address"] ?? throw new ArgumentNullException("Consul address is not configured");
-            consulConfig.Address = new Uri(address);
-        }));
-        services.AddScoped<IConsulServiceDiscovery, ConsulServiceDiscovery>();
-        services.AddHostedService<ConsulServiceRegistration>(provider =>
-            new ConsulServiceRegistration(
-                provider.GetRequiredService<IConsulClient>(),
-                provider.GetRequiredService<ILogger<ConsulServiceRegistration>>(),
-                configuration["Consul:Service:Host"] ?? throw new ArgumentNullException("Consul host is not configured"),
-                configuration["Consul:Service:Name"] ?? throw new ArgumentNullException("Consul service name is not configured"),
-                int.Parse(configuration["Consul:Service:Port"] ?? throw new ArgumentNullException("Consul service port is not configured"))
-            ));
-
         // Mass Transit
         services.AddMassTransit(x =>
         {
@@ -64,6 +45,7 @@ public static class Extensions
                     {
                         hostConfigurator.Username(configuration["RabbitMQ:Username"] ?? throw new ArgumentNullException("RabbitMQ username is not configured"));
                         hostConfigurator.Password(configuration["RabbitMQ:Password"] ?? throw new ArgumentNullException("RabbitMQ password is not configured"));
+                        hostConfigurator.RequestedConnectionTimeout(TimeSpan.FromSeconds(2));
                     });
                 busFactoryConfigurator.ConfigureEndpoints(context);
             });

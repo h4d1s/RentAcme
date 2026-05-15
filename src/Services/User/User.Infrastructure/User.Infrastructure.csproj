@@ -7,6 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="HostedServices\**" />
+    <Compile Remove="Services\**" />
+    <EmbeddedResource Remove="HostedServices\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="HostedServices\**" />
+    <None Remove="Services\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
 	<PackageReference Include="MassTransit" Version="9.1.0" />
 	<PackageReference Include="MassTransit.RabbitMQ" Version="9.1.0" />
@@ -20,7 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\BuildingBlocks\ConsulIntegrationHelpers\ConsulIntegrationHelpers.csproj" />
 	<ProjectReference Include="..\..\..\BuildingBlocks\GrpcIntegrationHelpers\GrpcIntegrationHelpers.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\Diagnostics\Diagnostics.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\EventBus\EventBus.csproj" />
@@ -28,11 +36,6 @@
     <ProjectReference Include="..\User.Application\User.Application.csproj" />
     <ProjectReference Include="..\User.Domain\User.Domain.csproj" />
     <ProjectReference Include="..\User.Infrastructure.Persistence\User.Infrastructure.Persistence.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="HostedServices\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

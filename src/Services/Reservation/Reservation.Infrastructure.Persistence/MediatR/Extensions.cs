@@ -21,5 +21,7 @@ public static class Extensions
 
         foreach (var domainEvent in domainEvents)
             await mediator.Publish(domainEvent);
+
+        Console.Write(">>");
     }
 }

@@ -31,14 +31,12 @@ public class ReserveBookingHandler : IRequestHandler<ReserveBookingCommand, Guid
     public async Task<Guid> Handle(ReserveBookingCommand request, CancellationToken cancellationToken)
     {
         var validationResult = await _validator.ValidateAsync(request);
-
         if (validationResult.Errors.Any())
         {
             throw new BadRequestException("Invalid reserve booking request", validationResult);
         }
 
-        var currentUserId = _identityService.GetUserId() ?? throw new BadRequestException("User not authenticated.");
-
+        var currentUserId = _identityService.GetUserId() ?? throw new UnauthorizedException("User not authenticated.");
         var user = await _userGrpcClientService.GetUserByExternalIdAsync(currentUserId) ??
             throw new BadRequestException("User not found.");
 
@@ -48,7 +46,7 @@ public class ReserveBookingHandler : IRequestHandler<ReserveBookingCommand, Guid
 
         if (!canView)
         {
-            throw new AuthenticationException("You are not authorized to reserve this booking.");
+            throw new UnauthorizedException("You are not authorized to reserve this booking.");
         }
 
         var booking = new Booking(request.VehicleId, request.UserId, request.PickupDate, request.ReturnDate);

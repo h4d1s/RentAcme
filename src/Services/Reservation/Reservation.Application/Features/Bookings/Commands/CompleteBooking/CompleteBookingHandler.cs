@@ -1,5 +1,4 @@
 ﻿using GrpcIntegrationHelpers.ClientServices;
-using Identity.Models;
 using Identity.Services;
 using Reservation.Application.Exceptions;
 using Reservation.Domain.AggregatesModel.BookingAggregate;
@@ -34,19 +33,17 @@ public class CompleteBookingHandler : IRequestHandler<CompleteBookingCommand, Un
             throw new BadRequestException("Invalid complete booking request", validationResult);
         }
 
-        var bookingToUpdate = await _bookingRepository.GetByIdAsync(request.BookingId);
-
-        if (bookingToUpdate is null)
-        {
-            throw new NotFoundException($"Booking with {request.BookingId} not found.");
-        }
-
-        var currentUserId = _identityService.GetUserId() ?? throw new BadRequestException("User not authenticated.");
-
+        var currentUserId = _identityService.GetUserId() ?? throw new UnauthorizedException("User not authenticated.");
         var user = await _userGrpcClientService.GetUserByExternalIdAsync(currentUserId);
         if (user == null)
         {
             throw new BadRequestException("User not found.");
+        }
+
+        var bookingToUpdate = await _bookingRepository.GetByIdAsync(request.BookingId);
+        if (bookingToUpdate is null)
+        {
+            throw new NotFoundException($"Booking with {request.BookingId} not found.");
         }
 
         bookingToUpdate.SetCompleteStatus();

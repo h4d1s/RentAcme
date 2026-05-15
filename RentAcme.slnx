@@ -6,7 +6,6 @@
   </Folder>
   <Folder Name="/src/BuildingBlocks/">
     <Project Path="src/BuildingBlocks/Common/Common.csproj" />
-    <Project Path="src/BuildingBlocks/ConsulIntegrationHelpers/ConsulIntegrationHelpers.csproj" />
     <Project Path="src/BuildingBlocks/Diagnostics/Diagnostics.csproj" />
     <Project Path="src/BuildingBlocks/EventBus/EventBus.csproj" />
     <Project Path="src/BuildingBlocks/GrpcIntegrationHelpers/GrpcIntegrationHelpers.csproj" />
@@ -81,6 +80,8 @@
   <Folder Name="/tests/" />
   <Folder Name="/tests/Services/" />
   <Folder Name="/tests/Services/Reservation/">
+    <Project Path="tests/Services/Reservation/Reservation.Api.IntegrationTests/Reservation.API.IntegrationTests.csproj" Id="bfabd78a-4345-4794-9e9f-6e990918b4a6" />
     <Project Path="tests/Services/Reservation/Reservation.Application.UnitTests/Reservation.Application.UnitTests.csproj" />
+    <Project Path="tests/Services/Reservation/Reservation.Domain.UnitTests/Reservation.Domain.UnitTests.csproj" Id="7a09b75f-faab-4a5a-beab-6cc4b34fa698" />
   </Folder>
 </Solution>

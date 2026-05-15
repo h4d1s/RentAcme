@@ -44,11 +44,6 @@ services:
     networks: 
       - rentacme_network
 
-  consul:
-    image: hashicorp/consul:latest
-    networks: 
-      - rentacme_network
-
   api-gateway:
     image: ${DOCKER_REGISTRY-}api-gateway
     build:

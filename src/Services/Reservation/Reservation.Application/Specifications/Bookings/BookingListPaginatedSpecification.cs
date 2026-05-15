@@ -21,13 +21,13 @@ public class BookingListPaginatedSpecification : Specification<Booking>
         Query.Where(i => i.ReturnDate <= returnDate, returnDate.HasValue);
         Query.Where(i => i.Status == status, status.HasValue);
 
-
         if (!string.IsNullOrEmpty(orderBy))
         {
+            var isDesc = string.Equals(order, "desc", StringComparison.OrdinalIgnoreCase);
             switch (orderBy.ToLower())
             {
                 case "pickupdate":
-                    if (string.IsNullOrEmpty(order) || order.ToLower() == "desc")
+                    if (!isDesc)
                     {
                         Query.OrderBy(x => x.PickupDate);
                     }
@@ -37,7 +37,7 @@ public class BookingListPaginatedSpecification : Specification<Booking>
                     }
                     break;
                 case "returndate":
-                    if (string.IsNullOrEmpty(order) || order.ToLower() == "desc")
+                    if (!isDesc)
                     {
                         Query.OrderBy(x => x.ReturnDate);
                     }
@@ -47,7 +47,7 @@ public class BookingListPaginatedSpecification : Specification<Booking>
                     }
                     break;
                 case "status":
-                    if (string.IsNullOrEmpty(order) || order.ToLower() == "desc")
+                    if (!isDesc)
                     {
                         Query.OrderBy(x => x.Status);
                     }
@@ -57,13 +57,13 @@ public class BookingListPaginatedSpecification : Specification<Booking>
                     }
                     break;
                 default:
-                    if (string.IsNullOrEmpty(order) || order.ToLower() == "desc")
+                    if (!isDesc)
                     {
                         Query.OrderBy(x => x.Id);
                     }
                     else
                     {
-                        Query.OrderByDescending(x => x.Id);
+                        Query.OrderByDescending(x => x.Id); 
                     }
                     break;
             }
@@ -71,8 +71,9 @@ public class BookingListPaginatedSpecification : Specification<Booking>
 
         if (pageNumber.HasValue && pageSize.HasValue)
         {
+            var page = Math.Max(pageNumber.Value, 1);
             Query
-                .Skip((pageNumber.Value - 1) * pageSize.Value)
+                .Skip((page - 1) * pageSize.Value)
                 .Take(pageSize.Value);
         }
     }
