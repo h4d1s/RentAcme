@@ -20,10 +20,11 @@ public class VehicleListPaginatedSpecification : Specification<Vehicle>
 
         if (!string.IsNullOrEmpty(orderBy))
         {
+            var isDesc = string.Equals(order, "desc", StringComparison.OrdinalIgnoreCase);
             switch (orderBy.ToLower())
             {
                 case "brand":
-                    if (string.IsNullOrEmpty(order) || order.ToLower() != "desc")
+                    if (!isDesc)
                     {
                         Query.OrderBy(x => x.Variant.Model.Brand.Name);
                     }
@@ -33,7 +34,7 @@ public class VehicleListPaginatedSpecification : Specification<Vehicle>
                     }
                     break;
                 case "model":
-                    if (string.IsNullOrEmpty(order) || order.ToLower() != "desc")
+                    if (!isDesc)
                     {
                         Query.OrderBy(x => x.Variant.Model.Name);
                     }
@@ -43,7 +44,7 @@ public class VehicleListPaginatedSpecification : Specification<Vehicle>
                     }
                     break;
                 case "variant":
-                    if (string.IsNullOrEmpty(order) || order.ToLower() != "desc")
+                    if (!isDesc)
                     {
                         Query.OrderBy(x => x.Variant.Name);
                     }
@@ -53,7 +54,7 @@ public class VehicleListPaginatedSpecification : Specification<Vehicle>
                     }
                     break;
                 case "price":
-                    if (string.IsNullOrEmpty(order) || order.ToLower() != "desc")
+                    if (!isDesc)
                     {
                         Query.OrderBy(x => x.RentalPricePerDay);
                     }
@@ -63,17 +64,17 @@ public class VehicleListPaginatedSpecification : Specification<Vehicle>
                     }
                     break;
                 case "power":
-                    if (string.IsNullOrEmpty(order) || order.ToLower() != "desc")
+                    if (!isDesc)
                     {
                         Query.OrderBy(x => x.Variant.Power);
                     }
                     else
                     {
-                        Query.OrderByDescending(x => x.RentalPricePerDay);
+                        Query.OrderByDescending(x => x.Variant.Power);
                     }
                     break;
                 default:
-                    if (string.IsNullOrEmpty(order) || order.ToLower() != "desc")
+                    if (!isDesc)
                     {
                         Query.OrderBy(x => x.Id);
                     }

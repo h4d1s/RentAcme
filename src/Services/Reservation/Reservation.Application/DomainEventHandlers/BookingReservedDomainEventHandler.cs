@@ -31,6 +31,7 @@ public class BookingReservedDomainEventHandler : INotificationHandler<BookingRes
             ReturnDate = notification.Booking.ReturnDate,
             Price = notification.Booking.Price,
         };
+
         await _integrationEventService.PublishAsync(bookingReservedEvent);
     }
 } 

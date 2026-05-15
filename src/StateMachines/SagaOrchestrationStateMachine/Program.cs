@@ -36,6 +36,7 @@ builder.Services.AddMassTransit(cfg =>
             {
                 hostConfigurator.Username(configuration["RabbitMQ:Username"] ?? throw new ArgumentNullException("RabbitMQ:Username is not configured"));
                 hostConfigurator.Password(configuration["RabbitMQ:Password"] ?? throw new ArgumentNullException("RabbitMQ:Password is not configured"));
+                hostConfigurator.RequestedConnectionTimeout(TimeSpan.FromSeconds(2));
             });
         busFactoryConfigurator.ConfigureEndpoints(context);
     });

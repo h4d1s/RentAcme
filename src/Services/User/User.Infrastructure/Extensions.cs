@@ -1,7 +1,4 @@
-﻿using Consul;
-using ConsulIntegrationHelpers.HostedServices;
-using ConsulIntegrationHelpers.Services;
-using Diagnostics;
+﻿using Diagnostics;
 using EventBus;
 using HealthChecks.UI.Client;
 using Identity;
@@ -42,22 +39,6 @@ public static class Extensions
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
         services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
-        // Consul
-        services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
-        {
-            var address = configuration["Consul:Address"] ?? throw new ArgumentNullException("Consul address is not configured");
-            consulConfig.Address = new Uri(address);
-        }));
-        services.AddScoped<IConsulServiceDiscovery, ConsulServiceDiscovery>();
-        services.AddHostedService<ConsulServiceRegistration>(provider =>
-            new ConsulServiceRegistration(
-                provider.GetRequiredService<IConsulClient>(),
-                provider.GetRequiredService<ILogger<ConsulServiceRegistration>>(),
-                configuration["Consul:Service:Host"] ?? throw new ArgumentNullException("Consul host is not configured"),
-                configuration["Consul:Service:Name"] ?? throw new ArgumentNullException("Consul service name is not configured"),
-                int.Parse(configuration["Consul:Service:Port"] ?? throw new ArgumentNullException("Consul service port is not configured"))
-            ));
-
         // DI
 
         // Mass Transit
@@ -78,6 +59,7 @@ public static class Extensions
                         hostConfigurator.Password(
                             configuration["RabbitMQ:Password"] ??
                             throw new ArgumentNullException("RabbitMQ Password is not configured"));
+                        hostConfigurator.RequestedConnectionTimeout(TimeSpan.FromSeconds(2));
                     });
                 busFactoryConfigurator.ReceiveEndpoint("keycloak-client-event-queue", e =>
                 {
