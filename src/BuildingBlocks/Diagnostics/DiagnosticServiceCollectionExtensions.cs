@@ -2,8 +2,6 @@
 using MassTransit.Monitoring;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using OpenTelemetry;
-using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -18,20 +16,18 @@ public static class DiagnosticServiceCollectionExtensions
         string serviceName,
         IConfiguration configuration)
     {
-        // create the resource that references the service name passed in
-        var resource = ResourceBuilder.CreateDefault()
-            .AddService(serviceName: serviceName, serviceVersion: "1.0");
+        var endpoint = configuration["OtelCollector:Endpoint"] ?? throw new ArgumentNullException("OtelCollector:Endpoint");
 
-        // add the OpenTelemetry services
-        var otelBuilder = services.AddOpenTelemetry();
-
-        otelBuilder
-            .UseOtlpExporter(OtlpExportProtocol.Grpc, new Uri("http://otel-collector:4317/"))
+        services.AddOpenTelemetry()
+            .ConfigureResource(r =>
+                r.AddService(
+                    serviceName: serviceName,
+                    serviceVersion: "1.0.0", //typeof(Program).Assembly.GetName().Version?.ToString() ?? "unknown",
+                    serviceInstanceId: Environment.MachineName))
             // add the metrics providers
             .WithMetrics(metrics =>
             {
                 metrics
-                    .SetResourceBuilder(resource)
                     .AddRuntimeInstrumentation()
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
@@ -47,23 +43,25 @@ public static class DiagnosticServiceCollectionExtensions
                         "Microsoft.AspNetCore.Hosting",
                         "Microsoft.AspNetCore.Server.Kestrel",
                         // Mass Transit
-                        InstrumentationOptions.MeterName);
+                        InstrumentationOptions.MeterName)
+                    .AddOtlpExporter(otlpOptions =>
+                    {
+                        otlpOptions.Endpoint = new Uri(endpoint);
+                    });
             })
             // add the tracing providers
             .WithTracing(tracing =>
             {
                 tracing
-                    .SetResourceBuilder(resource)
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddSqlClientInstrumentation()
                     // MassTransit
-                    .AddSource(DiagnosticHeaders.DefaultListenerName);
-            })
-            .WithLogging(logging =>
-            {
-                logging
-                    .SetResourceBuilder(resource);
+                    .AddSource(DiagnosticHeaders.DefaultListenerName)
+                    .AddOtlpExporter(otlpOptions =>
+                    {
+                        otlpOptions.Endpoint = new Uri(endpoint);
+                    });
             });
 
         return services;

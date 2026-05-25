@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "saga-orchestration-statemachine.fullname" . }}
+  labels:
+    {{- include "saga-orchestration-statemachine.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "saga-orchestration-statemachine.selectorLabels" . | nindent 4 }}

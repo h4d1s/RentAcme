@@ -17,7 +17,6 @@ COPY ["Services/Notification/Notification.Appication/Notification.Appication.csp
 COPY ["Services/Notification/Notification.Infrastructure/Notification.Infrastructure.csproj", "Services/Notification/Notification.Infrastructure/"]
 COPY ["BuildingBlocks/EventBus/EventBus.csproj", "BuildingBlocks/EventBus/"]
 COPY ["BuildingBlocks/GrpcIntegrationHelpers/GrpcIntegrationHelpers.csproj", "BuildingBlocks/GrpcIntegrationHelpers/"]
-COPY ["BuildingBlocks/ConsulIntegrationHelpers/ConsulIntegrationHelpers.csproj", "BuildingBlocks/ConsulIntegrationHelpers/"]
 COPY ["BuildingBlocks/Identity/Identity.csproj", "BuildingBlocks/Identity/"]
 RUN dotnet restore "Services/Notification/Notification.API/Notification.API.csproj"
 COPY . .

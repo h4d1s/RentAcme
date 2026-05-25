@@ -1,9 +1,10 @@
-using Consul;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
-using Ocelot.Provider.Consul;
+using Ocelot.Values;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,13 +12,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-
-// Consul
-builder.Services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
-{
-    var address = builder.Configuration["Consul:Address"] ?? throw new ArgumentNullException("Consul address is not configured");
-    consulConfig.Address = new Uri(address);
-}));
 
 // CORS
 builder.Services.AddCors(options =>
@@ -31,14 +25,7 @@ builder.Services.AddCors(options =>
 // Configure Ocelot
 builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
 builder.Services
-    .AddOcelot(builder.Configuration)
-    .AddConsul();
-
-builder.Services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
-{
-    var address = builder.Configuration["Consul:Address"] ?? throw new ArgumentNullException("Consul address is not configured");
-    consulConfig.Address = new Uri(address);
-}));
+    .AddOcelot(builder.Configuration);
 
 // Auth
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -56,6 +43,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 builder.Services.AddAuthorization();
 
+// Health
+var hcBuilder = builder.Services.AddHealthChecks();
+hcBuilder
+    .AddCheck("self", () => HealthCheckResult.Healthy());
+
 var app = builder.Build();
 
 app.UseHttpsRedirection();
@@ -66,6 +58,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHealthChecks("/health/live", new HealthCheckOptions
+{
+    Predicate = _ => false
+});
+app.MapHealthChecks("/health/ready");
 
 app.UseOcelot().Wait();
 

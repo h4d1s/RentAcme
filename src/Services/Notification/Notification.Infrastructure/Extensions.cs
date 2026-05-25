@@ -1,6 +1,7 @@
-﻿using GrpcIntegrationHelpers;
-using HealthChecks.UI.Client;
+﻿using Diagnostics;
+using GrpcIntegrationHelpers;
 using Identity;
+using Logging;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -14,6 +15,7 @@ using Notification.Appication.Infrastructure.Services;
 using Notification.Infrastructure.Grpc;
 using Notification.Infrastructure.Hubs;
 using Notification.Infrastructure.Services;
+using RabbitMQ.Client;
 using System.Reflection;
 
 namespace Notification.Infrastructure;
@@ -29,8 +31,21 @@ public static class Extensions
         services.AddTransient<IEmailService, EmailService>();
 
         // Health
-        services.AddHealthChecks()
-            .AddCheck("self", () => HealthCheckResult.Healthy());
+        services.AddSingleton<IConnection>(sp =>
+        {
+            var connectionString = configuration.GetConnectionString("RabbitMQ")
+                ?? throw new ArgumentNullException("RabbitMQ connection string is not configured");
+            var factory = new ConnectionFactory
+            {
+                Uri = new Uri(connectionString),
+            };
+            return factory.CreateConnectionAsync().GetAwaiter().GetResult();
+        });
+
+        var hcBuilder = services.AddHealthChecks();
+        hcBuilder
+            .AddCheck("self", () => HealthCheckResult.Healthy())
+            .AddRabbitMQ(sp => sp.GetRequiredService<IConnection>());
 
         // Mass Transit
         services.AddMassTransit(x =>
@@ -38,13 +53,10 @@ public static class Extensions
             x.AddConsumers(Assembly.GetExecutingAssembly());
             x.UsingRabbitMq((context, busFactoryConfigurator) =>
             {
-                busFactoryConfigurator.Host(
-                    configuration["RabbitMQ:Hostname"],
-                    "/",
+                var connectionString = configuration.GetConnectionString("RabbitMQ") ?? throw new ArgumentNullException("RabbitMQ connecting string is not configured");
+                busFactoryConfigurator.Host(new Uri(connectionString),
                     hostConfigurator =>
                     {
-                        hostConfigurator.Username(configuration["RabbitMQ:Username"] ?? throw new ArgumentNullException("RabbitMQ username is not configured"));
-                        hostConfigurator.Password(configuration["RabbitMQ:Password"] ?? throw new ArgumentNullException("RabbitMQ password is not configured"));
                         hostConfigurator.RequestedConnectionTimeout(TimeSpan.FromSeconds(2));
                     });
                 busFactoryConfigurator.ConfigureEndpoints(context);
@@ -64,6 +76,12 @@ public static class Extensions
         // Identity
         services.AddIdentityServices(builder, configuration);
 
+        // Logging
+        services.AddLoggingSerilog("Notification", builder, configuration);
+
+        // Diagnostics
+        services.AddObservability("Notification", configuration);
+
         // SignalR
         services.AddSignalR();
 
@@ -76,11 +94,11 @@ public static class Extensions
         IServiceProvider serviceProvider)
     {
         // Health
-        app.UseHealthChecks("/hc", new HealthCheckOptions()
+        app.MapHealthChecks("/health/live", new HealthCheckOptions
         {
-            Predicate = _ => true,
-            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+            Predicate = _ => false
         });
+        app.MapHealthChecks("/health/ready");
 
         // SignalR
         app.MapHub<ReservationHub>("/reservationHub");

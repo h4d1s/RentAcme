@@ -1,9 +1,13 @@
+using Diagnostics;
 using EventBus.Commands;
 using EventBus.Constants;
+using Logging;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Persistence;
 using Quartz;
+using RabbitMQ.Client;
 using SagaOrchestrationStateMachine.Data;
 using SagaOrchestrationStateMachine.StateMachines;
 using SagaOrchestrationStateMachine.States;
@@ -29,13 +33,11 @@ builder.Services.AddMassTransit(cfg =>
         EndpointConvention.Map<CreatePaymentIntentCommand>(new Uri($"queue:{QueuesConsts.CreatePaymentIntentCommandQueueName}"));
 
         busFactoryConfigurator.UseMessageScheduler(new Uri("queue:quartz"));
-        busFactoryConfigurator.Host(
-            configuration["RabbitMQ:Hostname"],
-            "/",
+        var connectionString = configuration.GetConnectionString("RabbitMQ") ?? throw new ArgumentNullException("RabbitMQ connecting string is not configured");
+
+        busFactoryConfigurator.Host(new Uri(connectionString),
             hostConfigurator =>
             {
-                hostConfigurator.Username(configuration["RabbitMQ:Username"] ?? throw new ArgumentNullException("RabbitMQ:Username is not configured"));
-                hostConfigurator.Password(configuration["RabbitMQ:Password"] ?? throw new ArgumentNullException("RabbitMQ:Password is not configured"));
                 hostConfigurator.RequestedConnectionTimeout(TimeSpan.FromSeconds(2));
             });
         busFactoryConfigurator.ConfigureEndpoints(context);
@@ -44,6 +46,17 @@ builder.Services.AddMassTransit(cfg =>
 builder.Services.AddQuartz();
 builder.Services.AddQuartzHostedService();
 
+builder.Services.AddSingleton<IConnection>(sp =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("RabbitMQ")
+        ?? throw new ArgumentNullException("RabbitMQ connection string is not configured");
+    var factory = new ConnectionFactory
+    {
+        Uri = new Uri(connectionString),
+    };
+    return factory.CreateConnectionAsync().GetAwaiter().GetResult();
+});
+
 builder.Services.AddDbContext<SagaMachineContext>(options =>
 {
     options.UseNpgsql(
@@ -51,8 +64,22 @@ builder.Services.AddDbContext<SagaMachineContext>(options =>
             throw new InvalidOperationException("Connection string 'SagaMachineContext' not found.")
         );
 });
-
 builder.Services.AddMigration<SagaMachineContext>();
+
+var hcBuilder = builder.Services.AddHealthChecks();
+hcBuilder
+    .AddCheck("self", () => HealthCheckResult.Healthy())
+    .AddRabbitMQ(sp => sp.GetRequiredService<IConnection>())
+    .AddNpgSql(
+        builder.Configuration.GetConnectionString("SagaMachineContext") ?? throw new ArgumentNullException("SagaMachineContext is not configured"),
+        name: "SagaMachineDB-check",
+        tags: new string[] { "saga-machine-db" });
+
+// Logging
+builder.Services.AddLoggingSerilog("SagaOrchestrationStateMachine", builder, builder.Configuration);
+
+// Diagnostics
+builder.Services.AddObservability("SagaOrchestrationStateMachine", builder.Configuration);
 
 var host = builder.Build();
 host.Run();

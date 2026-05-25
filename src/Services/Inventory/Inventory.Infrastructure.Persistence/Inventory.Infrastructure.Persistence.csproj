@@ -12,8 +12,8 @@
 	
   <ItemGroup>
     <PackageReference Include="Ardalis.Specification" Version="9.3.1" />
-	<PackageReference Include="Ardalis.Specification.EntityFrameworkCore" Version="9.3.1" />
-	<PackageReference Include="MediatR" Version="14.1.0" />
+	  <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" Version="9.3.1" />
+	  <PackageReference Include="MediatR" Version="12.1.1" />
     <PackageReference Include="Humanizer.Core" Version="3.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.7">
     <PrivateAssets>all</PrivateAssets>

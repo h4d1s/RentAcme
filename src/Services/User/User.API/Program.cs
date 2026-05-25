@@ -20,7 +20,8 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 app
-    .ConfigureInfrastructurePersistenceServices(app.Environment, app.Services)
+    .ConfigureInfrastructurePersistenceServices(app.Environment, app.Services);
+app
     .ConfigureInfrastructureServices(app.Environment, app.Services, app.Configuration, app.Lifetime)
     .ConfigureApiServices(app.Environment, app.Services);
 
