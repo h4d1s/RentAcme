@@ -62,12 +62,6 @@
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "http://apigateway:8080",
-    "ServiceDiscoveryProvider": {
-      "Host": "consul",
-      "Port": 8500,
-      "Type": "Consul"
-    },
     "RateLimitOptions": {
       "DisableRateLimitHeaders": false,
       "HttpStatusCode": 429,

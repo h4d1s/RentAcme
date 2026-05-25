@@ -1,7 +1,8 @@
-﻿using EventBus;
+﻿using Diagnostics;
+using EventBus;
 using EventBus.Constants;
 using GrpcIntegrationHelpers;
-using HealthChecks.UI.Client;
+using Logging;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -9,10 +10,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Payment.Application.Infrastructure.Services;
 using Payment.Infrastructure.IntegrationEvents.EventHandling;
 using Payment.Infrastructure.Services;
+using RabbitMQ.Client;
 using Stripe;
 using System.Reflection;
 
@@ -29,8 +30,21 @@ public static class Extensions
         services.AddScoped<IPaymentGateway, StripePaymentGateway>();
 
         // Health
-        services.AddHealthChecks()
-            .AddCheck("self", () => HealthCheckResult.Healthy());
+        services.AddSingleton<IConnection>(sp =>
+        {
+            var connectionString = configuration.GetConnectionString("RabbitMQ")
+                ?? throw new ArgumentNullException("RabbitMQ connection string is not configured");
+            var factory = new ConnectionFactory
+            {
+                Uri = new Uri(connectionString),
+            };
+            return factory.CreateConnectionAsync().GetAwaiter().GetResult();
+        });
+
+        var hcBuilder = services.AddHealthChecks();
+        hcBuilder
+            .AddCheck("self", () => HealthCheckResult.Healthy())
+            .AddRabbitMQ(sp => sp.GetRequiredService<IConnection>());
 
         // Stripe
         StripeConfiguration.ApiKey = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
@@ -44,13 +58,10 @@ public static class Extensions
 
             x.UsingRabbitMq((context, busFactoryConfigurator) =>
             {
-                busFactoryConfigurator.Host(
-                    configuration["RabbitMQ:Hostname"],
-                    "/",
+                var connectionString = configuration.GetConnectionString("RabbitMQ") ?? throw new ArgumentNullException("RabbitMQ connecting string is not configured");
+                busFactoryConfigurator.Host(new Uri(connectionString),
                     hostConfigurator =>
                     {
-                        hostConfigurator.Username(configuration["RabbitMQ:Username"] ?? throw new ArgumentNullException("RabbitMQ username is not configured"));
-                        hostConfigurator.Password(configuration["RabbitMQ:Password"] ?? throw new ArgumentNullException("RabbitMQ password is not configured"));
                         hostConfigurator.RequestedConnectionTimeout(TimeSpan.FromSeconds(2));
                     });
                 busFactoryConfigurator.ConfigureEndpoints(context);
@@ -60,6 +71,12 @@ public static class Extensions
         // Event bus
         services.AddEventBus();
 
+        // Logging
+        services.AddLoggingSerilog("Payment", builder, configuration);
+
+        // Diagnostics
+        services.AddObservability("Payment", configuration);
+
         // GrpcHelpers
         services.AddGrpcIntegrationHelpers(builder, configuration);
 
@@ -67,16 +84,16 @@ public static class Extensions
     }
 
     public static IApplicationBuilder ConfigureInfrastructureServices(
-        this IApplicationBuilder app,
+        this WebApplication app,
         IHostEnvironment environment,
         IServiceProvider serviceProvider)
     {
         // Health
-        app.UseHealthChecks("/hc", new HealthCheckOptions()
+        app.MapHealthChecks("/health/live", new HealthCheckOptions
         {
-            Predicate = _ => true,
-            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+            Predicate = _ => false
         });
+        app.MapHealthChecks("/health/ready");
 
         return app;
     }

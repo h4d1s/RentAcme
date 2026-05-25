@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: infra-auth
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: infra-databases
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: infra-messaging
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: infra-observability

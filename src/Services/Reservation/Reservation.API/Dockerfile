@@ -17,7 +17,6 @@ COPY ["Services/Reservation/Reservation.Application/Reservation.Application.cspr
 COPY ["BuildingBlocks/Common/Common.csproj", "BuildingBlocks/Common/"]
 COPY ["BuildingBlocks/EventBus/EventBus.csproj", "BuildingBlocks/EventBus/"]
 COPY ["BuildingBlocks/GrpcIntegrationHelpers/GrpcIntegrationHelpers.csproj", "BuildingBlocks/GrpcIntegrationHelpers/"]
-COPY ["BuildingBlocks/ConsulIntegrationHelpers/ConsulIntegrationHelpers.csproj", "BuildingBlocks/ConsulIntegrationHelpers/"]
 COPY ["BuildingBlocks/Identity/Identity.csproj", "BuildingBlocks/Identity/"]
 COPY ["Services/Reservation/Reservation.Domain/Reservation.Domain.csproj", "Services/Reservation/Reservation.Domain/"]
 COPY ["Services/Reservation/Reservation.Infrastructure.Persistence/Reservation.Infrastructure.Persistence.csproj", "Services/Reservation/Reservation.Infrastructure.Persistence/"]

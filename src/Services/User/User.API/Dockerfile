@@ -21,7 +21,6 @@ COPY ["Services/User/User.Domain/User.Domain.csproj", "Services/User/User.Domain
 COPY ["Services/User/User.Infrastructure.Persistence/User.Infrastructure.Persistence.csproj", "Services/User/User.Infrastructure.Persistence/"]
 COPY ["BuildingBlocks/Persistence/Persistence.csproj", "BuildingBlocks/Persistence/"]
 COPY ["Services/User/User.Infrastructure/User.Infrastructure.csproj", "Services/User/User.Infrastructure/"]
-COPY ["BuildingBlocks/ConsulIntegrationHelpers/ConsulIntegrationHelpers.csproj", "BuildingBlocks/ConsulIntegrationHelpers/"]
 COPY ["BuildingBlocks/GrpcIntegrationHelpers/GrpcIntegrationHelpers.csproj", "BuildingBlocks/GrpcIntegrationHelpers/"]
 COPY ["BuildingBlocks/Diagnostics/Diagnostics.csproj", "BuildingBlocks/Diagnostics/"]
 COPY ["BuildingBlocks/Logging/Logging.csproj", "BuildingBlocks/Logging/"]
