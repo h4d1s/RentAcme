@@ -20,7 +20,6 @@ COPY ["Services/Inventory/Inventory.Domain/Inventory.Domain.csproj", "Services/I
 COPY ["Services/Inventory/Inventory.Infrastructure.Persistence/Inventory.Infrastructure.Persistence.csproj", "Services/Inventory/Inventory.Infrastructure.Persistence/"]
 COPY ["BuildingBlocks/Persistence/Persistence.csproj", "BuildingBlocks/Persistence/"]
 COPY ["Services/Inventory/Inventory.Infrastructure/Inventory.Infrastructure.csproj", "Services/Inventory/Inventory.Infrastructure/"]
-COPY ["BuildingBlocks/ConsulIntegrationHelpers/ConsulIntegrationHelpers.csproj", "BuildingBlocks/ConsulIntegrationHelpers/"]
 COPY ["BuildingBlocks/Diagnostics/Diagnostics.csproj", "BuildingBlocks/Diagnostics/"]
 COPY ["BuildingBlocks/GrpcIntegrationHelpers/GrpcIntegrationHelpers.csproj", "BuildingBlocks/GrpcIntegrationHelpers/"]
 COPY ["BuildingBlocks/Identity/Identity.csproj", "BuildingBlocks/Identity/"]

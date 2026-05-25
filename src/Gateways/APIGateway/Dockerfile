@@ -13,7 +13,6 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Gateways/APIGateway/APIGateway.csproj", "Gateways/APIGateway/"]
-COPY ["BuildingBlocks/ConsulIntegrationHelpers/ConsulIntegrationHelpers.csproj", "BuildingBlocks/ConsulIntegrationHelpers/"]
 RUN dotnet restore "Gateways/APIGateway/APIGateway.csproj"
 COPY . .
 WORKDIR "/src/Gateways/APIGateway"

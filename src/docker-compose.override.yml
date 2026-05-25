@@ -51,8 +51,8 @@ services:
       - start-dev
       - --import-realm
     volumes:
-      - ./BuildingBlocks/configs/keycloak/realm-rent-acme.json:/opt/keycloak/data/import/realm-rent-acme.json
-      - ./BuildingBlocks/configs/keycloak/keycloak-to-rabbit-3.0.5.jar:/opt/keycloak/providers/keycloak-to-rabbit-3.0.5.jar
+      - ../configs/keycloak/realm-rent-acme.json:/opt/keycloak/data/import/realm-rent-acme.json
+      - ../configs/keycloak/keycloak-to-rabbit-3.0.5.jar:/opt/keycloak/providers/keycloak-to-rabbit-3.0.5.jar
     depends_on:
       - keycloak-db
       - otel-collector
@@ -61,13 +61,13 @@ services:
   prometheus:
     container_name: prometheus
     command:
-      - --config.file=/etc/prometheus/prometheus.yml
+      - --config.file=/etc/prometheus/prometheus-config.yaml
       - --enable-feature=otlp-write-receiver
     ports:
       - 9090:9090
     restart: unless-stopped
     volumes:
-      - ./BuildingBlocks/configs/prometheus:/etc/prometheus
+      - ../configs/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
 
   grafana:
     container_name: grafana
@@ -78,7 +78,7 @@ services:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=grafana
     volumes:
-      - ./BuildingBlocks/configs/grafana:/etc/grafana/provisioning/datasources
+      - ../configs/grafana:/etc/grafana/provisioning/datasources
     depends_on:
       - prometheus
 
@@ -87,9 +87,9 @@ services:
     ports:
       - 3100:3100
     command:
-      - -config.file=/etc/loki/local-config.yaml
+      - -config.file=/etc/loki/loki-config.yaml
     volumes:
-      - ./BuildingBlocks/configs/loki/loki.yml:/etc/loki/local-config.yaml
+      - ../configs/loki/loki-config.yaml:/etc/loki/loki-config.yaml
     depends_on:
       - grafana
 
@@ -97,29 +97,28 @@ services:
     container_name: tempo
     command:
       - -target=all
-      - -config.file=/etc/tempo.yaml
+      - -config.file=/etc/tempo-config.yaml
     volumes:
-      - ./BuildingBlocks/configs/tempo/tempo.yml:/etc/tempo.yaml
+      - ../configs/tempo/tempo-config.yaml:/etc/tempo-config.yaml
     ports:
-      - 3200:3200 # tempo
-      - 4317:4317 # Tempo OTLP GRPC
-      - 4318:4318 # Tempo OTLP HTTP
+      - 3200:3200 # Tempo
+      - 4327:4317 # Tempo OTLP GRPC
+      - 4328:4318 # Tempo OTLP HTTP
     depends_on:
       - grafana
 
   otel-collector:
     container_name: otel-collector
     command: 
-      - --config=/etc/otel-collector.yml
+      - --config=/etc/otel-collector-config.yaml
     volumes:
-      - ./BuildingBlocks/configs/otel-collector/otel-collector.yml:/etc/otel-collector.yml
+      - ../configs/otel-collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
     ports:
       - 1888:1888 # pprof extension
       - 8888:8888 # Prometheus metrics exposed by the Collector
       - 8889:8889 # Prometheus exporter metrics
       - 13133:13133 # health_check extension
       - 4317:4317 # OTLP gRPC receiver
-      # - 4318:4318 # OTLP http receiver
       - 55679:55679 # zpages extension
     depends_on:
       - prometheus
@@ -144,8 +143,8 @@ services:
       - inventory-api
       - reservation-api
 
-  user-api-db:
-    container_name: user-api-db
+  user-db:
+    container_name: user-db
     environment:
       POSTGRES_DB: user_db
       POSTGRES_USER: rent-acme
@@ -167,12 +166,12 @@ services:
       - 5211:8080
       - 5212:8081
     depends_on:
-      - user-api-db
+      - user-db
       - rabbitmq
       - keycloak
 
-  inventory-api-db:
-    container_name: inventory-api-db
+  inventory-db:
+    container_name: inventory-db
     environment:
       POSTGRES_DB: inventory_db
       POSTGRES_USER: rent-acme
@@ -194,11 +193,11 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     depends_on:
-      - inventory-api-db
+      - inventory-db
       - rabbitmq
 
-  reservation-api-db:
-    container_name: reservation-api-db
+  reservation-db:
+    container_name: reservation-db
     environment:
       POSTGRES_DB: reservation_db
       POSTGRES_USER: rent-acme
@@ -220,7 +219,7 @@ services:
       - 5231:8080
       - 5332:8081
     depends_on:
-      - reservation-api-db
+      - reservation-db
       - rabbitmq
 
   notification-api:

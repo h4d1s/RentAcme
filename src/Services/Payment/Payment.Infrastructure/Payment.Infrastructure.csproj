@@ -7,16 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MassTransit" Version="9.1.0" />
+    <PackageReference Include="MassTransit" Version="8.5.9" />
     <PackageReference Include="RabbitMQ.Client" Version="7.2.1" />
     <PackageReference Include="Stripe.net" Version="51.1.0" />
-    <PackageReference Include="Consul" Version="1.8.0" />
-    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="9.1.0" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.9" />
+    <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="9.0.0" />
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\Diagnostics\Diagnostics.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\GrpcIntegrationHelpers\GrpcIntegrationHelpers.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\Logging\Logging.csproj" />
     <ProjectReference Include="..\Payment.Application\Payment.Application.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\EventBus\EventBus.csproj" />
   </ItemGroup>

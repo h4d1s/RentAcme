@@ -20,7 +20,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app
-    .ConfigureApiServices(app.Environment, app.Services)
+    .ConfigureApiServices(app.Environment, app.Services);
+app
     .ConfigureInfrastructureServices(app.Environment, app.Services);
 
 app.MapControllers();

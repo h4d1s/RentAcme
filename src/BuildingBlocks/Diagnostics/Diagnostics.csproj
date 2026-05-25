@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MassTransit" Version="9.1.0" />
+    <PackageReference Include="MassTransit" Version="8.5.9" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="3.1.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.EventCounterCollector" Version="2.23.0" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.7" />

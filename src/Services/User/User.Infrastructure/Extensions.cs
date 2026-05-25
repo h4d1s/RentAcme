@@ -1,6 +1,5 @@
 ﻿using Diagnostics;
 using EventBus;
-using HealthChecks.UI.Client;
 using Identity;
 using Logging;
 using MassTransit;
@@ -13,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using RabbitMQ.Client;
 using User.Infrastructure.Grpc;
 using User.Infrastructure.IntegrationEvents.EventHandling;
 using User.Infrastructure.Security;
@@ -27,9 +27,21 @@ public static class Extensions
         IHostBuilder builder)
     {
         // Health check
+        services.AddSingleton<IConnection>(sp =>
+        {
+            var connectionString = configuration.GetConnectionString("RabbitMQ")
+                ?? throw new ArgumentNullException("RabbitMQ connection string is not configured");
+            var factory = new ConnectionFactory
+            {
+                Uri = new Uri(connectionString),
+            };
+            return factory.CreateConnectionAsync().GetAwaiter().GetResult();
+        });
+
         var hcBuilder = services.AddHealthChecks();
         hcBuilder
             .AddCheck("self", () => HealthCheckResult.Healthy())
+            .AddRabbitMQ(sp => sp.GetRequiredService<IConnection>())
             .AddNpgSql(
                 configuration["ConnectionStrings:UserDbContext"] ?? throw new ArgumentNullException("User Db context is not configured"),
                 name: "UserDB-check",
@@ -48,17 +60,10 @@ public static class Extensions
 
             x.UsingRabbitMq((context, busFactoryConfigurator) =>
             {
-                busFactoryConfigurator.Host(
-                    configuration["RabbitMQ:Hostname"],
-                    "/",
+                var connectionString = configuration.GetConnectionString("RabbitMQ") ?? throw new ArgumentNullException("RabbitMQ connecting string is not configured");
+                busFactoryConfigurator.Host(new Uri(connectionString),
                     hostConfigurator =>
                     {
-                        hostConfigurator.Username(
-                            configuration["RabbitMQ:Username"] ??
-                            throw new ArgumentNullException("RabbitMQ Username is not configured"));
-                        hostConfigurator.Password(
-                            configuration["RabbitMQ:Password"] ??
-                            throw new ArgumentNullException("RabbitMQ Password is not configured"));
                         hostConfigurator.RequestedConnectionTimeout(TimeSpan.FromSeconds(2));
                     });
                 busFactoryConfigurator.ReceiveEndpoint("keycloak-client-event-queue", e =>
@@ -92,7 +97,7 @@ public static class Extensions
         );
 
         // Serilog
-        services.AddLoggingSerilog(builder);
+        services.AddLoggingSerilog("User", builder, configuration);
 
         // Diagnostics
         services.AddObservability("User", configuration);
@@ -107,18 +112,18 @@ public static class Extensions
     }
 
     public static IApplicationBuilder ConfigureInfrastructureServices(
-        this IApplicationBuilder app,
+        this WebApplication app,
         IHostEnvironment environment,
         IServiceProvider serviceProvider,
         IConfiguration configuration,
         IHostApplicationLifetime applicationLifetime)
     {
         // Health
-        app.UseHealthChecks("/hc", new HealthCheckOptions()
+        app.MapHealthChecks("/health/live", new HealthCheckOptions
         {
-            Predicate = _ => true,
-            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            Predicate = _ => false
         });
+        app.MapHealthChecks("/health/ready");
 
         // CORS
         app.UseCors("RentAcmeOrigins");

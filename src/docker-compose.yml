@@ -5,7 +5,7 @@ services:
       - rentacme_network
 
   mailhog:
-    image: mailhog/mailhog:latest
+    image: mailhog/mailhog
     networks:
       - rentacme_network
 
@@ -25,7 +25,7 @@ services:
       - rentacme_network
 
   loki:
-    image: grafana/loki:latest
+    image: grafana/loki
     networks:
       - rentacme_network
 
@@ -35,12 +35,15 @@ services:
       - rentacme_network
 
   keycloak-db:
-    image: postgres:latest
+    image: postgres
     networks: 
       - rentacme_network
 
   keycloak:
-    image: quay.io/keycloak/keycloak
+    image: ${DOCKER_REGISTRY-}keycloak
+    build:
+      context: ..
+      dockerfile: ./configs/keycloak/Dockerfile
     networks: 
       - rentacme_network
 
@@ -52,8 +55,8 @@ services:
     networks:
       - rentacme_network
 
-  user-api-db:
-    image: postgres:latest
+  user-db:
+    image: postgres
     networks: 
       - rentacme_network
 
@@ -65,8 +68,8 @@ services:
     networks: 
       - rentacme_network
 
-  inventory-api-db:
-    image: postgres:latest
+  inventory-db:
+    image: postgres
     networks: 
       - rentacme_network
 
@@ -78,8 +81,8 @@ services:
     networks: 
       - rentacme_network
 
-  reservation-api-db:
-    image: postgres:latest
+  reservation-db:
+    image: postgres
     networks: 
       - rentacme_network
 
@@ -108,7 +111,7 @@ services:
       - rentacme_network
 
   saga-orchestration-statemachine-db:
-    image: postgres:latest
+    image: postgres
     networks: 
       - rentacme_network
 
