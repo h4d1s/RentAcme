@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Exceptions\**" />
+    <EmbeddedResource Remove="Exceptions\**" />
+    <None Remove="Exceptions\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\BuildingBlocks\Persistence\Persistence.csproj" />
     <ProjectReference Include="..\Reservation.Application\Reservation.Application.csproj" />
     <ProjectReference Include="..\Reservation.Domain\Reservation.Domain.csproj" />
