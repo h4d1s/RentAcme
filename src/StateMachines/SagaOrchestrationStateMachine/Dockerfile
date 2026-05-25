@@ -15,7 +15,7 @@ COPY ["BuildingBlocks/Diagnostics/Diagnostics.csproj", "BuildingBlocks/Diagnosti
 COPY ["BuildingBlocks/EventBus/EventBus.csproj", "BuildingBlocks/EventBus/"]
 COPY ["BuildingBlocks/Logging/Logging.csproj", "BuildingBlocks/Logging/"]
 COPY ["BuildingBlocks/Persistence/Persistence.csproj", "BuildingBlocks/Persistence/"]
-RUN dotnet restore "./src/StateMachines/SagaOrchestrationStateMachine/SagaOrchestrationStateMachine.csproj"
+RUN dotnet restore "./StateMachines/SagaOrchestrationStateMachine/SagaOrchestrationStateMachine.csproj"
 COPY . .
 WORKDIR "/src/StateMachines/SagaOrchestrationStateMachine"
 RUN dotnet build "./SagaOrchestrationStateMachine.csproj" -c $BUILD_CONFIGURATION -o /app/build
