@@ -128,13 +128,13 @@ resources: {}
 livenessProbe:
   httpGet:
     path: /health/live
-    port: http
+    port: 8080
   initialDelaySeconds: 10
   periodSeconds: 15
 readinessProbe:
   httpGet:
     path: /health/ready
-    port: http
+    port: 8080
   timeoutSeconds: 5
   initialDelaySeconds: 90
   periodSeconds: 60
@@ -170,10 +170,10 @@ env:
   - name: Keycloak__BaseUrl
     value: "http://keycloak.infra-auth.svc.cluster.local:8080/"
   - name: ConnectionStrings__RabbitMQ
-    value: ""
-  - name: ConnectionStrings__ReservationDbContext
-    value: ""
+    value: "amqp://rentacme:Passw0rd!@rabbitmq.infra-messaging.svc.cluster.local:5672"
+  - name: ConnectionStrings__InventoryDbContext
+    value: "Host=inventory-db.infra-databases.svc.cluster.local;Database=inventory_db;User Id=rent-acme;Password=Passw0rd!;"
   - name: ASPNETCORE_ENVIRONMENT
     value: "Production"
   - name: KEYCLOAK_BACKEND_SECRET
-    value: ""
+    value: "7f1c9d84-3a52-4e7b-8c19-5d2a47f6b381"
