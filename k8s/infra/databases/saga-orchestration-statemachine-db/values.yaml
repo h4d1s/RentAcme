@@ -131,7 +131,7 @@ livenessProbe:
       - -U
       - rent-acme
       - -d
-      - saga_orchestration_statemachine_db
+      - saga_machine_db
   initialDelaySeconds: 30
   periodSeconds: 10
 readinessProbe:
@@ -141,7 +141,7 @@ readinessProbe:
       - -U
       - rent-acme
       - -d
-      - saga_orchestration_statemachine_db
+      - saga_machine_db
   initialDelaySeconds: 15
   periodSeconds: 5
 
