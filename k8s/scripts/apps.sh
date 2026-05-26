@@ -26,7 +26,7 @@ deploy_service () {
 }
 
 deploy_service api-gateway apps/api-gateway
-#deploy_service inventory-api apps/inventory-api
+deploy_service inventory-api apps/inventory-api
 deploy_service notification-api apps/notification-api
 deploy_service payment-api apps/payment-api
 deploy_service reservation-api apps/reservation-api

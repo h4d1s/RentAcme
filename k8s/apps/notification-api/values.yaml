@@ -171,6 +171,8 @@ env:
     value: "http://keycloak.infra-auth.svc.cluster.local:8080/"
   - name: ConnectionStrings__RabbitMQ
     value: "amqp://rentacme:Passw0rd!@rabbitmq.infra-messaging.svc.cluster.local:5672"
+  - name: OtelCollector__Endpoint
+    value: "otel-collector.infra-observability.svc.cluster.local:4317"
   - name: ASPNETCORE_ENVIRONMENT
     value: "Production"
   - name: KEYCLOAK_BACKEND_SECRET

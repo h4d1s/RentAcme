@@ -55,6 +55,7 @@ service:
   type: ClusterIP
   # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
   port: 80
+  targetPort: 8080
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
@@ -166,12 +167,12 @@ tolerations: []
 affinity: {}
 
 env:
-  - name: Keycloak__BaseUrl
-    value: "http://keycloak.infra-auth.svc.cluster.local:8080/"
   - name: ConnectionStrings__RabbitMQ
     value: "amqp://rentacme:Passw0rd!@rabbitmq.infra-messaging.svc.cluster.local:5672"
   - name: ConnectionStrings__SagaMachineContext
-    value: "Host=saga-orchestration-statemachine-db.infra-databases.svc.cluster.local;Database=saga_orchestration_statemachine_db;User Id=rent-acme;Password=Passw0rd!;"
+    value: "Host=saga-orchestration-statemachine-db.infra-databases.svc.cluster.local;Database=saga_machine_db;User Id=rent-acme;Password=Passw0rd!;"
+  - name: OtelCollector__Endpoint
+    value: "otel-collector.infra-observability.svc.cluster.local:4317"
   - name: ASPNETCORE_ENVIRONMENT
     value: "Production"
   - name: KEYCLOAK_BACKEND_SECRET
