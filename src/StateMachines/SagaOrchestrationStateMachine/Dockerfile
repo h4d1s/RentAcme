@@ -10,14 +10,14 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/StateMachines/SagaOrchestrationStateMachine/SagaOrchestrationStateMachine.csproj", "src/StateMachines/SagaOrchestrationStateMachine/"]
-COPY ["src/BuildingBlocks/Diagnostics/Diagnostics.csproj", "src/BuildingBlocks/Diagnostics/"]
-COPY ["src/BuildingBlocks/EventBus/EventBus.csproj", "src/BuildingBlocks/EventBus/"]
-COPY ["src/BuildingBlocks/Logging/Logging.csproj", "src/BuildingBlocks/Logging/"]
-COPY ["src/BuildingBlocks/Persistence/Persistence.csproj", "src/BuildingBlocks/Persistence/"]
-RUN dotnet restore "./src/StateMachines/SagaOrchestrationStateMachine/SagaOrchestrationStateMachine.csproj"
+COPY ["StateMachines/SagaOrchestrationStateMachine/SagaOrchestrationStateMachine.csproj", "StateMachines/SagaOrchestrationStateMachine/"]
+COPY ["BuildingBlocks/Diagnostics/Diagnostics.csproj", "BuildingBlocks/Diagnostics/"]
+COPY ["BuildingBlocks/EventBus/EventBus.csproj", "BuildingBlocks/EventBus/"]
+COPY ["BuildingBlocks/Logging/Logging.csproj", "BuildingBlocks/Logging/"]
+COPY ["BuildingBlocks/Persistence/Persistence.csproj", "BuildingBlocks/Persistence/"]
+RUN dotnet restore "./StateMachines/SagaOrchestrationStateMachine/SagaOrchestrationStateMachine.csproj"
 COPY . .
-WORKDIR "/src/src/StateMachines/SagaOrchestrationStateMachine"
+WORKDIR "/src/StateMachines/SagaOrchestrationStateMachine"
 RUN dotnet build "./SagaOrchestrationStateMachine.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
