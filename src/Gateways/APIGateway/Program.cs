@@ -4,7 +4,6 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
-using Ocelot.Values;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +20,11 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowAnyOrigin())
 );
+
+// Health
+var hcBuilder = builder.Services.AddHealthChecks();
+hcBuilder
+    .AddCheck("self", () => HealthCheckResult.Healthy());
 
 // Configure Ocelot
 builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
@@ -43,11 +47,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 builder.Services.AddAuthorization();
 
-// Health
-var hcBuilder = builder.Services.AddHealthChecks();
-hcBuilder
-    .AddCheck("self", () => HealthCheckResult.Healthy());
-
 var app = builder.Build();
 
 app.UseHttpsRedirection();
@@ -57,14 +56,19 @@ app.UseCors("RentAcmeOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
-
 app.MapHealthChecks("/health/live", new HealthCheckOptions
 {
     Predicate = _ => false
 });
 app.MapHealthChecks("/health/ready");
+app.MapControllers();
 
-app.UseOcelot().Wait();
+app.MapWhen(
+    context => !context.Request.Path.StartsWithSegments("/health"),
+    appBranch =>
+    {
+        appBranch.UseOcelot().Wait();
+    }
+);
 
 app.Run();
