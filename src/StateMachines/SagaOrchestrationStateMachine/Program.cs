@@ -1,13 +1,16 @@
 using Diagnostics;
 using EventBus.Commands;
 using EventBus.Constants;
+using Google.Protobuf.WellKnownTypes;
 using Logging;
 using MassTransit;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Persistence;
 using Quartz;
 using RabbitMQ.Client;
+using SagaOrchestrationStateMachine;
 using SagaOrchestrationStateMachine.Data;
 using SagaOrchestrationStateMachine.StateMachines;
 using SagaOrchestrationStateMachine.States;
@@ -74,6 +77,7 @@ hcBuilder
         builder.Configuration.GetConnectionString("SagaMachineContext") ?? throw new ArgumentNullException("SagaMachineContext is not configured"),
         name: "SagaMachineDB-check",
         tags: new string[] { "saga-machine-db" });
+builder.Services.AddHostedService<HealthCheckWebServerInstance>();
 
 // Logging
 builder.Services.AddLoggingSerilog("SagaOrchestrationStateMachine", builder, builder.Configuration);

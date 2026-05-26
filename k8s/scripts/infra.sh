@@ -38,14 +38,14 @@ deploy_service saga-orchestration-statemachine-db infra-databases ./infra/databa
 deploy_service user-db infra-databases ./infra/databases/user-db
 
 #auth
-deploy_service keycloak infra-auth ./infra/auth/keycloak --set-file configRealm=../../configs/keycloak/realm-rent-acme.json
+deploy_service keycloak infra-auth ./infra/auth/keycloak --set-file configRealm=../configs/keycloak/realm-rent-acme.json
 
 #messaging
 deploy_service rabbitmq infra-messaging ./infra/messaging/rabbitmq
 
 #observability
 deploy_service grafana infra-observability ./infra/observability/grafana
-deploy_service loki infra-observability ./infra/observability/loki --set-file configLoki=../../configs/loki/loki-config.yaml
+deploy_service loki infra-observability ./infra/observability/loki --set-file configLoki=../configs/loki/loki-config.yaml
 deploy_service otel-collector infra-observability ./infra/observability/otel-collector
 deploy_service prometheus infra-observability ./infra/observability/prometheus
 deploy_service tempo infra-observability ./infra/observability/tempo

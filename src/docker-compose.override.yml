@@ -268,6 +268,8 @@ services:
 
   saga-orchestration-statemachine:
     container_name: saga-orchestration-statemachine
+    ports:
+      - 5261:8080
     environment:
       - DOTNET_ENVIRONMENT=Development
     depends_on:
