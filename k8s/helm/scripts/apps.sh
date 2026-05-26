@@ -25,7 +25,7 @@ deploy_service () {
 	echo ""
 }
 
-#deploy_service api-gateway apps/api-gateway
+deploy_service api-gateway apps/api-gateway
 deploy_service inventory-api apps/inventory-api
 deploy_service notification-api apps/notification-api
 deploy_service payment-api apps/payment-api
