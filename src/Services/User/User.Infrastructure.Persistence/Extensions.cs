@@ -31,10 +31,10 @@ public static class Extensions
         var serviceProvider = services.BuildServiceProvider();
         var env = serviceProvider.GetRequiredService<IHostEnvironment>();
 
-        if (env.IsDevelopment())
-        {
+        //if (env.IsDevelopment())
+        //{
             services.AddMigration<ApplicationUserDbContext, ApplicationUserDbContextSeed>();
-        }
+        //}
 
         // DI
         services.AddScoped<IUnitOfWork, ApplicationUserDbContext>();

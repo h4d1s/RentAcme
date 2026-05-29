@@ -28,10 +28,10 @@ public static class Extensions
         var serviceProvider = services.BuildServiceProvider();
         var env = serviceProvider.GetRequiredService<IHostEnvironment>();
 
-        if (env.IsDevelopment())
-        {
+        //if (env.IsDevelopment())
+        //{
             services.AddMigration<ReservationDbContext, ReservationDbContextSeed>();
-        }
+        //}
 
         services.AddScoped<IBookingRepository, BookingRepository>();
 
