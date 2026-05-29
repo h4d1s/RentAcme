@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-config-realm
-data:
-  realm-rent-acme.json: |-
-{{ .Values.configRealm | nindent 4 }}
