@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-ocelot-config
+data:
+  ocelot.Production.json: |
+    {
+      "Routes": [
+        {
+          "UseServiceDiscovery": false,
+          "DownstreamHostAndPorts": [
+            {
+              "Host": "user-api",
+              "Port": 80
+            }
+          ],
+          "DangerousAcceptAnyServerCertificateValidator": true,
+          "DownstreamPathTemplate": "/api/{version}/{everything}",
+          "UpstreamPathTemplate": "/api/{version}/accounts/{everything}",
+          "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+          "DownstreamScheme": "http",
+          "RateLimitOptions": {
+            "EnableRateLimiting": true,
+            "Period": "5s",
+            "Limit": 100,
+            "PeriodTimespan": 2
+          }
+        },
+        {
+          "UseServiceDiscovery": false,
+          "DownstreamHostAndPorts": [
+            {
+              "Host": "inventory-api",
+              "Port": 80
+            }
+          ],
+          "DangerousAcceptAnyServerCertificateValidator": true,
+          "DownstreamPathTemplate": "/api/{version}/{everything}",
+          "UpstreamPathTemplate": "/api/{version}/inventories/{everything}",
+          "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+          "DownstreamScheme": "http",
+          "RateLimitOptions": {
+            "EnableRateLimiting": true,
+            "Period": "5s",
+            "Limit": 100,
+            "PeriodTimespan": 2
+          }
+        },
+        {
+          "UseServiceDiscovery": false,
+          "DownstreamHostAndPorts": [
+            {
+              "Host": "reservation-api",
+              "Port": 80
+            }
+          ],
+          "DangerousAcceptAnyServerCertificateValidator": true,
+          "DownstreamPathTemplate": "/api/{version}/{everything}",
+          "UpstreamPathTemplate": "/api/{version}/reservations/{everything}",
+          "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+          "DownstreamScheme": "http",
+          "RateLimitOptions": {
+            "EnableRateLimiting": true,
+            "Period": "5s",
+            "Limit": 100,
+            "PeriodTimespan": 2
+          }
+        }
+      ],
+      "GlobalConfiguration": {
+        "RateLimitOptions": {
+          "DisableRateLimitHeaders": false,
+          "HttpStatusCode": 429,
+          "ClientIdHeader": "ClientId"
+        }
+      }
+    }
