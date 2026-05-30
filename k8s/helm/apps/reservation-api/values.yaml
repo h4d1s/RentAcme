@@ -169,6 +169,8 @@ affinity: {}
 env:
   - name: Keycloak__BaseUrl
     value: "http://auth.infra-auth"
+  - name: Keycloak__Authority
+    value: "http://auth.rent-acme.local/realms/rent-acme"
   - name: Keycloak__AuthorizationUrl
     value: "http://auth.rent-acme.local/realms/rent-acme/protocol/openid-connect/auth"
   - name: Keycloak__TokenUrl

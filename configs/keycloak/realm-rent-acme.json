@@ -294,6 +294,14 @@
         }
       ],
       "realmRoles": [ "Customer" ]
+    },
+    {
+      "username": "service-account-rent-acme-api",
+      "serviceAccountClientId": "rent-acme-api",
+      "enabled": true,
+      "realmRoles": [
+        "Admin"
+      ]
     }
   ],
 
@@ -324,6 +332,7 @@
       "enabled": true,
       "publicClient": false,
       "serviceAccountsEnabled": true,
+      "fullScopeAllowed": true,
       "protocol": "openid-connect",
       "clientAuthenticatorType": "client-secret",
       "secret": "${KEYCLOAK_BACKEND_SECRET:none}",

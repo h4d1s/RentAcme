@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using System.Security.Claims;
 using User.API.Middleware;
 
 namespace User.API;
@@ -39,6 +40,7 @@ public static class Extensions
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidIssuer = configuration["Keycloak:Issuer"],
+                    RoleClaimType = ClaimTypes.Role
                 };
             });
         services.AddAuthorization();
