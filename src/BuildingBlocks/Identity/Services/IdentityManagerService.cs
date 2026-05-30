@@ -8,7 +8,6 @@ namespace Identity.Services;
 public class IdentityManagerService : IIdentityManagerService
 {
     private readonly HttpClient _httpClient;
-    private readonly IConfiguration _configuration;
     private readonly IIdentityTokenService _tokenService;
 
     public IdentityManagerService(
@@ -17,8 +16,6 @@ public class IdentityManagerService : IIdentityManagerService
         IIdentityTokenService identityTokenService)
     {
         _httpClient = httpClient;
-        _configuration = configuration;
-        _httpClient.BaseAddress = new Uri(_configuration["Keycloak:BaseUrl"] ?? throw new ArgumentNullException("Keycloak:BaseUrl"));
         _tokenService = identityTokenService;
     }
 

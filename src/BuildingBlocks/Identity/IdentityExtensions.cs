@@ -15,6 +15,10 @@ public static class IdentityExtensions
         // DI
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IIdentityManagerService, IdentityManagerService>();
+        services.AddHttpClient<IIdentityManagerService, IdentityManagerService>(config =>
+        {
+            config.BaseAddress = new Uri(configuration["Keycloak:BaseUrl"] ?? throw new ArgumentNullException("Keycloak:BaseUrl"));
+        });
         services.AddScoped<IIdentityTokenService, IdentityTokenService>();
         services.AddHttpClient<IIdentityTokenService, IdentityTokenService>(config =>
         {
