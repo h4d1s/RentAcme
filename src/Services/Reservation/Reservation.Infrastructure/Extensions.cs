@@ -113,9 +113,6 @@ public static class Extensions
         // CORS
         app.UseCors("RentAcmeOrigins");
 
-        app.UseAuthentication();
-        app.UseAuthorization();
-
         return app;
     }
 }
