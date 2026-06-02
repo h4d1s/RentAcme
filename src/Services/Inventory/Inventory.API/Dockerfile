@@ -12,6 +12,7 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+COPY ["Services/Inventory/Inventory.API/Setup/brands.json", "Services/Inventory/Inventory.API/Setup/"]
 COPY ["Services/Inventory/Inventory.API/Inventory.API.csproj", "Services/Inventory/Inventory.API/"]
 COPY ["Services/Inventory/Inventory.Application/Inventory.Application.csproj", "Services/Inventory/Inventory.Application/"]
 COPY ["BuildingBlocks/Common/Common.csproj", "BuildingBlocks/Common/"]

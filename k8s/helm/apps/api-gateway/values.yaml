@@ -167,6 +167,16 @@ affinity: {}
 
 env:
   - name: Keycloak__BaseUrl
-    value: "http://keycloak.infra-auth"
+    value: "http://keycloak.infra-auth.svc.cluster.local"
+  - name: Keycloak__Authority
+    value: "http://auth.rent-acme.local/realms/rent-acme"
+  - name: Keycloak__AuthorizationUrl
+    value: "http://auth.rent-acme.local/realms/rent-acme/protocol/openid-connect/auth"
+  - name: Keycloak__TokenUrl
+    value: "http://auth.rent-acme.local/realms/rent-acme/protocol/openid-connect/token"
+  - name: Keycloak__MetadataAddress
+    value: "http://keycloak.infra-auth.svc.cluster.local/realms/rent-acme/.well-known/openid-configuration"
+  - name: Keycloak__Issuer
+    value: "http://auth.rent-acme.local/realms/rent-acme"
   - name: ASPNETCORE_ENVIRONMENT
     value: "Production"

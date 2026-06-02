@@ -2,20 +2,23 @@
 using Grpc.Net.Client;
 using GrpcIntegrationHelpers.Models;
 using Identity.Services;
+using Microsoft.Extensions.Configuration;
 using Userproto;
 
 namespace GrpcIntegrationHelpers.ClientServices;
 
 public class UserGrpcClientService : IUserGrpcClientService, IDisposable
 {
-    private readonly string _address = "https://user-api:8081";
+    private readonly string _address;
     private readonly IIdentityTokenService _identityTokenService;
     private GrpcChannel _channel = null!;
     private UserProtoService.UserProtoServiceClient _client = null!;
 
     public UserGrpcClientService(
-        IIdentityTokenService identityTokenService)
+        IIdentityTokenService identityTokenService,
+        IConfiguration config)
     {
+        _address = config["Services:UserApi"] ?? throw new ArgumentNullException("User API service address is not configured.");
         _identityTokenService = identityTokenService;
         CreateConnectionAsync();
     }

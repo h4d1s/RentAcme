@@ -178,7 +178,7 @@ env:
         name: saga-orchestration-statemachine-secrets
         key: ConnectionStrings__SagaMachineContext
   - name: OtelCollector__Endpoint
-    value: "http://otel-collector.infra-observability:4317"
+    value: "http://otel-collector.infra-observability.svc.cluster.local:4317"
   - name: ASPNETCORE_ENVIRONMENT
     value: "Production"
   - name: KEYCLOAK_BACKEND_SECRET
