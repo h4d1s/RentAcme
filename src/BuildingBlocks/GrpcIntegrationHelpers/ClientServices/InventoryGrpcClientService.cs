@@ -2,17 +2,20 @@
 using Grpc.Net.Client;
 using GrpcIntegrationHelpers.Models;
 using Inventoryproto;
+using Microsoft.Extensions.Configuration;
 
 namespace GrpcIntegrationHelpers.ClientServices;
 
 public class InventoryGrpcClientService : IInventoryGrpcClientService, IDisposable
 {
-    private readonly string _address = "https://inventory-api:8081";
+    private readonly string _address;
     private GrpcChannel _channel = null!;
     private InventoryProtoService.InventoryProtoServiceClient _client = null!;
 
-    public InventoryGrpcClientService()
+    public InventoryGrpcClientService(
+        IConfiguration config)
     {
+        _address = config["Services:InventoryApi"] ?? throw new ArgumentNullException("Inventory API service address is not configured.");
         CreateConnectionAsync();
     }
 

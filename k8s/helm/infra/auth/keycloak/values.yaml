@@ -177,16 +177,20 @@ args:
 
 env:
   - name: KC_HOSTNAME
-    value: "auth.rent-acme.local"
+    value: ""
+  - name: KC_HTTP_ENABLED
+    value: "true"
   - name: KC_HOSTNAME_STRICT
     value: "false"
   - name: KC_PROXY
     value: edge
+  - name: KC_PROXY_HEADERS
+    value: xforwarded
 
   - name: KC_DB
     value: postgres
   - name: KC_DB_URL_HOST
-    value: keycloak-db.infra-databases
+    value: keycloak-db.infra-databases.svc.cluster.local
   - name: KC_DB_URL_DATABASE
     value: keycloak_db
   - name: KC_DB_USERNAME
@@ -212,7 +216,7 @@ env:
         key: KC_BOOTSTRAP_ADMIN_PASSWORD
 
   - name: KK_TO_RMQ_URL
-    value: rabbitmq.infra-messaging
+    value: rabbitmq.infra-messaging.svc.cluster.local
   - name: KK_TO_RMQ_PORT
     value: 5672
   - name: KK_TO_RMQ_USERNAME
@@ -233,7 +237,7 @@ env:
   - name: KC_OTEL
     value: "true"
   - name: OTEL_EXPORTER_OTLP_ENDPOINT
-    value: "http://otel-collector.infra-observability:4317"
+    value: "http://otel-collector.infra-observability.svc.cluster.local:4317"
   - name: OTEL_LOGS_EXPORTER
     value: otlp
   - name: OTEL_EXPORTER_OTLP_PROTOCOL
