@@ -168,7 +168,7 @@ affinity: {}
 
 env:
   - name: Keycloak__BaseUrl
-    value: "http://auth.infra-auth"
+    value: "http://keycloak.infra-auth.svc.cluster.local"
   - name: Keycloak__Authority
     value: "http://auth.rent-acme.local/realms/rent-acme"
   - name: Keycloak__AuthorizationUrl
@@ -176,16 +176,20 @@ env:
   - name: Keycloak__TokenUrl
     value: "http://auth.rent-acme.local/realms/rent-acme/protocol/openid-connect/token"
   - name: Keycloak__MetadataAddress
-    value: "http://auth.infra-auth/realms/rent-acme/.well-known/openid-configuration"
+    value: "http://keycloak.infra-auth.svc.cluster.local/realms/rent-acme/.well-known/openid-configuration"
   - name: Keycloak__Issuer
     value: "http://auth.rent-acme.local/realms/rent-acme"
+  - name: Services__InventoryApi
+    value: "http://inventory-api.apps.svc.cluster.local"
+  - name: Services__UserApi
+    value: "http://user-api.apps.svc.cluster.local"
   - name: ConnectionStrings__RabbitMQ
     valueFrom:
       secretKeyRef:
         name: notification-api-secrets
         key: ConnectionStrings__RabbitMQ
   - name: OtelCollector__Endpoint
-    value: "http://otel-collector.infra-observability:4317"
+    value: "http://otel-collector.infra-observability.svc.cluster.local:4317"
   - name: ASPNETCORE_ENVIRONMENT
     value: "Production"
   - name: KEYCLOAK_BACKEND_SECRET

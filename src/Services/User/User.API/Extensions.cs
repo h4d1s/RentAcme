@@ -34,12 +34,16 @@ public static class Extensions
             .AddJwtBearer(options =>
             {
                 options.RequireHttpsMetadata = false;
+
                 options.Authority = configuration["Keycloak:Authority"];
-                options.Audience = configuration["Keycloak:Audience"];
                 options.MetadataAddress = configuration["Keycloak:MetadataAddress"] ?? throw new ArgumentNullException("Keycloak metadataAddress is not configured");
+                options.Audience = configuration["Keycloak:Audience"];
+
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidIssuer = configuration["Keycloak:Issuer"],
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
                     RoleClaimType = ClaimTypes.Role
                 };
             });
