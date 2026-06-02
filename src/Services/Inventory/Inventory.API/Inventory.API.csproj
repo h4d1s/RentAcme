@@ -32,9 +32,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Setup\brands.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <None Update="Setup\brands.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
