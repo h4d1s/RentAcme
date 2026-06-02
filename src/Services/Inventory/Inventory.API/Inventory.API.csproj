@@ -32,8 +32,9 @@
   </ItemGroup>
 
   <ItemGroup>
-	<Content Remove="Setup\brands.json" />
-    <None Include="Setup\brands.json" />
+    <Content Include="Setup\brands.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
