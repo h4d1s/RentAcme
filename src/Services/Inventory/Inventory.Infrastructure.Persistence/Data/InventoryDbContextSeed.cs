@@ -97,7 +97,8 @@ public class InventoryDbContextSeed : IDbSeeder<InventoryDbContext>
                 var pickupDate = DateTime.UtcNow.AddDays(-random.Next(5, 10));
                 var returnDate = DateTime.UtcNow.AddDays(-random.Next(1, 5));
                 var plates = GenerateRandomRegistrationPlates();
-                var vehicle = new Vehicle((decimal)randomRentalPricePerDay, plates, v.Id);
+                var mileageKm = random.Next(100, 200000);
+                var vehicle = new Vehicle((decimal)randomRentalPricePerDay, plates, mileageKm, VehicleStatus.Available, v.Id);
                 vehicles.Add(vehicle);
             });
 

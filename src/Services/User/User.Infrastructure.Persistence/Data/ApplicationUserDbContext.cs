@@ -38,12 +38,36 @@ public class ApplicationUserDbContext : DbContext, IUnitOfWork
     {
         await _mediator.DispatchDomainEventsAsync(this);
 
+        foreach (var entry in ChangeTracker.Entries<Entity>())
+        {
+            if (entry.State == EntityState.Added)
+            {
+                entry.Entity.SetCreatedAt(DateTime.UtcNow);
+            }
+            if (entry.State == EntityState.Modified)
+            {
+                entry.Entity.SetUpdatedAt(DateTime.UtcNow);
+            }
+        }
+
         return await base.SaveChangesAsync();
     }
 
     public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
     {
         await _mediator.DispatchDomainEventsAsync(this);
+
+        foreach (var entry in ChangeTracker.Entries<Entity>())
+        {
+            if (entry.State == EntityState.Added)
+            {
+                entry.Entity.SetCreatedAt(DateTime.UtcNow);
+            }
+            if (entry.State == EntityState.Modified)
+            {
+                entry.Entity.SetUpdatedAt(DateTime.UtcNow);
+            }
+        }
 
         _ = await base.SaveChangesAsync(cancellationToken);
 

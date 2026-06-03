@@ -19,6 +19,9 @@ public abstract class Entity
         }
     }
 
+    public DateTime CreatedAt { get; private set; }
+    public DateTime? UpdatedAt { get; private set; }
+
     private List<INotification>? _domainEvents;
     [JsonIgnore]
     public IReadOnlyCollection<INotification>? DomainEvents => _domainEvents?.AsReadOnly();
@@ -42,6 +45,16 @@ public abstract class Entity
     public bool IsTransient()
     {
         return this.Id == default;
+    }
+
+    public void SetCreatedAt(DateTime utcNow)
+    {
+        CreatedAt = utcNow;
+    }
+
+    public void SetUpdatedAt(DateTime utcNow)
+    {
+        UpdatedAt = utcNow;
     }
 
     public override bool Equals(object? obj)
