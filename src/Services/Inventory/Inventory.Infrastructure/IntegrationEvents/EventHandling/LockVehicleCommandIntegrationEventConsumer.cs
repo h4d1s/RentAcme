@@ -1,10 +1,8 @@
 ﻿using EventBus.Commands;
 using EventBus.Events;
-using EventBus.Services;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
 using MassTransit;
 using Microsoft.Extensions.Logging;
-using static Identity.Models.Permissions;
 
 namespace Inventory.Infrastructure.IntegrationEvents.EventHandling;
 
@@ -35,13 +33,13 @@ public class LockVehicleCommandIntegrationEventConsumer : IConsumer<LockVehicleC
                 return;
             }
 
-            if (vehicle.IsLocked)
+            if (vehicle.Status == VehicleStatus.Reserved || vehicle.Status == VehicleStatus.Rented)
             {
                 SendVehicleUnavaliableIntegrationEvent(context, context.Message.BookingId);
                 return;
             }
 
-            vehicle.UpdateIsLocked(true);
+            vehicle.UpdateStatus(VehicleStatus.Reserved);
             _vehicleRepository.Update(vehicle);
             await _vehicleRepository.UnitOfWork.SaveChangesAsync();
 

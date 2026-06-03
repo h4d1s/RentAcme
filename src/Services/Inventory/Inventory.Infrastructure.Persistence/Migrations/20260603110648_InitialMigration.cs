@@ -16,7 +16,9 @@ namespace Inventory.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -32,7 +34,9 @@ namespace Inventory.Infrastructure.Persistence.Migrations
                     YearOfProduction = table.Column<int>(type: "integer", nullable: false),
                     NumberOfSeats = table.Column<int>(type: "integer", nullable: false),
                     Category = table.Column<int>(type: "integer", nullable: false),
-                    BrandId = table.Column<Guid>(type: "uuid", nullable: false)
+                    BrandId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -55,7 +59,9 @@ namespace Inventory.Infrastructure.Persistence.Migrations
                     FuelType = table.Column<int>(type: "integer", nullable: false),
                     Power = table.Column<int>(type: "integer", nullable: false),
                     EngineSize = table.Column<int>(type: "integer", nullable: false),
-                    ModelId = table.Column<Guid>(type: "uuid", nullable: false)
+                    ModelId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -75,8 +81,11 @@ namespace Inventory.Infrastructure.Persistence.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     RentalPricePerDay = table.Column<decimal>(type: "numeric(10,2)", precision: 10, scale: 2, nullable: false),
                     RegistrationPlates = table.Column<string>(type: "text", nullable: false),
-                    IsLocked = table.Column<bool>(type: "boolean", nullable: false),
-                    VariantId = table.Column<Guid>(type: "uuid", nullable: false)
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    MileageKm = table.Column<int>(type: "integer", nullable: false),
+                    VariantId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {

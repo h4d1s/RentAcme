@@ -11,7 +11,8 @@ public class Vehicle
 {
     public decimal RentalPricePerDay { get; private set; }
     public string RegistrationPlates { get; private set; } = string.Empty;
-    public bool IsLocked { get; private set; }
+    public VehicleStatus Status { get; private set; }
+    public int MileageKm { get; private set; }
 
     public Guid VariantId { get; private set; }
     [JsonIgnore]
@@ -24,8 +25,9 @@ public class Vehicle
     public Vehicle(
         decimal rentalPricePerDay,
         string registrationPlates,
-        Guid variantId,
-        bool isLocked = false) : this()
+        int mileageKm,
+        VehicleStatus status,
+        Guid variantId) : this()
     {
         ValidateRentalPrice(rentalPricePerDay);
         ValidateRegistrationPlates(registrationPlates);
@@ -34,7 +36,8 @@ public class Vehicle
         RentalPricePerDay = rentalPricePerDay;
         RegistrationPlates = registrationPlates;
         VariantId = variantId;
-        IsLocked = isLocked;
+        MileageKm = mileageKm;
+        Status = status;
 
         AddDomainEvent(new VehicleCreatedDomainEvent(this));
     }
@@ -57,9 +60,9 @@ public class Vehicle
         VariantId = variantId;
     }
 
-    public void UpdateIsLocked(bool isLocked)
-    { 
-        IsLocked = isLocked;
+    public void UpdateStatus(VehicleStatus status)
+    {
+        Status = status;
     }
 
     private void ValidateRentalPrice(decimal price)

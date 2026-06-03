@@ -12,7 +12,7 @@ using User.Infrastructure.Persistence.Data;
 namespace User.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationUserDbContext))]
-    [Migration("20260425054446_InitialMigration")]
+    [Migration("20260603110915_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -30,6 +30,9 @@ namespace User.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -50,6 +53,9 @@ namespace User.Infrastructure.Persistence.Migrations
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UserName")
                         .IsRequired()

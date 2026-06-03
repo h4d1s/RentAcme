@@ -3,6 +3,7 @@ using Identity.Models;
 using Identity.Services;
 using Reservation.Application.Exceptions;
 using Reservation.Domain.AggregatesModel.BookingAggregate;
+using static Identity.Models.Permissions;
 
 namespace Reservation.Application.Features.Bookings.Commands.ReserveBooking;
 
