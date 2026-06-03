@@ -25,7 +25,7 @@ public class BookingCompletedIntegrationEventConsumer : IConsumer<BookingComplet
             var vehicle = await _vehicleRepository.GetByIdAsync(context.Message.VehicleId);
             if (vehicle is not null)
             {
-                vehicle.UpdateIsLocked(false);
+                vehicle.UpdateStatus(VehicleStatus.Available);
                 _vehicleRepository.Update(vehicle);
                 await _vehicleRepository.UnitOfWork.SaveChangesAsync();
             }

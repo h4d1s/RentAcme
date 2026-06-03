@@ -12,7 +12,7 @@ using Reservation.Infrastructure.Persistence.Data;
 namespace Reservation.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ReservationDbContext))]
-    [Migration("20260424143502_InitialMigration")]
+    [Migration("20260603110828_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace Reservation.Infrastructure.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.5")
+                .HasAnnotation("ProductVersion", "10.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -32,6 +32,9 @@ namespace Reservation.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("BookingDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("PickupDate")
@@ -46,6 +49,9 @@ namespace Reservation.Infrastructure.Persistence.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");

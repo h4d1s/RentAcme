@@ -32,7 +32,7 @@ public class CreateVehicleHandler : IRequestHandler<CreateVehicleCommand, Guid>
             throw new BadRequestException("", validationResult);
         }
 
-        var vehicle = new Vehicle(request.RentalPricePerDay, request.RegistrationPlates, request.VariantId);
+        var vehicle = new Vehicle(request.RentalPricePerDay, request.RegistrationPlates, request.MileageKm, VehicleStatus.Available, request.VariantId);
 
         _logger.LogInformation("Creating vehicle - Vehicle: {@vehicle}", vehicle);
 

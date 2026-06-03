@@ -2,6 +2,7 @@
 using Inventory.Application.Exceptions;
 using Inventory.Application.Features.Brands.Commands.CreateBrand;
 using Inventory.Domain.AggregatesModel.VariantAggreate;
+using Inventory.Domain.AggregatesModel.VehicleAggregate;
 using MediatR;
 using Microsoft.Extensions.Logging;
 

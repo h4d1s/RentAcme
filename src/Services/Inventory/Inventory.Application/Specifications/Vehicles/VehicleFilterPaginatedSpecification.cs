@@ -24,7 +24,7 @@ public class VehicleFilterPaginatedSpecification : Specification<Vehicle>
             .Where(i => i.Variant.Model.Category == category, category.HasValue)
             .Where(i => i.RentalPricePerDay >= rentalPricePerDayFrom, rentalPricePerDayFrom.HasValue)
             .Where(i => i.RentalPricePerDay <= rentalPricePerDayTo, rentalPricePerDayTo.HasValue)
-            .Where(i => !i.IsLocked);
+            .Where(i => i.Status == VehicleStatus.Available);
 
         if (!string.IsNullOrEmpty(orderBy))
         {
