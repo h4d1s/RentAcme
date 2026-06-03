@@ -2,6 +2,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Http.Resilience;
+using Polly;
+using Polly.Extensions.Http;
 
 namespace Identity;
 
@@ -12,6 +15,11 @@ public static class IdentityExtensions
         IHostBuilder builder,
         IConfiguration configuration)
     {
+        services.ConfigureHttpClientDefaults(http =>
+        {
+            http.AddStandardResilienceHandler();
+        });
+
         // DI
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IIdentityManagerService, IdentityManagerService>();
@@ -19,6 +27,7 @@ public static class IdentityExtensions
         {
             config.BaseAddress = new Uri(configuration["Keycloak:BaseUrl"] ?? throw new ArgumentNullException("Keycloak:BaseUrl"));
         });
+
         services.AddScoped<IIdentityTokenService, IdentityTokenService>();
         services.AddHttpClient<IIdentityTokenService, IdentityTokenService>(config =>
         {
