@@ -12,6 +12,11 @@ public static class IdentityExtensions
         IHostBuilder builder,
         IConfiguration configuration)
     {
+        services.ConfigureHttpClientDefaults(http =>
+        {
+            http.AddStandardResilienceHandler();
+        });
+
         // DI
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IIdentityManagerService, IdentityManagerService>();
@@ -19,6 +24,7 @@ public static class IdentityExtensions
         {
             config.BaseAddress = new Uri(configuration["Keycloak:BaseUrl"] ?? throw new ArgumentNullException("Keycloak:BaseUrl"));
         });
+
         services.AddScoped<IIdentityTokenService, IdentityTokenService>();
         services.AddHttpClient<IIdentityTokenService, IdentityTokenService>(config =>
         {
