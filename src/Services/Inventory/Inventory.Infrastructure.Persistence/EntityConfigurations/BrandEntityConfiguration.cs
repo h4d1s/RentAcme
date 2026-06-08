@@ -19,6 +19,7 @@ public class BrandEntityConfiguration : IEntityTypeConfiguration<Brand>
             .HasMany(e => e.Models)
             .WithOne(e => e.Brand)
             .HasForeignKey(e => e.BrandId)
-            .IsRequired();
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

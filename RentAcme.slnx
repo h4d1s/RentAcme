@@ -5,6 +5,7 @@
     </Project>
   </Folder>
   <Folder Name="/src/BuildingBlocks/">
+    <Project Path="src/BuildingBlocks/Caching/Caching.csproj" Id="e0fda3e1-8314-4346-bfdb-634e1b0b0da3" />
     <Project Path="src/BuildingBlocks/Common/Common.csproj" />
     <Project Path="src/BuildingBlocks/Diagnostics/Diagnostics.csproj" />
     <Project Path="src/BuildingBlocks/EventBus/EventBus.csproj" />

@@ -4,6 +4,11 @@ services:
     networks: 
       - rentacme_network
 
+  redis:
+    image: redis
+    networks: 
+      - rentacme_network
+
   mailhog:
     image: mailhog/mailhog
     networks:

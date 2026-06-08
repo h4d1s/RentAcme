@@ -1,5 +1,5 @@
 ﻿using Common.Models;
-using Inventory.Application.Models;
+using Inventory.Application.Models.Vehicles;
 using Inventory.Domain.AggregatesModel.VariantAggreate;
 using MediatR;
 

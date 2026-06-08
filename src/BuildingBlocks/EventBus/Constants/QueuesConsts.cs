@@ -1,6 +1,6 @@
 ﻿namespace EventBus.Constants;
 
-public class QueuesConsts
+public sealed class QueuesConsts
 {
     // Commands
     public const string VehicleLockCommandQueueName = "vehicle-lock-command-queue";

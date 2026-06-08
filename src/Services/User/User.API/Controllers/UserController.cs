@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using Common.Models;
 using GrpcIntegrationHelpers.Models;
 using Identity.Models;
 using MediatR;
@@ -7,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using User.Application.Features.Users.Commands.DeleteUser;
 using User.Application.Features.Users.Commands.UpdateUser;
 using User.Application.Features.Users.Queries.GetUser;
+using User.Application.Features.Users.Queries.GetUserList;
+using static Identity.Models.Permissions;
 
 namespace User.API.Controllers;
 
@@ -81,5 +84,16 @@ public class UserController : ControllerBase
         var command = new DeleteUserCommand { Id = id };
         await _mediator.Send(command);
         return NoContent();
+    }
+
+    // GET api/users
+    [HttpGet]
+    [Authorize(Policy = Permissions.Users.ViewAny)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<PagedResponse<UserDto>>> Get([FromQuery] GetUserListQuery query)
+    {
+        var response = await _mediator.Send(query);
+        return Ok(response);
     }
 }

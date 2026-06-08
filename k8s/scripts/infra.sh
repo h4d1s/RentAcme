@@ -39,6 +39,7 @@ deploy_service () {
 }
 
 #databases
+deploy_service redis infra-databases ./infra/databases/redis
 deploy_service inventory-db infra-databases ./infra/databases/inventory-db
 deploy_service keycloak-db infra-databases ./infra/databases/keycloak-db
 deploy_service reservation-db infra-databases ./infra/databases/reservation-db

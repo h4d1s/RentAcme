@@ -7,8 +7,8 @@ using Identity.Services;
 using Moq;
 using Reservation.Application.Exceptions;
 using Reservation.Application.Features.Bookings.Queries.GetBookingList;
-using Reservation.Application.Specifications.Bookings;
 using Reservation.Domain.AggregatesModel.BookingAggregate;
+using Reservation.Domain.Specifications.Bookings;
 
 namespace Reservation.Application.UnitTests.Bookings.Queries;
 
@@ -93,7 +93,7 @@ public class GetBookingListQueryHandlerTests
             .Setup(p => p.ListAsync(It.IsAny<BookingListPaginatedSpecification>()))
             .ReturnsAsync(fakeList.Where(s => s.UserId == userId).ToList());
         _mockBookingRepository
-            .Setup(p => p.CountAsync(It.IsAny<BookingListPaginatedSpecification>()))
+            .Setup(p => p.CountAsync(It.IsAny<BookingListCountPaginatedSpecification>()))
             .ReturnsAsync(fakeList.Count(s => s.UserId == userId));
 
         // Act
@@ -140,7 +140,7 @@ public class GetBookingListQueryHandlerTests
             .Setup(p => p.ListAsync(It.IsAny<BookingListPaginatedSpecification>()))
             .ReturnsAsync(fakeList);
         _mockBookingRepository
-            .Setup(p => p.CountAsync(It.IsAny<BookingListPaginatedSpecification>()))
+            .Setup(p => p.CountAsync(It.IsAny<BookingListCountPaginatedSpecification>()))
             .ReturnsAsync(fakeList.Count);
 
         // Act

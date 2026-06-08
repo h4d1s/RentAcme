@@ -1,4 +1,4 @@
-﻿using Reservation.Application.Specifications.Bookings;
+﻿using Reservation.Domain.Specifications.Bookings;
 using Reservation.Domain.AggregatesModel.BookingAggregate;
 
 namespace Reservation.Application.UnitTests.Bookings.Specifications;

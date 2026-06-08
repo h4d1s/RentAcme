@@ -1,10 +1,10 @@
-﻿using Ardalis.Specification;
-using Reservation.Domain.Common;
+﻿using Reservation.Domain.Common;
+using Reservation.Domain.Specifications.Bookings;
 
 namespace Reservation.Domain.AggregatesModel.BookingAggregate;
 
 public interface IBookingRepository : IRepository<Booking>
 {
-    public Task<IReadOnlyList<Booking>> ListAsync(Specification<Booking> spec);
-    public Task<int> CountAsync(Specification<Booking> spec);
+    public Task<IReadOnlyList<Booking>> ListAsync(BookingListPaginatedSpecification spec);
+    public Task<int> CountAsync(BookingListCountPaginatedSpecification spec);
 }
