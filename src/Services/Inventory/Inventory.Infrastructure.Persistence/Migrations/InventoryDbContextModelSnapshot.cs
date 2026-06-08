@@ -181,7 +181,7 @@ namespace Inventory.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Inventory.Domain.AggregatesModel.VehicleAggregate.Vehicle", b =>
                 {
                     b.HasOne("Inventory.Domain.AggregatesModel.VariantAggreate.Variant", "Variant")
-                        .WithOne("Vehicle")
+                        .WithOne()
                         .HasForeignKey("Inventory.Domain.AggregatesModel.VehicleAggregate.Vehicle", "VariantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -197,11 +197,6 @@ namespace Inventory.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Inventory.Domain.AggregatesModel.ModelAggregate.Model", b =>
                 {
                     b.Navigation("Variants");
-                });
-
-            modelBuilder.Entity("Inventory.Domain.AggregatesModel.VariantAggreate.Variant", b =>
-                {
-                    b.Navigation("Vehicle");
                 });
 #pragma warning restore 612, 618
         }

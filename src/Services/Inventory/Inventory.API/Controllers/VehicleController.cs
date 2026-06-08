@@ -7,7 +7,7 @@ using Inventory.Application.Features.Vehicles.Commands.UpdateVehicle;
 using Inventory.Application.Features.Vehicles.Queries.GetVehicle;
 using Inventory.Application.Features.Vehicles.Queries.GetVehicleList;
 using Inventory.Application.Features.Vehicles.Queries.SearchVehicles;
-using Inventory.Application.Models;
+using Inventory.Application.Models.Vehicles;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

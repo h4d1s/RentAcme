@@ -1,8 +1,6 @@
 ﻿using Inventory.Domain.AggregatesModel.ModelAggregate;
-using Inventory.Domain.AggregatesModel.VehicleAggregate;
 using Inventory.Domain.Common;
 using Inventory.Domain.Exceptions;
-using System.Text.Json.Serialization;
 
 namespace Inventory.Domain.AggregatesModel.VariantAggreate;
 
@@ -15,12 +13,8 @@ public class Variant
     public int Power { get; private set; }
     public int EngineSize { get; private set; }
 
-    public Guid ModelId { get; private set; }
-    [JsonIgnore]
     public Model Model { get; private set; } = null!;
-
-    [JsonIgnore]
-    public Vehicle? Vehicle { get; private set; }
+    public Guid ModelId { get; private set; }
 
     public Variant(string name, Gearbox gearbox, FuelType fuelType, int power, int engineSize, Guid modelId)
     {

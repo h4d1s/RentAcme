@@ -14,9 +14,8 @@ public class Model
     public int NumberOfSeats { get; private set; }
     public Category Category { get; private set; }
 
+    public Brand Brand { get; private set; } = null!;
     public Guid? BrandId { get; private set; }
-    [JsonIgnore]
-    public Brand Brand { get; } = null!;
 
     private readonly List<Variant> _variants;
     [JsonIgnore]

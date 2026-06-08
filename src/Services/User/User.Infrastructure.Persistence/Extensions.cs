@@ -9,6 +9,7 @@ using User.Domain.AggregatesModel.ApplicationUserAggregate;
 using User.Domain.Common;
 using User.Infrastructure.Persistence.Data;
 using User.Infrastructure.Persistence.Repositories;
+using Caching;
 
 namespace User.Infrastructure.Persistence;
 
@@ -36,9 +37,12 @@ public static class Extensions
             services.AddMigration<ApplicationUserDbContext, ApplicationUserDbContextSeed>();
         //}
 
+        // Caching
+        services.AddCaching(configuration);
+
         // DI
         services.AddScoped<IUnitOfWork, ApplicationUserDbContext>();
-        services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
+        services.AddScoped<IApplicationUserRepository, CachedApplicationUserRepository>();
 
         return services;
     }

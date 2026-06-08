@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Common.Models;
-using Inventory.Application.Models;
-using Inventory.Application.Specifications.Vehicles;
+using Inventory.Application.Models.Vehicles;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
+using Inventory.Domain.Specifications.Vehicles;
 using MediatR;
 
 namespace Inventory.Application.Features.Vehicles.Queries.SearchVehicles;
@@ -20,7 +20,9 @@ public class SearchVehiclesHandler : IRequestHandler<SearchVehiclesQuery, PagedR
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<PagedResponse<VehicleSearchResponse>> Handle(SearchVehiclesQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResponse<VehicleSearchResponse>> Handle(
+        SearchVehiclesQuery request,
+        CancellationToken cancellationToken)
     {
         var specification = new VehicleFilterPaginatedSpecification(
             request.Page,
@@ -39,9 +41,9 @@ public class SearchVehiclesHandler : IRequestHandler<SearchVehiclesQuery, PagedR
         var vehicleResponseList = vehicleList
             .Select(vehicle => _mapper.Map<VehicleSearchResponse>(vehicle));
 
-        specification = new VehicleFilterPaginatedSpecification(
-            null,
-            null,
+        var countSpecification = new VehicleFilterCountSpecification(
+            request.Page,
+            request.PageSize,
             request.Order,
             request.OrderBy,
             request.Gearbox,
@@ -51,7 +53,7 @@ public class SearchVehiclesHandler : IRequestHandler<SearchVehiclesQuery, PagedR
             request.PickupDate,
             request.ReturnDate
         );
-        var vehicleListAllCount = await _vehicleRepository.CountAsync(specification);
+        var vehicleListAllCount = await _vehicleRepository.CountAsync(countSpecification);
 
         return new PagedResponse<VehicleSearchResponse>(
             request.Page,

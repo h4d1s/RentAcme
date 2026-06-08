@@ -1,4 +1,5 @@
-﻿using Inventory.Domain.AggregatesModel.VehicleAggregate;
+﻿using Inventory.Domain.AggregatesModel.VariantAggreate;
+using Inventory.Domain.AggregatesModel.VehicleAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,5 +15,10 @@ public class VehicleEntityConfiguration : IEntityTypeConfiguration<Vehicle>
         builder
             .Property(v => v.RentalPricePerDay)
             .HasPrecision(10, 2);
+
+        builder.HasOne<Variant>()
+            .WithMany()
+            .HasForeignKey(v => v.VariantId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

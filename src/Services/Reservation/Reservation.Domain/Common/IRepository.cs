@@ -8,7 +8,6 @@ public interface IRepository<T> where T : IAggregateRoot
 
     Task<int> CountAsync();
     Task<T?> GetByIdAsync(Guid id);
-    Task<IReadOnlyList<T>> ListAllAsync();
     Task<Guid> AddAsync(T entity);
     Task AddRangeAsync(IEnumerable<T> entities);
     void Update(T entity);

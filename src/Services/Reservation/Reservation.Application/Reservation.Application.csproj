@@ -10,6 +10,7 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="MediatR" Version="12.1.1" />
+    <PackageReference Include="AutoMapper" Version="16.1.1" />
     <PackageReference Include="MassTransit" Version="8.5.9" />
 	  <PackageReference Include="Ardalis.Specification" Version="9.3.1" />
     <PackageReference Include="Grpc.Net.ClientFactory" Version="2.80.0" />

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Inventory.Application.Exceptions;
-using Inventory.Application.Models;
+using Inventory.Application.Models.Vehicles;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
 using MediatR;
 

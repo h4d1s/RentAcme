@@ -1,4 +1,4 @@
-﻿using Inventory.Application.Models;
+﻿using Inventory.Application.Models.Vehicles;
 using MediatR;
 
 namespace Inventory.Application.Features.Vehicles.Queries.GetVehicle;

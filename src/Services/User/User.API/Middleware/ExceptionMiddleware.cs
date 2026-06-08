@@ -57,7 +57,7 @@ public class ExceptionMiddleware
                     Type = nameof(NotFoundException),
                 };
                 break;
-            case AuthenticationException authenticationException:
+            case UnauthorizedException authenticationException:
                 statusCode = StatusCodes.Status401Unauthorized;
                 problem = new CustomProblemDetails
                 {

@@ -10,40 +10,6 @@
       "name": "Bookings",
       "item": [
         {
-          "name": "Reserve Booking",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "ClientId",
-                "value": "user",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"vehicleId\": \"{{vehicleId}}\",\n  \"userId\": \"{{userId}}\",\n  \"pickupDate\": \"2026-06-20T10:00:00Z\",\n  \"returnDate\": \"2026-06-25T10:00:00Z\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/{{version}}/reservations/bookings",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "{{version}}",
-                "reservations",
-                "bookings"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "Get All Bookings",
           "request": {
             "method": "GET",
@@ -105,6 +71,40 @@
                   "key": "targetBookingId",
                   "value": ""
                 }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reserve Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "user",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vehicleId\": \"{{vehicleId}}\",\n  \"userId\": \"{{userId}}\",\n  \"pickupDate\": \"2026-06-20T10:00:00Z\",\n  \"returnDate\": \"2026-06-25T10:00:00Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{version}}/reservations/bookings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{version}}",
+                "reservations",
+                "bookings"
               ]
             }
           },
@@ -185,6 +185,41 @@
     {
       "name": "Users",
       "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "user",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{version}}/reservations/bookings?Page=1&PageSize=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{version}}",
+                "reservations",
+                "bookings"
+              ],
+              "query": [
+                {
+                  "key": "Page",
+                  "value": "1"
+                },
+                {
+                  "key": "PageSize",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
         {
           "name": "Get User",
           "request": {
@@ -1109,16 +1144,6 @@
     "type": "oauth2",
     "oauth2": [
       {
-        "key": "scope",
-        "value": "openid profile email roles rent-acme-web-scope",
-        "type": "string"
-      },
-      {
-        "key": "clientId",
-        "value": "{{client_id}}",
-        "type": "string"
-      },
-      {
         "key": "accessTokenUrl",
         "value": "http://localhost:8080/realms/rent-acme/protocol/openid-connect/token",
         "type": "string"
@@ -1126,6 +1151,16 @@
       {
         "key": "authUrl",
         "value": "http://localhost:8080/realms/rent-acme/protocol/openid-connect/auth",
+        "type": "string"
+      },
+      {
+        "key": "scope",
+        "value": "openid profile email roles rent-acme-web-scope",
+        "type": "string"
+      },
+      {
+        "key": "clientId",
+        "value": "{{client_id}}",
         "type": "string"
       },
       {

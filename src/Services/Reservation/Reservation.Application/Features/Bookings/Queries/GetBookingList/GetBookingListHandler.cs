@@ -3,9 +3,8 @@ using GrpcIntegrationHelpers.ClientServices;
 using Identity.Models;
 using Identity.Services;
 using Reservation.Application.Exceptions;
-using Reservation.Application.Specifications.Bookings;
 using Reservation.Domain.AggregatesModel.BookingAggregate;
-using System.Security.Authentication;
+using Reservation.Domain.Specifications.Bookings;
 
 namespace Reservation.Application.Features.Bookings.Queries.GetBookingList;
 
@@ -58,7 +57,7 @@ public class GetBookingListHandler : IRequestHandler<GetBookingListQuery, PagedR
             request.Status);
         var bookingList = await _bookingRepository.ListAsync(specification);
 
-        specification = new BookingListPaginatedSpecification(
+        var countSpecification = new BookingListCountPaginatedSpecification(
             null,
             null,
             request.Order,
@@ -68,7 +67,7 @@ public class GetBookingListHandler : IRequestHandler<GetBookingListQuery, PagedR
             request.PickupDate,
             request.ReturnDate,
             request.Status);
-        var bookingListAllCount = await _bookingRepository.CountAsync(specification);
+        var bookingListAllCount = await _bookingRepository.CountAsync(countSpecification);
 
         return new PagedResponse<Booking>(
             request.Page,

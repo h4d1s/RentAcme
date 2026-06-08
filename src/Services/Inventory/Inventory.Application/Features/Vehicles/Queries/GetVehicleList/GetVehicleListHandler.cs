@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using Common.Models;
-using Inventory.Application.Models;
-using Inventory.Application.Specifications.Vehicles;
+using Inventory.Domain.Specifications.Vehicles;
 using Inventory.Domain.AggregatesModel.VehicleAggregate;
+using Inventory.Domain.Common;
 using MediatR;
+using Inventory.Application.Models.Vehicles;
 
 namespace Inventory.Application.Features.Vehicles.Queries.GetVehicleList;
 
@@ -34,14 +35,14 @@ public class GetVehicleListHandler : IRequestHandler<GetVehicleListQuery, PagedR
         var vehicleResponseList = vehicleList
             .Select(vehicle => _mapper.Map<VehicleResponse>(vehicle));
 
-        specification = new VehicleListPaginatedSpecification(
-            null,
-            null,
+        var countSpecification = new VehicleListCountSpecification(
+            request.Page,
+            request.PageSize,
             request.Order,
             request.OrderBy,
             request.RentalPricePerDayFrom,
             request.RentalPricePerDayTo);
-        var vehiclesListAllCount = await _vehicleRepository.CountAsync(specification);
+        var vehiclesListAllCount = await _vehicleRepository.CountAsync(countSpecification);
 
         return new PagedResponse<VehicleResponse>(
             request.Page,

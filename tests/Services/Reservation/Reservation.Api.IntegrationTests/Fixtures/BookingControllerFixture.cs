@@ -13,18 +13,27 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Reservation.API.IntegrationTests.Fakes;
 using Reservation.Domain.AggregatesModel.BookingAggregate;
 using Reservation.Infrastructure.Persistence.Data;
+using StackExchange.Redis;
 using Testcontainers.PostgreSql;
+using Testcontainers.Redis;
 
 namespace Reservation.API.IntegrationTests.Fixtures;
 
 public sealed class BookingControllerFixture : WebApplicationFactory<Program>, IAsyncLifetime
 {
+    public RedisContainer RedisContainer { get; private set; } = null!;
     public PostgreSqlContainer PostgreSqlContainer { get; private set; } = null!;
 
     private string _connectionString => PostgreSqlContainer.GetConnectionString();
 
     public async Task InitializeAsync()
     {
+        RedisContainer = new RedisBuilder("redis:latest")
+            .WithCommand("redis-server")
+            .WithPortBinding(6379, true)
+            .Build();
+        await RedisContainer.StartAsync();
+
         PostgreSqlContainer = new PostgreSqlBuilder("postgres:latest")
             .WithDatabase("reservation_test_db")
             .WithUsername("rent-acme")
@@ -66,6 +75,13 @@ public sealed class BookingControllerFixture : WebApplicationFactory<Program>, I
             })
             .ConfigureTestServices(services =>
             {
+                // Redis
+                services.RemoveAll<IConnectionMultiplexer>();
+                services.AddSingleton<IConnectionMultiplexer>(_ =>
+                {
+                    return ConnectionMultiplexer.Connect(RedisContainer.GetConnectionString());
+                });
+
                 // DB
                 services.RemoveAll(typeof(DbContextOptions<ReservationDbContext>));
                 services.AddDbContext<ReservationDbContext>(options =>
@@ -106,6 +122,7 @@ public sealed class BookingControllerFixture : WebApplicationFactory<Program>, I
 
     async Task IAsyncLifetime.DisposeAsync()
     {
+        await RedisContainer.DisposeAsync();
         await PostgreSqlContainer.DisposeAsync();
     }
 }
