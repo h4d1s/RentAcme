@@ -15,6 +15,7 @@ public class ModelEntityConfiguration : IEntityTypeConfiguration<Model>
             .HasMany(e => e.Variants)
             .WithOne(e => e.Model)
             .HasForeignKey(e => e.ModelId)
-            .IsRequired();
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

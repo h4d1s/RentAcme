@@ -13,9 +13,10 @@ public class VariantEntityConfiguration : IEntityTypeConfiguration<Variant>
             .Ignore(v => v.DomainEvents);
 
         builder
-            .HasOne(e => e.Vehicle)
+            .HasOne<Vehicle>()
             .WithOne(e => e.Variant)
             .HasForeignKey<Vehicle>(e => e.VariantId)
-            .IsRequired();
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -43,7 +43,6 @@ public static class Extensions
         IHostEnvironment environment,
         IServiceProvider serviceProvider)
     {
-
         return app;
     }
 }

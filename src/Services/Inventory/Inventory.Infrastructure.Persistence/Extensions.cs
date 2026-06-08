@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Persistence;
+using Caching;
 
 namespace Inventory.Infrastructure.Persistence;
 
@@ -34,15 +35,18 @@ public static class Extensions
 
         //if (env.IsDevelopment())
         //{
-            services.AddMigration<InventoryDbContext, InventoryDbContextSeed>();
+        services.AddMigration<InventoryDbContext, InventoryDbContextSeed>();
         //}
+
+        // Caching
+        services.AddCaching(configuration);
 
         // DI
         services.AddScoped<IUnitOfWork, InventoryDbContext>();
-        services.AddScoped<IBrandRepository, BrandRepository>();
-        services.AddScoped<IModelRepository, ModelRepository>();
-        services.AddScoped<IVariantRepository, VariantRepository>();
-        services.AddScoped<IVehicleRepository, VehicleRepository>();
+        services.AddScoped<IBrandRepository, CachedBrandRepository>();
+        services.AddScoped<IModelRepository, CachedModelRepository>();
+        services.AddScoped<IVariantRepository, CachedVariantRepository>();
+        services.AddScoped<IVehicleRepository, CachedVehicleRepository>();
 
         return services;
     }

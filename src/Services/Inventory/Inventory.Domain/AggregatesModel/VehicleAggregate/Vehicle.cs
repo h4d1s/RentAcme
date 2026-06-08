@@ -2,7 +2,6 @@
 using Inventory.Domain.AggregatesModel.VehicleAggregate.Events;
 using Inventory.Domain.Common;
 using Inventory.Domain.Exceptions;
-using System.Text.Json.Serialization;
 
 namespace Inventory.Domain.AggregatesModel.VehicleAggregate;
 
@@ -14,9 +13,8 @@ public class Vehicle
     public VehicleStatus Status { get; private set; }
     public int MileageKm { get; private set; }
 
+    public Variant Variant { get; private set; } = null!;
     public Guid VariantId { get; private set; }
-    [JsonIgnore]
-    public Variant Variant { get; } = null!;
 
     protected Vehicle()
     {

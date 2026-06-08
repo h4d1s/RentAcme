@@ -12,7 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Inventory.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
+<<<<<<<< HEAD:src/Services/Inventory/Inventory.Infrastructure.Persistence/Migrations/20260603110648_InitialMigration.Designer.cs
     [Migration("20260603110648_InitialMigration")]
+========
+    [Migration("20260605152722_InitialMigration")]
+>>>>>>>> feature/add-redis:src/Services/Inventory/Inventory.Infrastructure.Persistence/Migrations/20260605152722_InitialMigration.Designer.cs
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -184,7 +188,7 @@ namespace Inventory.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Inventory.Domain.AggregatesModel.VehicleAggregate.Vehicle", b =>
                 {
                     b.HasOne("Inventory.Domain.AggregatesModel.VariantAggreate.Variant", "Variant")
-                        .WithOne("Vehicle")
+                        .WithOne()
                         .HasForeignKey("Inventory.Domain.AggregatesModel.VehicleAggregate.Vehicle", "VariantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -200,11 +204,6 @@ namespace Inventory.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Inventory.Domain.AggregatesModel.ModelAggregate.Model", b =>
                 {
                     b.Navigation("Variants");
-                });
-
-            modelBuilder.Entity("Inventory.Domain.AggregatesModel.VariantAggreate.Variant", b =>
-                {
-                    b.Navigation("Vehicle");
                 });
 #pragma warning restore 612, 618
         }

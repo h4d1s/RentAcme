@@ -193,6 +193,11 @@ env:
       secretKeyRef:
         name: inventory-api-secrets
         key: ConnectionStrings__InventoryDbContext
+  - name: ConnectionStrings__Redis
+    valueFrom:
+      secretKeyRef:
+        name: inventory-api-secrets
+        key: ConnectionStrings__Redis
   - name: OtelCollector__Endpoint
     value: "http://otel-collector.infra-observability.svc.cluster.local:4317"
   - name: ASPNETCORE_ENVIRONMENT

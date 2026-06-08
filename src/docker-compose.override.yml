@@ -10,6 +10,12 @@ services:
       - 5672:5672
       - 15672:15672
 
+  redis:
+    container_name: redis
+    command: redis-server --requirepass Passw0rd!
+    ports:
+      - 6379:6379
+
   mailhog:
     container_name: mailhog
     ports:
@@ -264,12 +270,12 @@ services:
       POSTGRES_USER: rent-acme
       POSTGRES_PASSWORD: Passw0rd!
     ports:
-      - 5450:5432
+      - 5460:5432
 
   saga-orchestration-statemachine:
     container_name: saga-orchestration-statemachine
     ports:
-      - 5261:8080
+      - 5271:8080
     environment:
       - DOTNET_ENVIRONMENT=Development
     depends_on:

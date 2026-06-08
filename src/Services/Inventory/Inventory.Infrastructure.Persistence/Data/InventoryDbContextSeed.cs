@@ -50,7 +50,7 @@ public class InventoryDbContextSeed : IDbSeeder<InventoryDbContext>
             {
                 var brand = new Brand(brandSource.Name);
                 await context.Brands.AddAsync(brand);
-                await context.SaveEntitiesAsync(CancellationToken.None);
+                await context.SaveChangesAsync(CancellationToken.None);
 
                 foreach (var modelSource in brandSource.Models)
                 {
@@ -67,7 +67,7 @@ public class InventoryDbContextSeed : IDbSeeder<InventoryDbContext>
                         randomCategory,
                         brand.Id);
                     await context.Models.AddAsync(model);
-                    await context.SaveEntitiesAsync(CancellationToken.None);
+                    await context.SaveChangesAsync(CancellationToken.None);
 
                     foreach (var variantSource in modelSource.Variants)
                     {
@@ -84,7 +84,7 @@ public class InventoryDbContextSeed : IDbSeeder<InventoryDbContext>
                     }
 
                     context.Models.Update(model);
-                    await context.SaveEntitiesAsync(CancellationToken.None);
+                    await context.SaveChangesAsync(CancellationToken.None);
 
                     variants.AddRange(model.Variants);
                 }
@@ -103,7 +103,7 @@ public class InventoryDbContextSeed : IDbSeeder<InventoryDbContext>
             });
 
             await context.Vehicles.AddRangeAsync(vehicles);
-            await context.SaveEntitiesAsync(CancellationToken.None);
+            await context.SaveChangesAsync(CancellationToken.None);
         }
         catch (Exception ex)
         {

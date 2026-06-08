@@ -6,7 +6,7 @@ using Inventory.Application.Features.Brands.Commands.DeleteBrand;
 using Inventory.Application.Features.Brands.Commands.UpdateBrand;
 using Inventory.Application.Features.Brands.Queries.GetBrand;
 using Inventory.Application.Features.Brands.Queries.GetBrandList;
-using Inventory.Application.Models;
+using Inventory.Application.Models.Vehicles;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

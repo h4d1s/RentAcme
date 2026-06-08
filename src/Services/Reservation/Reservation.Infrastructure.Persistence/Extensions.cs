@@ -6,6 +6,7 @@ using Persistence;
 using Reservation.Domain.AggregatesModel.BookingAggregate;
 using Reservation.Infrastructure.Persistence.Data;
 using Reservation.Infrastructure.Persistence.Repositories;
+using Caching;
 
 namespace Reservation.Infrastructure.Persistence;
 
@@ -24,6 +25,9 @@ public static class Extensions
             )
         );
 
+        // Caching
+        services.AddCaching(configuration);
+
         // Seed DB
         var serviceProvider = services.BuildServiceProvider();
         var env = serviceProvider.GetRequiredService<IHostEnvironment>();
@@ -33,7 +37,9 @@ public static class Extensions
             services.AddMigration<ReservationDbContext, ReservationDbContextSeed>();
         //}
 
-        services.AddScoped<IBookingRepository, BookingRepository>();
+        services.AddCaching(configuration);
+
+        services.AddScoped<IBookingRepository, CachedBookingRepository>();
 
         return services;
     }
