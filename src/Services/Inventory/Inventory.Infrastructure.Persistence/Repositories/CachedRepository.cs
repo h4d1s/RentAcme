@@ -37,7 +37,7 @@ public class CachedRepository<T> : IRepository<T>
             return cached;
         }
 
-        var entity = await _dbSet.FirstAsync(x => x.Id == id);
+        var entity = await _dbSet.FirstOrDefaultAsync(x => x.Id == id);
         if (entity is not null)
         {
             await _cache.SetAsync(

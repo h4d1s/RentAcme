@@ -142,8 +142,6 @@ public sealed class BookingControllerTests : IClassFixture<BookingControllerFixt
             $"/api/v1/bookings/{bookingId}");
 
         // Assert
-        Assert.True(
-            response.StatusCode == HttpStatusCode.NotFound ||
-            response.StatusCode == HttpStatusCode.OK);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 }
